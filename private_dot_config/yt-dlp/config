@@ -1,0 +1,14 @@
+--cookies-from-browser firefox
+--downloader aria2c
+--embed-metadata
+--embed-subs
+--embed-thumbnail
+--format bestvideo*[height=2160][vcodec!=av01]+bestaudio/bestvideo*[height>1440][vcodec!=av01]+bestaudio/bestvideo*[height<=1440]+bestaudio/bestvideo*+bestaudio/best
+#--format-sort res,codec
+--keep-video
+--mark-watched
+--output "%(playlist)s/%(playlist_index)s_%(title)s.%(ext)s"
+--paths "~/Videos/web-dl"
+--sub-langs en.*,zh.*,ja.*
+--write-auto-sub
+--write-sub

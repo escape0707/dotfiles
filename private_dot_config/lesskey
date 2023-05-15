@@ -1,0 +1,3 @@
+#env
+LESS = --jump-target=7 --ignore-case --RAW-CONTROL-CHARS
+

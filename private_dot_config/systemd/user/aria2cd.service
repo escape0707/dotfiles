@@ -1,0 +1,9 @@
+[Unit]
+Description=aria2 Daemon
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/aria2c --conf-path=/home/jay/.config/aria2/aria2-rpc.conf
+
+[Install]
+WantedBy=default.target

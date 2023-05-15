@@ -1,0 +1,50 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+alias ls='ls --color=auto'
+PS1='[\u@\h \W]\$ '
+
+# My config
+PS1='[\u@\h \w]\n\$ '
+
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_DATA_HOME=$HOME/.local/share
+
+export CARGO_HOME="$XDG_DATA_HOME"/cargo
+export TEXMFHOME=$XDG_DATA_HOME/texmf
+export TEXMFVAR=$XDG_CACHE_HOME/texlive/texmf-var
+export TEXMFCONFIG=$XDG_CONFIG_HOME/texlive/texmf-config
+
+export BROWSER=firefox-developer-edition
+export EDITOR=nvim
+
+alias anifps='gnome-randr modify --mode 3840x2160@23.976 DP-2'
+alias enven='env LANG=en_US.UTF-8 LANGUAGE=en_US'
+alias hifps='gnome-randr modify --mode 3840x2160@119.993 DP-2'
+alias less='less -R'
+alias ll='ls -al --color=auto'
+alias mpv='gnome-session-inhibit mpv'
+alias pacclear='paccache --remove && paccache --remove --uninstalled --keep 0'
+alias rebootwin='systemctl reboot --boot-loader-entry=auto-windows'
+alias rm='gio trash'
+alias updsrcinfo='makepkg --printsrcinfo | tee .SRCINFO'
+
+function setfps {
+    gnome-randr modify --mode 3840x2160@$1.000 DP-2
+}
+
+function zimu {
+    local audio=${1%.*}.mkv
+    [ ! -f /tmp/$audio ] && ffmpeg -i $1 -vn -c copy /tmp/$audio
+    scp /tmp/$audio gpu:audio && rm /tmp/$audio
+    ssh gpu$4 sh -c "\"loginctl enable-linger && \\
+        systemd-run --user \\
+        env APPTAINERENV_CUDA_VISIBLE_DEVICES=${3:-1} \\
+        apptainer run --nv ~/whisper.sif \\
+        --model large --output_dir=\$HOME/subs --output_format=srt --language ${2:-ja} ~/audio/$audio\""
+}

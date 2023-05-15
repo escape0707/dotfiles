@@ -1,0 +1,7 @@
+[user]
+	email = tothesong@gmail.com
+	name = escape0707
+[pull]
+	rebase = true
+[init]
+	defaultBranch = main

@@ -1,0 +1,11 @@
+642c642,644
+<                 if rsync_servers and db.name in OFFICIAL_REPOSITORIES:
+---
+>                 # Also use rsync for archlinuxcn
+>                 #if rsync_servers and db.name in OFFICIAL_REPOSITORIES:
+>                 if rsync_servers:
+764c766,767
+<             else:
+---
+>             # Only use rsync. Don't fallback to Aria2
+>             #else:
