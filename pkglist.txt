@@ -22,7 +22,6 @@ code-nautilus-git
 dconf-editor
 edid-decode-git
 efibootmgr
-eog
 etckeeper
 fcitx5-chinese-addons
 fcitx5-im
@@ -124,6 +123,7 @@ virtio-win
 virt-manager
 vulkan-radeon
 waypipe
+webp-pixbuf-loader
 wireguard-tools
 wireshark-qt
 wl-clipboard
