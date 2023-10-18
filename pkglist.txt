@@ -34,7 +34,6 @@ file-roller
 firefox-developer-edition
 gdu
 geary
-gimp-devel
 gnome
 gnome-browser-connector
 gnome-randr-rust
