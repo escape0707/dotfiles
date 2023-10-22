@@ -10,10 +10,10 @@
       "--continue=true",
       "--file-allocation=none",
       "--log-level=error",
-      "--max-concurrent-downloads=32",
+      "--max-concurrent-downloads=100",
       "--max-connection-per-server=1",
-      "--min-split-size=1M",
-      "--split=4",
+      "--min-split-size=5M",
+      "--split=1000",
       "--remote-time=true",
       "--show-console-readout=true"
     ],
@@ -45,9 +45,6 @@
     ],
     "db only": true,
     "path": "/usr/bin/rsync",
-    "servers": [
-      "rsync://mirror.funami.tech/arch/$repo/os/$arch",
-      "rsync://mirrors.xtom.jp/archlinuxcn/$arch"
-    ]
+    "servers": []
   }
 }
