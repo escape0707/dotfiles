@@ -2,6 +2,9 @@
 	email = tothesong@gmail.com
 	name = escape0707
 [pull]
-	rebase = true
+	rebase = interactive
+	ff = only
 [init]
 	defaultBranch = main
+[merge]
+	ff = only
