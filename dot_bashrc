@@ -24,7 +24,7 @@ export BROWSER=firefox-developer-edition
 export EDITOR=nvim
 
 alias anifps='gnome-randr modify --mode 3840x2160@23.976 DP-2'
-alias chezmoicd="cd $XDG_DATA_HOME/chezmoi"
+alias cmcd="cd $XDG_DATA_HOME/chezmoi"
 alias enven='env LANG=en_US.UTF-8 LANGUAGE=en_US'
 alias hifps='gnome-randr modify --mode 3840x2160@119.993 DP-2'
 alias less='less -R'

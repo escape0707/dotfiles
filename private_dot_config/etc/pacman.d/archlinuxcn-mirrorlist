@@ -1,10 +1,16 @@
+## xTom (Japan server) (Osaka, Japan) (ipv4, ipv6, http, https)
+Server = https://mirrors.xtom.jp/archlinuxcn/$arch
+
 ##
 ## Arch Linux CN community repository mirrorlist
-## Generated on 2023-04-21
+## Generated on 2023-08-25
 ##
 
 ## Our main server (Amsterdam, the Netherlands) (ipv4, ipv6, http, https)
 # Server = https://repo.archlinuxcn.org/$arch
+
+## CERNET (中国) (ipv4, ipv6, http, https)
+# Server = https://mirrors.cernet.edu.cn/archlinuxcn/$arch
 
 ## OpenTUNA (China CDN) (ipv4, https)
 # Server = https://opentuna.cn/archlinuxcn/$arch
@@ -60,6 +66,30 @@ Server = https://repo.huaweicloud.com/archlinuxcn/$arch
 ## 武昌首义学院 (湖北武汉) (ipv4, ipv6, http, https)
 # Server = https://mirrors.wsyu.edu.cn/archlinuxcn/$arch
 
+## 北京交通大学 (北京) (ipv4, ipv6, https)
+# Server = https://mirror.bjtu.edu.cn/archlinuxcn/$arch
+
+## 兰州大学 (甘肃兰州) (ipv4, ipv6, http, https)
+# Server = https://mirror.lzu.edu.cn/archlinuxcn/$arch
+
+## 西安交通大学 (陕西西安) (ipv4, ipv6, http, https)
+# Server = https://mirrors.xjtu.edu.cn/archlinuxcn/$arch
+
+## 南阳理工学院 (河南南阳) (ipv4, ipv6, http, https)
+# Server = https://mirror.nyist.edu.cn/archlinuxcn/$arch
+
+## 南京工业大学 (江苏南京) (ipv4, ipv6, http, https)
+# Server = https://mirrors.njtech.edu.cn/archlinuxcn/$arch
+
+## 上海科技大学 (上海) (ipv4, https)
+# Server = https://mirrors.shanghaitech.edu.cn/archlinuxcn/$arch
+
+## 中国科学院软件研究所 (北京) (ipv4, https)
+# Server = https://mirror.iscas.ac.cn/archlinuxcn/$arch
+
+## 北京邮电大学 (北京) (ipv4, ipv6, http, https)
+# Server = https://mirrors.bupt.edu.cn/archlinuxcn/$arch
+
 ## NCKU CCNS (Taiwan) (ipv4, http, https)
 # Server = https://archlinux.ccns.ncku.edu.tw/archlinuxcn/$arch
 
@@ -79,7 +109,7 @@ Server = https://repo.huaweicloud.com/archlinuxcn/$arch
 # Server = https://mirrors.xtom.ee/archlinuxcn/$arch
 
 ## xTom (Japan server) (Osaka, Japan) (ipv4, ipv6, http, https)
-Server = https://mirrors.xtom.jp/archlinuxcn/$arch
+# Server = https://mirrors.xtom.jp/archlinuxcn/$arch
 
 ## xTom (Australia server) (Sydney, Australia) (ipv4, ipv6, http, https)
 # Server = https://mirrors.xtom.au/archlinuxcn/$arch
@@ -88,4 +118,4 @@ Server = https://mirrors.xtom.jp/archlinuxcn/$arch
 # Server = https://mirrors.ocf.berkeley.edu/archlinuxcn/$arch
 
 ## Our main server (Amsterdam, the Netherlands) (ipv4, ipv6, http, https)
-Server = https://repo.archlinuxcn.org/$arch
+# Server = https://repo.archlinuxcn.org/$arch
