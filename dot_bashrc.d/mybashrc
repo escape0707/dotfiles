@@ -20,9 +20,6 @@ export TEXMFHOME=$XDG_DATA_HOME/texmf
 export TEXMFVAR=$XDG_CACHE_HOME/texlive/texmf-var
 export TEXMFCONFIG=$XDG_CONFIG_HOME/texlive/texmf-config
 
-export BROWSER=firefox-developer-edition
-export EDITOR=nvim
-
 alias anifps='gnome-randr modify --mode 3840x2160@23.976 DP-2'
 alias cmcd="cd $XDG_DATA_HOME/chezmoi"
 alias enven='env LANG=en_US.UTF-8 LANGUAGE=en_US'
@@ -36,6 +33,8 @@ alias pacup='sudo pacman -Sy && paru -Su'
 alias rebootwin='systemctl reboot --boot-loader-entry=auto-windows'
 alias rm='gio trash'
 alias updsrcinfo='makepkg --printsrcinfo | tee .SRCINFO'
+alias vi='nvim'
+alias vimdiff='nvim -d'
 
 function setfps {
     gnome-randr modify --mode 3840x2160@$1.${2:-000} DP-2
