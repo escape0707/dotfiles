@@ -68,6 +68,7 @@ mpv-sponsorblock-git
 neovim-symlinks
 networkmanager
 nicotine+
+nm-connection-editor
 noto-fonts-cjk
 p7zip
 pacman-contrib
