@@ -1,0 +1,7 @@
+vo=gpu-next
+profile=high-quality
+video-sync=display-resample
+hwdec=auto-safe
+scale=ewa_lanczos
+cscale=ewa_lanczos
+deband=yes
