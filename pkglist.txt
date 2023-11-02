@@ -37,7 +37,7 @@ gnome-randr-rust
 gnome-themes-extra
 gnome-tweaks
 gnu-netcat
-goldendict-ng
+goldendict-ng-git
 gst-libav
 gst-plugins-ugly
 gstreamer-vaapi
