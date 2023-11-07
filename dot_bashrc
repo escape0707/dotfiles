@@ -43,7 +43,7 @@ function setfps {
 
 function zimu {
     local audio=${1%.*}.mkv
-    [ ! -f /tmp/$audio ] && ffmpeg -i $1 -vn -c copy /tmp/$audio
+    [ ! -f /tmp/$audio ] && ffmpeg -i $1 -map a -c copy /tmp/$audio
     scp /tmp/$audio gpu:audio && command rm /tmp/$audio
     ssh gpu$4 sh -c "\"loginctl enable-linger && \\
         systemd-run --user \\
