@@ -4,6 +4,7 @@
 --embed-subs
 --embed-thumbnail
 --format bestvideo*[height=2160][vcodec!=av01]+bestaudio/bestvideo*[height>1440][vcodec!=av01]+bestaudio/bestvideo*[height<=1440]+bestaudio/bestvideo*+bestaudio/best
+#--format bestvideo*[height<=1440]+bestaudio/bestvideo*+bestaudio/best
 #--format-sort res,codec
 --keep-video
 --mark-watched
