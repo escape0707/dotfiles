@@ -1,3 +1,5 @@
+adobe-source-sans-fonts
+adobe-source-serif-fonts
 amd-ucode
 android-tools
 anki-bin
@@ -5,6 +7,7 @@ apptainer
 arch-install-scripts
 archlinuxcn-keyring
 archlinuxcn-mirrorlist-git
+archlinux-wallpaper
 authy-desktop-win32-bin
 base
 base-devel
@@ -18,10 +21,11 @@ code-icons
 code-marketplace
 code-nautilus-git
 dconf-editor
-edid-decode-git
 efibootmgr
 etckeeper
 extension-manager
+f37-backgrounds
+f38-backgrounds
 fcitx5-chinese-addons
 fcitx5-im
 fcitx5-mozc
@@ -64,12 +68,13 @@ mesa-vdpau
 miniserve
 modprobed-db
 moonlight-qt
-mpv-sponsorblock-git
+mpv_inhibit_gnome
+mpv-mpris
+mpv-sponsorblock
 neovim-symlinks
 networkmanager
 nicotine+
 nm-connection-editor
-noto-fonts-cjk
 p7zip
 pacman-contrib
 paru
