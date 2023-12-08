@@ -12,6 +12,8 @@ PS1='[\u@\h \W]\$ '
 # My config
 PS1='[\u@\h \w]\n\$ '
 
+source /usr/share/doc/pkgfile/command-not-found.bash
+
 export XDG_CACHE_HOME=$HOME/.cache
 export XDG_CONFIG_HOME=$HOME/.config
 export XDG_DATA_HOME=$HOME/.local/share
@@ -47,6 +49,6 @@ function zimu {
     ssh gpu$4 sh -c "\"loginctl enable-linger && \\
         systemd-run --user \\
         env APPTAINERENV_CUDA_VISIBLE_DEVICES=${3:-1} \\
-        apptainer run --nv ~/whisper.sif \\
-        --model large --output_dir=\$HOME/subs --output_format=srt --language ${2:-ja} ~/audio/$audio\""
+        apptainer run --nv ~/faster-whisper.sif \\
+        --vad_filter True --model large-v2 --output_dir=\$HOME/subs --output_format=srt --language ${2:-ja} ~/audio/$audio\""
 }
