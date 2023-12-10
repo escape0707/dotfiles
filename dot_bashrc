@@ -43,12 +43,15 @@ function setfps {
 }
 
 function zimu {
-    local audio=${1%.*}.mkv
-    [ ! -f /tmp/$audio ] && ffmpeg -i $1 -map a -c copy /tmp/$audio
-    scp /tmp/$audio gpu:audio && command rm /tmp/$audio
-    ssh gpu$4 sh -c "\"loginctl enable-linger && \\
-        systemd-run --user \\
-        env APPTAINERENV_CUDA_VISIBLE_DEVICES=${3:-1} \\
-        apptainer run --nv ~/faster-whisper.sif \\
-        --vad_filter True --model large-v2 --output_dir=\$HOME/subs --output_format=srt --language ${2:-ja} ~/audio/$audio\""
+    local audio="${1%.*}.mkv"
+    [ ! -f "/tmp/$audio" ] && ffmpeg -i "$1" -map a -c copy "/tmp/$audio"
+    # use `command` here to avoid local shell alias of `rm`
+    scp "/tmp/$audio" gpu:audio && command rm "/tmp/$audio" &&
+    ssh gpu$4 -- loginctl enable-linger "&&" \
+        systemd-run --user \
+        env APPTAINERENV_CUDA_VISIBLE_DEVICES=${3:-1} \
+        apptainer run --nv \~/faster-whisper.sif \
+        --vad_filter True --model large-v2 --output_dir=\$HOME/subs --output_format=srt \
+        --language ${2:-ja} \
+        "'\"~/audio/$audio\"'"
 }
