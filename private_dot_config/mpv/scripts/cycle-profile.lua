@@ -45,7 +45,7 @@ function findDesc(profile)
         if profileList[i]['name'] == profile then
             msg.verbose('profile found')
             local desc = profileList[i]['profile-desc']
-            
+
             if desc ~= nil then
                 msg.verbose('description found')
                 profilesDescs[profile] = desc

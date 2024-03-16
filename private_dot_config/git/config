@@ -7,3 +7,6 @@
 	defaultBranch = main
 [merge]
 	ff = only
+[core]
+	autocrlf = input
+	whitespace = tab-in-indent

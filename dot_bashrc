@@ -53,5 +53,5 @@ function zimu {
         apptainer run --nv \~/faster-whisper.sif \
         --vad_filter True --model large-v2 --output_dir=\$HOME/subs --output_format=srt \
         --language ${2:-ja} \
-        "'\"~/audio/$audio\"'"
+        "~/audio/$audio"
 }
