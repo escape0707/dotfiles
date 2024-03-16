@@ -2,4 +2,4 @@ GTK_IM_MODULE=fcitx
 QT_IM_MODULE=fcitx
 XMODIFIERS=@im=fcitx
 EDITOR=nvim
-BROWSER=firefox
+BROWSER=firefox-developer-edition

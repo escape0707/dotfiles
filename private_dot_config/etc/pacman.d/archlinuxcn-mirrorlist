@@ -1,5 +1,13 @@
-## xTom (Japan server) (Osaka, Japan) (ipv4, ipv6, http, https)
+Server = https://repo.archlinuxcn.org/$arch
 Server = https://mirrors.xtom.jp/archlinuxcn/$arch
+Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
+Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
+
+CacheServer = https://mirrors.cloud.tencent.com/archlinuxcn/$arch
+CacheServer = https://mirrors.aliyun.com/archlinuxcn/$arch
+CacheServer = https://mirrors.xtom.jp/archlinuxcn/$arch
+CacheServer = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
+CacheServer = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
 
 ##
 ## Arch Linux CN community repository mirrorlist
@@ -12,9 +20,6 @@ Server = https://mirrors.xtom.jp/archlinuxcn/$arch
 ## CERNET (中国) (ipv4, ipv6, http, https)
 # Server = https://mirrors.cernet.edu.cn/archlinuxcn/$arch
 
-## OpenTUNA (China CDN) (ipv4, https)
-# Server = https://opentuna.cn/archlinuxcn/$arch
-
 ## 北京外国语大学 (北京) (ipv4, ipv6, http, https)
 # Server = https://mirrors.bfsu.edu.cn/archlinuxcn/$arch
 
@@ -22,16 +27,13 @@ Server = https://mirrors.xtom.jp/archlinuxcn/$arch
 # Server = https://mirrors.pku.edu.cn/archlinuxcn/$arch
 
 ## 腾讯云 (Global CDN) (ipv4, http, https)
-Server = https://mirrors.cloud.tencent.com/archlinuxcn/$arch
+# Server = https://mirrors.cloud.tencent.com/archlinuxcn/$arch
 
 ## 网易 (China CDN) (ipv4, http, https)
 # Server = https://mirrors.163.com/archlinux-cn/$arch
 
 ## 阿里云 (Global CDN) (ipv4, ipv6, http, https)
-Server = https://mirrors.aliyun.com/archlinuxcn/$arch
-
-## 华为云 (Global CDN) (ipv4, http, https)
-Server = https://repo.huaweicloud.com/archlinuxcn/$arch
+# Server = https://mirrors.aliyun.com/archlinuxcn/$arch
 
 ## 清华大学 (北京) (ipv4, ipv6, http, https)
 # Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
@@ -50,9 +52,6 @@ Server = https://repo.huaweicloud.com/archlinuxcn/$arch
 
 ## 重庆大学 (重庆) (ipv4, ipv6, http, https)
 # Server = https://mirrors.cqu.edu.cn/archlinuxcn/$arch
-
-## 重庆邮电大学 (重庆) (ipv4, http, https)
-# Server = https://mirrors.cqupt.edu.cn/archlinuxcn/$arch
 
 ## SJTUG 软件源镜像服务 (上海) (ipv4, ipv6, https)
 # Server = https://mirror.sjtu.edu.cn/archlinux-cn/$arch
@@ -116,6 +115,3 @@ Server = https://repo.huaweicloud.com/archlinuxcn/$arch
 
 ## Open Computing Facility, UC Berkeley (Berkeley, CA, United States) (ipv4, ipv6, http, https)
 # Server = https://mirrors.ocf.berkeley.edu/archlinuxcn/$arch
-
-## Our main server (Amsterdam, the Netherlands) (ipv4, ipv6, http, https)
-# Server = https://repo.archlinuxcn.org/$arch
