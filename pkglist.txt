@@ -114,6 +114,7 @@ steam
 strace
 sunshine-bin
 syncthing
+systemd-boot-pacman-hook
 systemd-shutdown-diagnose
 tailscale
 telegram-desktop
