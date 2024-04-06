@@ -5,6 +5,7 @@ amd-ucode
 android-tools
 anki-bin
 apptainer
+arc-gtk-theme
 arch-install-scripts
 archlinuxcn-keyring
 archlinuxcn-mirrorlist-git
@@ -15,9 +16,6 @@ base
 base-devel
 bash-completion
 bind
-bluez-utils
-bt-dualboot
-btrfs-progs
 ccache
 chezmoi
 cksfv
@@ -47,7 +45,6 @@ gnome-firmware
 gnome-randr-rust
 gnome-themes-extra
 gnome-tweaks
-gnu-netcat
 goldendict-ng-git
 gst-libav
 gst-plugins-ugly
@@ -72,20 +69,20 @@ linux-firmware
 lldb
 man-db
 mcomix
-mesa-utils
 mesa-vdpau
 miniserve
 modprobed-db
 moonlight-qt
 mpv_inhibit_gnome
 mpv-mpris
-mpv-sponsorblock-git
+mpv-sponsorblock
 neovim-symlinks
 networkmanager
 networkmanager-openvpn
 nicotine+
 nm-connection-editor
 nvtop
+openbsd-netcat
 p7zip
 pacman-contrib
 papirus-icon-theme
@@ -114,8 +111,6 @@ steam
 strace
 sunshine-bin
 syncthing
-systemd-boot-pacman-hook
-systemd-shutdown-diagnose
 tailscale
 telegram-desktop
 testdisk
