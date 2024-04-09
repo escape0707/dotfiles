@@ -43,15 +43,53 @@ function setfps {
 }
 
 function zimu {
-    local audio="${1%.*}.mkv"
-    [ ! -f "/tmp/$audio" ] && ffmpeg -i "$1" -map a -c copy "/tmp/$audio"
-    # use `command` here to avoid local shell alias of `rm`
-    scp "/tmp/$audio" gpu:audio && command rm "/tmp/$audio" &&
-    ssh gpu$4 -- loginctl enable-linger "&&" \
-        systemd-run --user \
+    local gpu="gpu$4"
+    local hash=$(ffprobe -show_format -loglevel error $1 | b2sum | cut -d " " -f 1)
+    local hashed_audio_name=$hash.mkv
+    local hashed_log_name=$hash.log
+    local hashed_sub_name=$hash.srt
+
+    local filename_wo_extension="${1%.*}"
+    if scp $gpu:subs/$hashed_sub_name "$filename_wo_extension.srt"; then
+        echo "Output subtitle file exists on remote. Subtitle downloaded." &&
+        ssh $gpu "rm audio/$hashed_audio_name subs/$hashed_sub_name subs/$hashed_log_name" &&
+        echo "Cleaned up server side leftover files." &&
+        ssh $gpu "systemctl --user list-units --type=service --quiet" &&
+        echo "No running tasks on remote. Disabling lingering..." &&
+        ssh $gpu "loginctl disable-linger" &&
+        echo "Disabled lingering."
+        return
+    fi
+
+    if ssh $gpu "test -e audio/$hashed_audio_name"; then
+        echo "Only audio file exists on remote."
+        if ! ssh $gpu "systemctl --user list-units --type=service --quiet"; then
+            echo "There are some running user services on remote. Seems still processing..."
+            return
+        fi 
+        echo "But no running tasks on remote. Something is wrong." &&
+        echo "Please Manually remove audio/$hashed_audio_name and try again." &&
+        echo "Disabling lingering since no tasks are running..." &&
+        ssh $gpu "loginctl disable-linger" &&
+        echo "Disabled lingering."
+        return
+    fi
+
+    [ ! -f "/tmp/$hashed_audio_name" ] && ffmpeg -i "$1" -map a -c copy "/tmp/$hashed_audio_name"
+    # Use `command` here to avoid local shell alias of `rm`.
+    scp /tmp/$hashed_audio_name $gpu:audio && command rm "/tmp/$hashed_audio_name" &&
+    # Apptainer can't load nvidia kernel modules themselves and will fail if the module is not loaded.
+    # Invoke `nvidia-smi` to load modules and sanity check if server GPUs are too busy.
+    # Usually when LANG contains "utf-8", `less` will support UTF-8. 
+    # But when "UsePAM=no" was set in sshd_config, `/etc/locale.conf` was not parsed, and less won't
+    # support UTF-8. Thus, I'm using "LESSCHARSET=utf-8" here.
+    ssh -t $gpu -- loginctl enable-linger "&&" \
+        nvidia-smi "&&" \
+        systemd-run --user -p "StandardOutput=truncate:\$HOME/subs/$hashed_log_name" \
         env APPTAINERENV_CUDA_VISIBLE_DEVICES=${3:-1} \
         apptainer run --nv \~/faster-whisper.sif \
         --vad_filter True --model large-v2 --output_dir=\$HOME/subs --output_format=srt \
         --language ${2:-ja} \
-        "~/audio/$audio"
+        \~/audio/$hashed_audio_name "&&" \
+        env LESSCHARSET=utf-8 less +F subs/$hashed_log_name
 }
