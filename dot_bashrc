@@ -63,7 +63,7 @@ function zimu {
 
     if ssh $gpu "test -e audio/$hashed_audio_name"; then
         echo "Only audio file exists on remote."
-        if ! ssh $gpu "systemctl --user list-units --type=service --quiet"; then
+        if ssh $gpu "systemctl --user list-units --type=service --quiet" | grep --quiet running; then
             echo "There are some running user services on remote. Seems still processing..."
             return
         fi 
