@@ -75,7 +75,7 @@ function zimu {
         return
     fi
 
-    [ ! -f "/tmp/$hashed_audio_name" ] && ffmpeg -i "$1" -map a -c copy "/tmp/$hashed_audio_name"
+    [ ! -f "/tmp/$hashed_audio_name" ] && ffmpeg -loglevel warning -i "$1" -map a -c copy "/tmp/$hashed_audio_name"
     # Use `command` here to avoid local shell alias of `rm`.
     scp /tmp/$hashed_audio_name $gpu:audio && command rm "/tmp/$hashed_audio_name" &&
     # Apptainer can't load nvidia kernel modules themselves and will fail if the module is not loaded.
