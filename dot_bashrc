@@ -44,7 +44,7 @@ function setfps {
 
 function zimu {
     local gpu="gpu$4"
-    local hash=$(ffprobe -show_format -loglevel error $1 | b2sum | cut -d " " -f 1)
+    local hash=$(ffprobe -show_format -loglevel error "$1" | b2sum | cut -d " " -f 1)
     local hashed_audio_name=$hash.mkv
     local hashed_log_name=$hash.log
     local hashed_sub_name=$hash.srt
