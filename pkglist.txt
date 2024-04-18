@@ -5,7 +5,6 @@ amd-ucode
 android-tools
 anki-bin
 apptainer
-arc-gtk-theme
 arch-install-scripts
 archlinuxcn-keyring
 archlinuxcn-mirrorlist-git
@@ -16,9 +15,13 @@ base
 base-devel
 bash-completion
 bind
+boost
+bt-dualboot
+btrfs-progs
 ccache
 chezmoi
 cksfv
+cmake
 code-features
 code-icons
 code-marketplace
@@ -26,7 +29,6 @@ code-nautilus-git
 dconf-editor
 dnsmasq
 efibootmgr
-etckeeper
 extension-manager
 f37-backgrounds
 f38-backgrounds
@@ -38,6 +40,8 @@ fcitx5-pinyin-moegirl
 fcitx5-pinyin-zhwiki
 file-roller
 firefox-developer-edition
+foliate
+gdb
 gdu
 geary
 gnome
@@ -82,6 +86,7 @@ networkmanager-openvpn
 nicotine+
 nm-connection-editor
 nvtop
+obs-pipewire-audio-capture-bin
 openbsd-netcat
 p7zip
 pacman-contrib
