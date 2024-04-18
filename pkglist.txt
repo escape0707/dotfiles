@@ -16,7 +16,6 @@ base-devel
 bash-completion
 bind
 boost
-bt-dualboot
 btrfs-progs
 ccache
 chezmoi
