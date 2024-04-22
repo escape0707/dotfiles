@@ -19,6 +19,7 @@ boost
 btrfs-progs
 ccache
 chezmoi
+chntpw
 cksfv
 cmake
 code-features
