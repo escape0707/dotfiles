@@ -8,7 +8,6 @@ apptainer
 arch-install-scripts
 archlinuxcn-keyring
 archlinuxcn-mirrorlist-git
-archlinux-wallpaper
 arc-solid-gtk-theme
 authy-desktop-win32-bin
 base
@@ -29,8 +28,6 @@ dconf-editor
 dnsmasq
 efibootmgr
 extension-manager
-f37-backgrounds
-f38-backgrounds
 fastfetch
 fcitx5-chinese-addons
 fcitx5-im
@@ -91,6 +88,7 @@ p7zip
 pacman-contrib
 papirus-icon-theme
 paru
+pax-utils
 pipewire-alsa
 pkgfile
 plocate
