@@ -88,6 +88,7 @@ function zimu {
     # support UTF-8. Thus, I'm using "LESSCHARSET=utf-8" here.
     ssh -t $gpu -- loginctl enable-linger "&&" \
         nvidia-smi "&&" \
+        touch $HOME/subs/$hashed_log_name "&&" \
         systemd-run --user -p "StandardOutput=truncate:\$HOME/subs/$hashed_log_name" \
         env APPTAINERENV_CUDA_VISIBLE_DEVICES=${3:-1} \
         apptainer run --nv \~/faster-whisper.sif \
