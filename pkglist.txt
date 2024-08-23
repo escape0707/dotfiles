@@ -75,6 +75,7 @@ mesa-vdpau
 miniserve
 modprobed-db
 moonlight-qt
+mplayer
 mpv_inhibit_gnome
 mpv-mpris
 mpv-sponsorblock
