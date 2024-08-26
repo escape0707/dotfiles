@@ -9,6 +9,7 @@ archlinuxcn-keyring
 archlinuxcn-mirrorlist-git
 arc-solid-gtk-theme
 authy-desktop-win32-bin
+auto-editor
 base
 base-devel
 bash-completion
@@ -60,6 +61,7 @@ intel-ucode
 interception-caps2esc
 iotop
 iperf3
+jdownloader2
 jupyterlab
 kernel-modules-hook-bindmount
 libreoffice-fresh-ja
@@ -130,6 +132,7 @@ tmux
 torbrowser-launcher
 tree
 ttf-fira-code
+unrar
 ventoy-bin
 virtio-win
 virt-manager

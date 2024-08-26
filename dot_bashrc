@@ -100,3 +100,16 @@ function zimu {
         echo Not monitoring log.
         # env LESSCHARSET=utf-8 less +F subs/$hashed_log_name
 }
+
+function zimuall {
+    local card=$((RANDOM % 2))
+    for folder in *; do
+        pushd "$folder"
+        for file in *; do
+            zimu "$file" "$folder" "$card"
+            card=$(( (card + 1) % 2 ))
+        done
+        popd
+    done
+}
+
