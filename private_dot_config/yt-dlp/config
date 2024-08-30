@@ -1,5 +1,5 @@
 --cookies-from-browser firefox
---downloader aria2c
+#--downloader aria2c
 --embed-metadata
 --embed-subs
 --embed-thumbnail
@@ -10,6 +10,6 @@
 --mark-watched
 --output "%(playlist)s/%(playlist_index)s_%(title)s.%(ext)s"
 --paths "~/Videos/web-dl"
---sub-langs en.*,zh.*,ja.*
+--sub-langs en.*,zh.*,ja.*,live_chat
 --write-auto-sub
 --write-sub
