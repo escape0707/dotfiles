@@ -1,11 +1,13 @@
+--concurrent-fragments 32
 --cookies-from-browser firefox
 #--downloader aria2c
 --embed-metadata
 --embed-subs
 --embed-thumbnail
---format bestvideo*[height=2160][vcodec!=av01]+bestaudio/bestvideo*[height>1440][vcodec!=av01]+bestaudio/bestvideo*[height<=1440]+bestaudio/bestvideo*+bestaudio/best
-#--format bestvideo*[height<=1440]+bestaudio/bestvideo*+bestaudio/best
-#--format-sort res,codec
+# Avoid av1 for video resolution above 2K
+#--format bestvideo*[height=2160][vcodec!=av01]+bestaudio/bestvideo*[height>1440][vcodec!=av01]+bestaudio/bestvideo*[height<=1440]+bestaudio/bestvideo*+bestaudio/best
+# Prefer av1
+--format-sort quality,res,fps,hdr:12,source,vcodec
 --keep-video
 --mark-watched
 --output "%(playlist)s/%(playlist_index)s_%(title)s.%(ext)s"
