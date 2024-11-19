@@ -92,7 +92,7 @@ function zimu {
         nvidia-smi "&&" \
         touch subs/$hashed_log_name "&&" \
         systemd-run --user -p "StandardOutput=truncate:\$HOME/subs/$hashed_log_name" \
-        env APPTAINERENV_CUDA_VISIBLE_DEVICES=${3:-1} \
+        env APPTAINERENV_CUDA_VISIBLE_DEVICES=${3:-$((RANDOM % 2))} \
         apptainer run --nv \~/faster-whisper.sif \
         --vad_filter True --vad_min_silence_duration_ms=5000 --model large-v2 --output_dir=\$HOME/subs --output_format=srt \
         --language ${2:-ja} \
