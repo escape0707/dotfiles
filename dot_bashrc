@@ -46,7 +46,7 @@ function setfps {
 
 function zimu {
     local filename=$1
-    local language=${2:-ja}
+    local language_arg=$([ -n "$2" ] && echo "--language $2")
     local device=${3:-$((RANDOM % 2))}
     local gpu="gpu$4"
 
@@ -99,7 +99,7 @@ function zimu {
         env APPTAINERENV_CUDA_VISIBLE_DEVICES=$device \
         apptainer run --nv \~/faster-whisper.sif \
         --vad_filter True --vad_min_silence_duration_ms=5000 --model large-v2 --output_dir=\$HOME/subs --output_format=srt \
-        --language $language \
+        $language_arg \
         \~/audio/$hashed_audio_name "&&" \
         echo Not monitoring log.
         # env LESSCHARSET=utf-8 less +F subs/$hashed_log_name
