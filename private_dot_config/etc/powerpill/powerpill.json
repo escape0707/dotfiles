@@ -1,19 +1,18 @@
 {
   "aria2": {
     "args": [
-      "--no-conf=true",
       "--allow-overwrite=true",
       "--always-resume=false",
       "--auto-file-renaming=false",
       "--check-integrity=true",
       "--conditional-get=true",
+      "--connect-timeout=15",
       "--continue=true",
       "--file-allocation=none",
       "--log-level=error",
       "--max-concurrent-downloads=100",
       "--max-connection-per-server=1",
       "--min-split-size=5M",
-      "--split=1000",
       "--remote-time=true",
       "--show-console-readout=true"
     ],
