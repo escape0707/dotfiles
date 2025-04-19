@@ -45,61 +45,134 @@ function setfps {
 }
 
 function zimu {
-    local filename=$1
-    local language_arg=$([ -n "$2" ] && echo "--language $2")
-    local device=${3:-$((RANDOM % 2))}
-    local gpu="gpu$4"
+    function usage() {
+        echo "Usage: zimu [-l <language>] [-d <deviceID>] [-s <server>] filename"
+        echo "Options:"
+        echo "  -l | --language : Optional. Language code (default: leave empty and let whisper to auto detect)"
+        echo "  -d | --device   : Optional. GPU device ID (default: random of 0 or 1)"
+        echo "  -s | --server   : Optional. GPU server name (default: gpu)"
+        echo "  -h | --help     : Show this help message"
+    }
+
+    local OPTIND
+    local language=""
+    local device=$((RANDOM % 2))
+    local server="gpu"
+    
+    local parsed_options
+    parsed_options=$(getopt -o 'l:d:s:h' --long 'language:,device:,server:,help' -n 'zimu' -- "$@")
+
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to parse arguments"
+        usage
+        return 1
+    fi
+
+    eval set -- "$parsed_options"
+    unset parsed_options
+
+    while true; do
+        case "$1" in
+            '-l'|'--language')
+                language="$2"
+                shift 2
+                ;;
+            '-d'|'--device')
+                device="$2"
+                shift 2
+                ;;
+            '-s'|'--server')
+                server="$2"
+                shift 2
+                ;;
+            '-h'|'--help')
+                usage
+                return 0
+                ;;
+            '--')
+                shift
+                break
+                ;;
+            *)
+                echo "Error: Unrecognized argument."
+                usage
+                return 1
+                ;;
+        esac
+    done
+
+    # Check if filename is provided as positional argument
+    if [ $# -eq 0 ]; then
+        echo "Error: Filename is required"
+        usage
+        return 1
+    fi
+
+    local filename="$1"
+    local sub_name="${filename%.*}.srt"
+
+    # Check if file exists
+    if [ ! -f "$filename" ]; then
+        echo "Error: File $filename does not exist."
+        return 1
+    fi
+    # Check if subtitle file exists
+    if [ -f "$sub_name" ]; then
+        echo "Subtitle file $sub_name already exists. Skipping..."
+        return 0
+    fi
+    
+    echo "Processing $filename."
 
     local hash=$(ffprobe -show_format -loglevel error "$filename" | b2sum | cut -d " " -f 1)
     local hashed_audio_name=$hash.mkv
     local hashed_log_name=$hash.log
     local hashed_sub_name=$hash.srt
 
-    local filename_wo_extension="${filename%.*}"
-    if scp $gpu:subs/$hashed_sub_name "$filename_wo_extension.srt"; then
+    if scp $server:subs/$hashed_sub_name "$sub_name"; then
         echo "Output subtitle file exists on remote. Subtitle downloaded."
-        ssh $gpu "rm audio/$hashed_audio_name subs/$hashed_sub_name subs/$hashed_log_name" &&
+        ssh $server "rm audio/$hashed_audio_name subs/$hashed_sub_name subs/$hashed_log_name" &&
         echo "Cleaned up server side leftover files."
-        if ssh $gpu systemctl --user list-units --type=service --quiet | grep --quiet running; then
+        if ssh $server systemctl --user list-units --type=service --quiet | grep --quiet running; then
             echo "There are some other running user services on remote. Leaving them alone..."
             return
         fi
         echo "No running tasks on remote. Disabling lingering..."
-        ssh $gpu loginctl disable-linger &&
+        ssh $server loginctl disable-linger &&
         echo "Disabled lingering."
         return
     fi
 
-    if ssh $gpu "test -e audio/$hashed_audio_name"; then
+    if ssh $server "test -e audio/$hashed_audio_name"; then
         echo "Only audio file exists on remote."
-        if ssh $gpu systemctl --user list-units --type=service --quiet | grep --quiet running; then
+        if ssh $server systemctl --user list-units --type=service --quiet | grep --quiet running; then
             echo "There are some running user services on remote. Seems still processing..."
             return
         fi
         echo "But no running tasks on remote. Something is wrong."
         echo "Please manually remove audio/$hashed_audio_name and try again."
         echo "Disabling lingering since no tasks are running..."
-        ssh $gpu loginctl disable-linger &&
+        ssh $server loginctl disable-linger &&
         echo "Disabled lingering."
         return
     fi
 
     [ ! -f "/tmp/$hashed_audio_name" ] && ffmpeg -loglevel warning -i "$filename" -map a -c copy "/tmp/$hashed_audio_name"
     # Use `command` here to avoid local shell alias of `rm`.
-    scp /tmp/$hashed_audio_name $gpu:audio && command rm "/tmp/$hashed_audio_name" &&
+    scp /tmp/$hashed_audio_name $server:audio && command rm "/tmp/$hashed_audio_name" &&
     # Apptainer can't load nvidia kernel modules themselves and will fail if the module is not loaded.
     # Invoke `nvidia-smi` to load modules and sanity check if server GPUs are too busy.
     # Usually when LANG contains "utf-8", `less` will support UTF-8.
     # But when "UsePAM=no" was set in sshd_config, `/etc/locale.conf` was not parsed, and less won't
     # support UTF-8. Thus, I'm using "LESSCHARSET=utf-8" here.
-    ssh -t $gpu -- loginctl enable-linger "&&" \
+    ssh -t $server -- loginctl enable-linger "&&" \
         nvidia-smi "&&" \
         touch subs/$hashed_log_name "&&" \
         systemd-run --user -p "StandardOutput=truncate:\$HOME/subs/$hashed_log_name" \
         env APPTAINERENV_CUDA_VISIBLE_DEVICES=$device \
         apptainer run --nv \~/faster-whisper.sif \
         --vad_filter True --vad_min_silence_duration_ms=5000 --model large-v2 --output_dir=\$HOME/subs --output_format=srt \
-        $language_arg \
+        $language \
         \~/audio/$hashed_audio_name "&&" \
         echo Not monitoring log.
         # env LESSCHARSET=utf-8 less +F subs/$hashed_log_name
@@ -107,12 +180,13 @@ function zimu {
 
 function zimuall {
     local card=$((RANDOM % 2))
-    for folder in *; do
-        pushd "$folder"
-        for file in *; do
-            zimu "$file" "$folder" "$card"
+    # for folderLang in *; do
+        # pushd "$folderLang"
+        for file in *.mp4 *.mkv; do
+            # zimu "$file" "$folder" "$card"
+            zimu --device "$card" "$file"
             card=$(( (card + 1) % 2 ))
         done
-        popd
-    done
+        # popd
+    # done
 }
