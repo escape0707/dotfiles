@@ -1,0 +1,9 @@
+-qB\w{4}-		.*
+-TR\w{4}-		Transmission.*
+-DE\w{4}-		.*
+-KT\w{4}-		.*
+-lt\w{4}-		.*
+-BI\w{4}-		.*
+-PI\w{4}-		.*
+.* 		URL\sseed\s\@\s.*
+.*		.*
