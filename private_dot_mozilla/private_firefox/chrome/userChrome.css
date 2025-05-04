@@ -1,1 +1,5 @@
-#TabsToolbar:not([inFullscreen]), #sidebar-header { display: none; }
+html:not([inFullscreen]) #TabsToolbar,
+#sidebar-header {
+  display: none;
+}
+
