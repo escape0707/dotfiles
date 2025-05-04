@@ -1,0 +1,5 @@
+{
+    "control":[
+        { "VTOY_DEFAULT_SEARCH_ROOT": "/ventoy/images" }
+    ]
+}
