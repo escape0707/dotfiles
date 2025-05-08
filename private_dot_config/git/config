@@ -9,4 +9,4 @@
 	ff = only
 [core]
 	autocrlf = input
-	whitespace = tab-in-indent
+	whitespace = tab-in-indent,tabwidth=4
