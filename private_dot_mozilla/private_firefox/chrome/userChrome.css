@@ -1,5 +1,3 @@
-html:not([inFullscreen]) #TabsToolbar,
-#sidebar-header {
+#main-window:not([inFullscreen]) :is(#TabsToolbar, #sidebar-header) {
   display: none;
 }
-
