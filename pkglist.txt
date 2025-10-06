@@ -63,7 +63,6 @@ interception-caps2esc
 iotop
 iperf3
 jdownloader2
-jupyterlab
 keepassxc-git
 kernel-modules-hook-bindmount
 lib32-vulkan-intel
