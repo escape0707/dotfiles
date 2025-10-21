@@ -48,7 +48,7 @@ function zimu {
     function usage() {
         echo "Usage: zimu [-l <language>] [-d <deviceID>] [-s <server>] filename"
         echo "Options:"
-        echo "  -l | --language : Optional. Language code (default: leave empty and let whisper to auto detect)"
+        echo "  -l | --language : Optional. Language code (default: leave it empty and let whisper auto detect)"
         echo "  -d | --device   : Optional. GPU device ID (default: random of 0 or 1)"
         echo "  -s | --server   : Optional. GPU server name (default: gpu)"
         echo "  -h | --help     : Show this help message"
@@ -74,7 +74,7 @@ function zimu {
     while true; do
         case "$1" in
             '-l'|'--language')
-                language="$2"
+                language="--language $2"
                 shift 2
                 ;;
             '-d'|'--device')
@@ -179,13 +179,83 @@ function zimu {
 }
 
 function zimuall {
-    local card=$((RANDOM % 2))
+    function usage() {
+        echo "Usage: zimuall [-l <language>] [-d <deviceID>] [-s <server>] directory_path"
+        echo "directory_path will default to current working directory."
+        echo "Options:"
+        echo "  -l | --language : Optional. Language code (default: leave it empty and let whisper auto detect)."
+        echo "  -d | --device   : Optional. GPU device ID (default: alternate between 0 and 1)."
+        echo "  -s | --server   : Optional. GPU server name (default: gpu)."
+        echo "  -h | --help     : Show this help message."
+    }
+
+    local OPTIND
+    local language_arg=""
+    local device=$((RANDOM % 2))
+    local device_specified=0
+    local server_arg="--server gpu"
+    
+    local parsed_options
+    parsed_options=$(getopt -o 'l:d:s:h' --long 'language:,device:,server:,help' -n 'zimuall' -- "$@")
+
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to parse arguments"
+        usage
+        return 1
+    fi
+
+    eval set -- "$parsed_options"
+    unset parsed_options
+
+    while true; do
+        case "$1" in
+            '-l'|'--language')
+                language_arg="--language $2"
+                shift 2
+                ;;
+            '-d'|'--device')
+                device=$2
+                device_specified=1
+                shift 2
+                ;;
+            '-s'|'--server')
+                server_arg="--server $2"
+                shift 2
+                ;;
+            '-h'|'--help')
+                usage
+                return 0
+                ;;
+            '--')
+                shift
+                break
+                ;;
+            *)
+                echo "Error: Unrecognized argument."
+                usage
+                return 1
+                ;;
+        esac
+    done
+
+    function update_device_no() {
+        if [$device_specified -eq 0]; then
+            device=$(( (device + 1) % 2 ))
+        fi
+    }
+
+    local directory_path="${1:-.}"
     # for folderLang in *; do
         # pushd "$folderLang"
-        for file in *.mp4 *.mkv; do
+        for filename in "${directory_path}/*.mp4" "${directory_path}/*.mkv"; do
+            local sub_name="${filename%.*}.srt"
+            if [ -f "$sub_name" ]; then
+                echo "Subtitle file $sub_name already exists. Skipping..."
+                continue
+            fi
             # zimu "$file" "$folder" "$card"
-            zimu --device "$card" "$file"
-            card=$(( (card + 1) % 2 ))
+            zimu $language_arg --device $device $server_arg "$filename"
+            update_device_arg
         done
         # popd
     # done
