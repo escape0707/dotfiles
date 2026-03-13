@@ -40,6 +40,50 @@ alias updsrcinfo='makepkg --printsrcinfo | tee .SRCINFO'
 alias vi='nvim'
 alias vimdiff='nvim -d'
 
+function ghapiurls() {
+  local u=${1%/} n=${2:-3} base main x i
+
+  [[ $u == https://github.com/*/*/*/* ]] || {
+    printf 'usage: ghapiurls <github issue|pull|commit url> [pages]\n' >&2
+    return 1
+  }
+
+  base="https://api.github.com/repos/${u#https://github.com/}"
+
+  case $base in
+    */commit/*)
+      base=${base/\/commit\//\/commits\/}
+      printf '%s\n\n' "$base"
+      for ((i=1;i<=n;i++)); do
+        printf '%s/comments?per_page=100&page=%d\n' "$base" "$i"
+      done
+      return
+      ;;
+
+    */pull/*)
+      main=${base/\/pull\//\/pulls\/}
+      printf '%s\n\n' "$main"
+      base=${base/\/pull\//\/issues\/}
+      ;;
+
+    */issues/*)
+      printf '%s\n\n' "$base"
+      ;;
+
+    *)
+      printf 'usage: ghapiurls <github issue|pull|commit url> [pages]\n' >&2
+      return 1
+      ;;
+  esac
+
+  for x in comments events timeline; do
+    for ((i=1;i<=n;i++)); do
+      printf '%s/%s?per_page=100&page=%d\n' "$base" "$x" "$i"
+    done
+    [[ $x != timeline ]] && printf '\n'
+  done
+}
+
 function setfps {
     gnome-randr modify --mode 3840x2160@$1.${2:-000} DP-2
 }
