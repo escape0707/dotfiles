@@ -110,6 +110,7 @@ python-pysubs2
 qbittorrent-enhanced-ua
 qemu-desktop
 rclone
+rdt-client
 rsync
 rust-analyzer
 sbctl

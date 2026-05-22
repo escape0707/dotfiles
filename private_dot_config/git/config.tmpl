@@ -1,6 +1,6 @@
 [user]
-	email = tothesong@gmail.com
-	name = escape0707
+	email = {{ get . "gitUserEmail" | default "you@example.com" }}
+	name = {{ get . "gitUserName" | default "Your Name" }}
 [pull]
 	ff = only
 [init]

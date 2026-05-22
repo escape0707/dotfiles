@@ -71,7 +71,7 @@ INTEGRITY_CHECK=(sha512 b2)
 #########################################################################
 #
 #-- Packager: name/email of the person or organization building packages
-PACKAGER="Jay Chu <tothesong@gmail.com>"
+PACKAGER="{{ get . "packagerName" | default "Your Name" }} <{{ get . "packagerEmail" | default "you@example.com" }}>"
 #-- Specify a key to use for package signing
 #GPGKEY=""
 
@@ -82,4 +82,3 @@ PACKAGER="Jay Chu <tothesong@gmail.com>"
 #PKGEXT='.pkg.tar.zst'
 PKGEXT='.pkg.tar'
 #SRCEXT='.src.tar.gz'
-
