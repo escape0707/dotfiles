@@ -1,6 +1,49 @@
-README.md
+AGENTS.md
 HANDOFF.*.md
-# Keep /etc mirror sources in this repo without rendering copies into $HOME.
-{{- if not (get . "manageEtcMirror" | default false) }}
+README.md
+scripts
+scripts/**
+
+{{- if (get . "isHeadless") }}
+.config/fontconfig/**
+.config/fcitx5/**
+.config/mpv/**
+.config/pipewire/**
+.config/sunshine/**
+.local/share/gnome-background-properties/**
+.local/share/qBittorrent/**
+.mozilla/**
+{{- end }}
+
+{{- if (get . "isVM") }}
+.config/libvirt/**
+.config/ventoy/**
+{{- end }}
+
+{{- if (get . "deferSharedToolInventory") }}
+.config/aria2/**
+.config/fish/config.fish
+.config/fish/functions/last_history_item.fish
+.config/systemd/user/aria2cd.service
+.config/yt-dlp/**
+{{- end }}
+
+{{- if (get . "deferLocalInventory") }}
+.bashrc
+{{- end }}
+
+{{- if (get . "deferLaptopLinuxDrift") }}
+.bashrc
+.config/git/config
+.config/lazygit
+.config/lazygit/**
+.config/nvim
+.config/nvim/**
+.config/pacman/makepkg.conf
+listpkg.sh
+{{- end }}
+
+# /etc mirror is opt-in for templating and review.
+{{- if not (get . "manageEtcMirror") }}
 etc/**
 {{- end }}

@@ -2,7 +2,8 @@ Include = /etc/paru.conf
 
 [options]
 UpgradeMenu
+{{- if get . "usePowerpill" }}
 
 [bin]
 Pacman = powerpill
-
+{{ end }}
