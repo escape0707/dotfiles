@@ -2,6 +2,14 @@
 # ~/.bashrc
 #
 
+# Ensure user-local executables are available in non-interactive bash.
+case ":$PATH:" in
+    *":$HOME/.local/bin:"*) ;;
+    *) export PATH="$HOME/.local/bin:$PATH" ;;
+esac
+
+export DOCKER_HOST="unix://${XDG_RUNTIME_DIR:-/run/user/$UID}/podman/podman.sock"
+
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
@@ -25,10 +33,10 @@ export TEXMFHOME=$XDG_DATA_HOME/texmf
 export TEXMFVAR=$XDG_CACHE_HOME/texlive/texmf-var
 export TEXMFCONFIG=$XDG_CONFIG_HOME/texlive/texmf-config
 
-alias anifps='gnome-randr modify --mode 3840x2160@23.976 DP-2'
+alias anifps='gnome-randr modify --mode 3840x2160@23.976 {{ get . "gnomeRandrOutput" | default "DP-1" }}'
 alias cmcd="cd $XDG_DATA_HOME/chezmoi"
 alias enven='env LANG=en_US.UTF-8 LANGUAGE=en_US'
-alias hifps='gnome-randr modify --mode 3840x2160@119.993 DP-2'
+alias hifps='gnome-randr modify --mode 3840x2160@119.993 {{ get . "gnomeRandrOutput" | default "DP-1" }}'
 alias less='less -R'
 alias ll='ls -al --color=auto'
 alias pacclear='paccache --remove && paccache --remove --uninstalled --keep 0'
@@ -85,7 +93,7 @@ function ghapiurls() {
 }
 
 function setfps {
-    gnome-randr modify --mode 3840x2160@$1.${2:-000} DP-2
+    gnome-randr modify --mode 3840x2160@$1.${2:-000} {{ get . "gnomeRandrOutput" | default "DP-1" }}
 }
 
 function zimu {
@@ -304,3 +312,11 @@ function zimuall {
         # popd
     # done
 }
+
+# pnpm
+export PNPM_HOME="{{ .chezmoi.homeDir }}/.local/share/pnpm"
+case ":$PATH:" in
+    *":$PNPM_HOME:"*) ;;
+    *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
