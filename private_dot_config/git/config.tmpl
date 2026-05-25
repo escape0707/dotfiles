@@ -1,0 +1,39 @@
+[user]
+    email = {{ get . "gitUserEmail" }}
+    name = {{ get . "gitUserName" }}
+[pull]
+    rebase = true
+[init]
+    defaultBranch = main
+[merge]
+    ff = only
+[core]
+    autocrlf = input
+    whitespace = tab-in-indent,tabwidth=4
+[diff]
+    tool = difftastic
+[difftool "vscode"]
+    cmd = code --wait --diff \"$LOCAL\" \"$REMOTE\"
+[rebase]
+    autoStash = true
+[push]
+    default = current
+[fetch]
+    all = true
+[remote]
+    pushDefault = origin
+[credential]
+    helper = {{ get . "gitCredentialHelper" }}
+[alias]
+    dlog = -c diff.external=difft log --ext-diff
+    dshow = -c diff.external=difft show --ext-diff
+    ddiff = -c diff.external=difft diff
+    dl = -c diff.external=difft log -p --ext-diff
+    dft = -c diff.external=difft diff
+    ds = -c diff.external=difft show --ext-diff
+[pager]
+    difftool = true
+[difftool]
+    prompt = false
+[difftool "difftastic"]
+    cmd = difft \"$MERGED\" \"$LOCAL\" \"abcdef1\" \"100644\" \"$REMOTE\" \"abcdef2\" \"100644\"

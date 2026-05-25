@@ -1,0 +1,18 @@
+#!/hint/bash
+# shellcheck disable=2034
+
+# Uncomment to use aria2 for makepkg downloads.
+# DLAGENTS=('file::/usr/bin/curl -qgC - -o %o %u'
+#           'ftp::/usr/bin/aria2c -d . -UWget %u -o %o --follow-metalink=mem'
+#           'http::/usr/bin/aria2c -d . -UWget %u -o %o --follow-metalink=mem'
+#           'https::/usr/bin/aria2c -d . -UWget %u -o %o --follow-metalink=mem'
+#           'rsync::/usr/bin/rsync --no-motd -z %u %o'
+#           'scp::/usr/bin/scp -C %u %o')
+
+MAKEFLAGS="--jobs=$(nproc)"
+BUILDENV=(!distcc color ccache check !sign)
+OPTIONS=(strip docs !libtool !staticlibs emptydirs zipman purge !debug lto)
+PACKAGER="{{ get . "packagerName" }} <{{ get . "packagerEmail" }}>"
+
+# Keep local package builds fast to create and install.
+PKGEXT='.pkg.tar'
