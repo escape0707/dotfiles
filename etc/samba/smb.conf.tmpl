@@ -1,0 +1,11 @@
+[global]
+    hosts allow = {{ get . "sambaHostsAllow" | default "127. 10.0.0." }}
+[Downloads]
+    path = {{ .chezmoi.homeDir }}/Downloads
+    browseable = yes
+[Music]
+    path = {{ .chezmoi.homeDir }}/Music
+    browseable = yes
+[Videos]
+    path = {{ .chezmoi.homeDir }}/Videos
+    browseable = yes

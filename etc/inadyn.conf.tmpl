@@ -1,16 +1,16 @@
 period = 1800
 allow-ipv6 = true
-    
+
 provider ipv6@duckdns.org {
-    username        = yourToken
+    username        = {{ keyring "chezmoi.duckdns" "token" }}
     password        = noPasswordForDuckdns
-    hostname        = yourHostname.duckdns.org
+    hostname        = {{ get . "duckdnsHostname" }}
     checkip-command = "ip -6 addr show scope global mngtmpaddr | awk -F'[ /]+' '/inet6/{print $3}'"
 }
 
 provider ipv6@cloudflare.com {
-    username = yourDomain
-    password = yourAPIKey
-    hostname = yourHostname
+    username = {{ get . "cloudflareDomain" }}
+    password = {{ keyring "chezmoi.cloudflare" "api-token" }}
+    hostname = {{ get . "cloudflareHostname" }}
     checkip-command = "ip -6 addr show scope global mngtmpaddr | awk -F'[ /]+' '/inet6/{print $3}'"
 }

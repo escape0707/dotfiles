@@ -9,11 +9,11 @@
       "settings": {
         "clients": [
           {
-            "id": "{{- .xrayClientId0 }}", 
+            "id": {{ keyring "chezmoi.xray" "client-id-0" | quote }},
             "flow": "xtls-rprx-vision"
           },
           {
-            "id": "{{- .xrayClientId1 }}", 
+            "id": {{ keyring "chezmoi.xray" "client-id-1" | quote }},
             "flow": "xtls-rprx-vision"
           }
         ],
@@ -24,14 +24,14 @@
         "security": "reality",
         "realitySettings": {
           "show": false,
-          "dest": "{{- .xraySpoofDomain }}:443",
+          "dest": {{ printf "%s:443" (get . "xraySpoofDomain") | quote }},
           "serverNames": [
-            "{{- .xraySpoofDomain }}"
+            {{ get . "xraySpoofDomain" | quote }}
           ],
-          "privateKey": "{{- .xrayPrivateKey }}",
+          "privateKey": {{ keyring "chezmoi.xray" "private-key" | quote }},
           "shortIds": [
-            "{{- .xrayShortId0 }}",
-            "{{- .xrayShortId1 }}"
+            {{ keyring "chezmoi.xray" "short-id-0" | quote }},
+            {{ keyring "chezmoi.xray" "short-id-1" | quote }}
           ]
         }
       },

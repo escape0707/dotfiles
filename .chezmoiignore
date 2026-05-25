@@ -1,0 +1,6 @@
+README.md
+HANDOFF.*.md
+# Keep /etc mirror sources in this repo without rendering copies into $HOME.
+{{- if not (get . "manageEtcMirror" | default false) }}
+etc/**
+{{- end }}
