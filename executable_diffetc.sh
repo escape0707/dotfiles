@@ -13,7 +13,7 @@ while IFS= read -r -d '' -u 3 source; do
         read -r -p 'Apply rendered source, delete source, skip, or quit? [a/d/S/q] ' reply
 
         case "$reply" in
-            [Dd]*) rm --force -- "$source" ;;
+            [Dd]*) rm -- "$source" ;;
             [Qq]*) exit 0 ;;
             [Aa]*)
                 rendered=$(mktemp "$runtime_dir/diffetc.XXXXXXXXXX")
@@ -23,7 +23,7 @@ while IFS= read -r -d '' -u 3 source; do
                     cat "$live" >"$rendered"
 
                 sudo install -D --mode=0644 "$rendered" "$live"
-                rm --force -- "$rendered"
+                rm -- "$rendered"
                 trap - EXIT
                 ;;
         esac
@@ -44,7 +44,7 @@ while IFS= read -r -d '' -u 3 source; do
                 cat "$live" >"$rendered"
 
             SUDO_EDITOR="nvim -d $rendered $PWD/$source" sudoedit "$live" || true
-            rm --force -- "$rendered"
+            rm -- "$rendered"
             trap - EXIT
             ;;
     esac
