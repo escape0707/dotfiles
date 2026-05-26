@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+    echo "Usage: zimu [-l <language>] [-d <deviceID>] [-s <server>] filename"
+    echo "Options:"
+    echo "  -l | --language : Optional. Language code (default: leave it empty and let whisper auto detect)"
+    echo "  -d | --device   : Optional. GPU device ID (default: random of 0 or 1)"
+    echo "  -s | --server   : Optional. GPU server name (default: gpu)"
+    echo "  -h | --help     : Show this help message"
+}
+
+language=()
+device=$((RANDOM % 2))
+server="gpu"
+
+parsed_options=$(getopt \
+    --options 'l:d:s:h' \
+    --longoptions 'language:,device:,server:,help' \
+    --name 'zimu' \
+    -- "$@") || {
+    echo "Error: Failed to parse arguments"
+    usage
+    exit 1
+}
+
+eval set -- "$parsed_options"
+unset parsed_options
+
+while true; do
+    case "$1" in
+        '-l'|'--language')
+            language=(--language "$2")
+            shift 2
+            ;;
+        '-d'|'--device')
+            device="$2"
+            shift 2
+            ;;
+        '-s'|'--server')
+            server="$2"
+            shift 2
+            ;;
+        '-h'|'--help')
+            usage
+            exit 0
+            ;;
+        '--')
+            shift
+            break
+            ;;
+        *)
+            echo "Error: Unrecognized argument."
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+if (($# == 0)); then
+    echo "Error: Filename is required"
+    usage
+    exit 1
+fi
+
+filename="$1"
+sub_name="${filename%.*}.srt"
+
+if [[ ! -f "$filename" ]]; then
+    echo "Error: File $filename does not exist."
+    exit 1
+fi
+
+if [[ -f "$sub_name" ]]; then
+    echo "Subtitle file $sub_name already exists. Skipping..."
+    exit 0
+fi
+
+echo "Processing $filename."
+
+hash=$(ffprobe -show_format -loglevel error "$filename" | b2sum | cut --delimiter " " --fields 1)
+hashed_audio_name=$hash.mkv
+hashed_log_name=$hash.log
+hashed_sub_name=$hash.srt
+
+if scp "$server:subs/$hashed_sub_name" "$sub_name"; then
+    echo "Output subtitle file exists on remote. Subtitle downloaded."
+    ssh "$server" "rm audio/$hashed_audio_name subs/$hashed_sub_name subs/$hashed_log_name" &&
+        echo "Cleaned up server side leftover files."
+    if ssh "$server" systemctl --user list-units --type=service --quiet | grep --quiet running; then
+        echo "There are some other running user services on remote. Leaving them alone..."
+        exit 0
+    fi
+    echo "No running tasks on remote. Disabling lingering..."
+    ssh "$server" loginctl disable-linger &&
+        echo "Disabled lingering."
+    exit 0
+fi
+
+if ssh "$server" "test -e audio/$hashed_audio_name"; then
+    echo "Only audio file exists on remote."
+    if ssh "$server" systemctl --user list-units --type=service --quiet | grep --quiet running; then
+        echo "There are some running user services on remote. Seems still processing..."
+        exit 0
+    fi
+    echo "But no running tasks on remote. Something is wrong."
+    echo "Please manually remove audio/$hashed_audio_name and try again."
+    echo "Disabling lingering since no tasks are running..."
+    ssh "$server" loginctl disable-linger &&
+        echo "Disabled lingering."
+    exit 0
+fi
+
+if [[ ! -f "/tmp/$hashed_audio_name" ]]; then
+    ffmpeg -loglevel warning -i "$filename" -map a -c copy "/tmp/$hashed_audio_name"
+fi
+
+scp "/tmp/$hashed_audio_name" "$server:audio"
+rm -- "/tmp/$hashed_audio_name"
+
+# Apptainer can't load nvidia kernel modules itself and will fail if the module is not loaded.
+# Invoke nvidia-smi first to load modules and sanity-check whether server GPUs are too busy.
+ssh -t "$server" -- loginctl enable-linger "&&" \
+    nvidia-smi "&&" \
+    touch "subs/$hashed_log_name" "&&" \
+    systemd-run --user --property "StandardOutput=truncate:\$HOME/subs/$hashed_log_name" \
+    env APPTAINERENV_CUDA_VISIBLE_DEVICES="$device" \
+    apptainer run --nv "\$HOME/faster-whisper.sif" \
+    --vad_filter True --vad_min_silence_duration_ms=5000 --model large-v2 --output_dir="\$HOME/subs" --output_format=srt \
+    "${language[@]}" \
+    "\$HOME/audio/$hashed_audio_name" "&&" \
+    echo Not monitoring log.

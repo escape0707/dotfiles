@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -euo pipefail
+shopt -s nullglob
+
+usage() {
+    echo "Usage: zimuall [-l <language>] [-d <deviceID>] [-s <server>] directory_path"
+    echo "directory_path will default to current working directory."
+    echo "Options:"
+    echo "  -l | --language : Optional. Language code (default: leave it empty and let whisper auto detect)."
+    echo "  -d | --device   : Optional. GPU device ID (default: alternate between 0 and 1)."
+    echo "  -s | --server   : Optional. GPU server name (default: gpu)."
+    echo "  -h | --help     : Show this help message."
+}
+
+language_arg=()
+device=$((RANDOM % 2))
+device_specified=0
+server_arg=(--server gpu)
+
+parsed_options=$(getopt \
+    --options 'l:d:s:h' \
+    --longoptions 'language:,device:,server:,help' \
+    --name 'zimuall' \
+    -- "$@") || {
+    echo "Error: Failed to parse arguments"
+    usage
+    exit 1
+}
+
+eval set -- "$parsed_options"
+unset parsed_options
+
+while true; do
+    case "$1" in
+        '-l'|'--language')
+            language_arg=(--language "$2")
+            shift 2
+            ;;
+        '-d'|'--device')
+            device="$2"
+            device_specified=1
+            shift 2
+            ;;
+        '-s'|'--server')
+            server_arg=(--server "$2")
+            shift 2
+            ;;
+        '-h'|'--help')
+            usage
+            exit 0
+            ;;
+        '--')
+            shift
+            break
+            ;;
+        *)
+            echo "Error: Unrecognized argument."
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+directory_path="${1:-.}"
+
+for filename in "$directory_path"/*.mp4 "$directory_path"/*.mkv; do
+    sub_name="${filename%.*}.srt"
+    if [[ -f "$sub_name" ]]; then
+        echo "Subtitle file $sub_name already exists. Skipping..."
+        continue
+    fi
+
+    zimu "${language_arg[@]}" --device "$device" "${server_arg[@]}" "$filename"
+
+    if ((device_specified == 0)); then
+        device=$(((device + 1) % 2))
+    fi
+done

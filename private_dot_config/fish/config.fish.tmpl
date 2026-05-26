@@ -1,0 +1,27 @@
+{{- $isHeadless := get . "isHeadless" -}}
+{{- $isHeaded := not $isHeadless -}}
+{{- $isVM := get . "isVM" -}}
+{{- $isBareMetal := not $isVM -}}
+if status is-interactive
+    source /usr/share/doc/pkgfile/command-not-found.fish
+
+    abbr --add cmcd 'cd $XDG_DATA_HOME/chezmoi'
+    abbr --add enven 'env LANG=en_US.UTF-8 LANGUAGE=en_US'
+    abbr --add less 'less -R'
+    abbr --add ll 'ls -al --color=auto'
+    abbr --add rm trash-put
+    abbr --add sshr "ssh -o ConnectionAttempts=9999"
+    abbr --add updsrcinfo 'makepkg --printsrcinfo | tee .SRCINFO'
+    abbr --add vi nvim
+    abbr --add vimdiff 'nvim -d'
+{{- if $isHeaded }}
+    abbr --add anifps 'gnome-randr modify --mode 3840x2160@23.976 {{ get . "gnomeRandrOutput" | default "DP-1" }}'
+    abbr --add hifps 'gnome-randr modify --mode 3840x2160@119.993 {{ get . "gnomeRandrOutput" | default "DP-1" }}'
+{{- end }}
+{{- if $isBareMetal }}
+    abbr --add rebootwin 'systemctl reboot --boot-loader-entry=auto-windows'
+{{- end }}
+    abbr --add ghi --set-cursor --function _gh_view_all_fields
+    abbr --add ghpr --set-cursor --function _gh_view_all_fields
+    abbr --add !! --position anywhere --function last_history_item
+end

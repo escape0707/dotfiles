@@ -1,0 +1,8 @@
+function setfps
+    set -l fractional 000
+    if set --query argv[2]
+        set fractional $argv[2]
+    end
+
+    gnome-randr modify --mode 3840x2160@$argv[1].$fractional {{ get . "gnomeRandrOutput" | default "DP-1" }}
+end

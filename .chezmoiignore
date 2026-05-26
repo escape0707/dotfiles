@@ -7,6 +7,7 @@ scripts/**
 {{- if (get . "isHeadless") }}
 .config/fontconfig/**
 .config/fcitx5/**
+.config/fish/functions/setfps.fish
 .config/mpv/**
 .config/pipewire/**
 .config/sunshine/**
@@ -16,31 +17,11 @@ scripts/**
 {{- end }}
 
 {{- if (get . "isVM") }}
-.config/libvirt/**
-.config/ventoy/**
-{{- end }}
-
-{{- if (get . "deferSharedToolInventory") }}
 .config/aria2/**
-.config/fish/config.fish
-.config/fish/functions/last_history_item.fish
+.config/libvirt/**
 .config/systemd/user/aria2cd.service
+.config/ventoy/**
 .config/yt-dlp/**
-{{- end }}
-
-{{- if (get . "deferLocalInventory") }}
-.bashrc
-{{- end }}
-
-{{- if (get . "deferLaptopLinuxDrift") }}
-.bashrc
-.config/git/config
-.config/lazygit
-.config/lazygit/**
-.config/nvim
-.config/nvim/**
-.config/pacman/makepkg.conf
-listpkg.sh
 {{- end }}
 
 # /etc mirror is opt-in for templating and review.

@@ -2,316 +2,27 @@
 # ~/.bashrc
 #
 
-# Ensure user-local executables are available in non-interactive bash.
 case ":$PATH:" in
     *":$HOME/.local/bin:"*) ;;
     *) export PATH="$HOME/.local/bin:$PATH" ;;
 esac
 
-export DOCKER_HOST="unix://${XDG_RUNTIME_DIR:-/run/user/$UID}/podman/podman.sock"
-
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
-
-alias ls='ls --color=auto'
-alias grep='grep --color=auto'
-PS1='[\u@\h \W]\$ '
-
-# My config
-PS1='[\u@\h \w]\n\$ '
-
-source /usr/share/doc/pkgfile/command-not-found.bash
-
+export DOCKER_HOST="unix://$XDG_RUNTIME_DIR/podman/podman.sock"
 export EDITOR=nvim
 
-export XDG_CACHE_HOME=$HOME/.cache
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_DATA_HOME=$HOME/.local/share
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
 
-export CARGO_HOME="$XDG_DATA_HOME"/cargo
-export TEXMFHOME=$XDG_DATA_HOME/texmf
-export TEXMFVAR=$XDG_CACHE_HOME/texlive/texmf-var
-export TEXMFCONFIG=$XDG_CONFIG_HOME/texlive/texmf-config
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+export TEXMFHOME="$XDG_DATA_HOME/texmf"
+export TEXMFVAR="$XDG_CACHE_HOME/texlive/texmf-var"
+export TEXMFCONFIG="$XDG_CONFIG_HOME/texlive/texmf-config"
 
-alias anifps='gnome-randr modify --mode 3840x2160@23.976 {{ get . "gnomeRandrOutput" | default "DP-1" }}'
-alias cmcd="cd $XDG_DATA_HOME/chezmoi"
-alias enven='env LANG=en_US.UTF-8 LANGUAGE=en_US'
-alias hifps='gnome-randr modify --mode 3840x2160@119.993 {{ get . "gnomeRandrOutput" | default "DP-1" }}'
-alias less='less -R'
-alias ll='ls -al --color=auto'
-alias pacclear='paccache --remove && paccache --remove --uninstalled --keep 0'
-alias pacrm='paru -Rnsu $(pacman -Qqd)'
-alias pacup='sudo pacman -Sy && paru -Su'
-alias rebootwin='systemctl reboot --boot-loader-entry=auto-windows'
-alias rm='gio trash'
-alias updsrcinfo='makepkg --printsrcinfo | tee .SRCINFO'
-alias vi='nvim'
-alias vimdiff='nvim -d'
-
-function ghapiurls() {
-  local u=${1%/} n=${2:-3} base main x i
-
-  [[ $u == https://github.com/*/*/*/* ]] || {
-    printf 'usage: ghapiurls <github issue|pull|commit url> [pages]\n' >&2
-    return 1
-  }
-
-  base="https://api.github.com/repos/${u#https://github.com/}"
-
-  case $base in
-    */commit/*)
-      base=${base/\/commit\//\/commits\/}
-      printf '%s\n\n' "$base"
-      for ((i=1;i<=n;i++)); do
-        printf '%s/comments?per_page=100&page=%d\n' "$base" "$i"
-      done
-      return
-      ;;
-
-    */pull/*)
-      main=${base/\/pull\//\/pulls\/}
-      printf '%s\n\n' "$main"
-      base=${base/\/pull\//\/issues\/}
-      ;;
-
-    */issues/*)
-      printf '%s\n\n' "$base"
-      ;;
-
-    *)
-      printf 'usage: ghapiurls <github issue|pull|commit url> [pages]\n' >&2
-      return 1
-      ;;
-  esac
-
-  for x in comments events timeline; do
-    for ((i=1;i<=n;i++)); do
-      printf '%s/%s?per_page=100&page=%d\n' "$base" "$x" "$i"
-    done
-    [[ $x != timeline ]] && printf '\n'
-  done
-}
-
-function setfps {
-    gnome-randr modify --mode 3840x2160@$1.${2:-000} {{ get . "gnomeRandrOutput" | default "DP-1" }}
-}
-
-function zimu {
-    function usage() {
-        echo "Usage: zimu [-l <language>] [-d <deviceID>] [-s <server>] filename"
-        echo "Options:"
-        echo "  -l | --language : Optional. Language code (default: leave it empty and let whisper auto detect)"
-        echo "  -d | --device   : Optional. GPU device ID (default: random of 0 or 1)"
-        echo "  -s | --server   : Optional. GPU server name (default: gpu)"
-        echo "  -h | --help     : Show this help message"
-    }
-
-    local OPTIND
-    local language=""
-    local device=$((RANDOM % 2))
-    local server="gpu"
-    
-    local parsed_options
-    parsed_options=$(getopt -o 'l:d:s:h' --long 'language:,device:,server:,help' -n 'zimu' -- "$@")
-
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to parse arguments"
-        usage
-        return 1
-    fi
-
-    eval set -- "$parsed_options"
-    unset parsed_options
-
-    while true; do
-        case "$1" in
-            '-l'|'--language')
-                language="--language $2"
-                shift 2
-                ;;
-            '-d'|'--device')
-                device="$2"
-                shift 2
-                ;;
-            '-s'|'--server')
-                server="$2"
-                shift 2
-                ;;
-            '-h'|'--help')
-                usage
-                return 0
-                ;;
-            '--')
-                shift
-                break
-                ;;
-            *)
-                echo "Error: Unrecognized argument."
-                usage
-                return 1
-                ;;
-        esac
-    done
-
-    # Check if filename is provided as positional argument
-    if [ $# -eq 0 ]; then
-        echo "Error: Filename is required"
-        usage
-        return 1
-    fi
-
-    local filename="$1"
-    local sub_name="${filename%.*}.srt"
-
-    # Check if file exists
-    if [ ! -f "$filename" ]; then
-        echo "Error: File $filename does not exist."
-        return 1
-    fi
-    # Check if subtitle file exists
-    if [ -f "$sub_name" ]; then
-        echo "Subtitle file $sub_name already exists. Skipping..."
-        return 0
-    fi
-    
-    echo "Processing $filename."
-
-    local hash=$(ffprobe -show_format -loglevel error "$filename" | b2sum | cut -d " " -f 1)
-    local hashed_audio_name=$hash.mkv
-    local hashed_log_name=$hash.log
-    local hashed_sub_name=$hash.srt
-
-    if scp $server:subs/$hashed_sub_name "$sub_name"; then
-        echo "Output subtitle file exists on remote. Subtitle downloaded."
-        ssh $server "rm audio/$hashed_audio_name subs/$hashed_sub_name subs/$hashed_log_name" &&
-        echo "Cleaned up server side leftover files."
-        if ssh $server systemctl --user list-units --type=service --quiet | grep --quiet running; then
-            echo "There are some other running user services on remote. Leaving them alone..."
-            return
-        fi
-        echo "No running tasks on remote. Disabling lingering..."
-        ssh $server loginctl disable-linger &&
-        echo "Disabled lingering."
-        return
-    fi
-
-    if ssh $server "test -e audio/$hashed_audio_name"; then
-        echo "Only audio file exists on remote."
-        if ssh $server systemctl --user list-units --type=service --quiet | grep --quiet running; then
-            echo "There are some running user services on remote. Seems still processing..."
-            return
-        fi
-        echo "But no running tasks on remote. Something is wrong."
-        echo "Please manually remove audio/$hashed_audio_name and try again."
-        echo "Disabling lingering since no tasks are running..."
-        ssh $server loginctl disable-linger &&
-        echo "Disabled lingering."
-        return
-    fi
-
-    [ ! -f "/tmp/$hashed_audio_name" ] && ffmpeg -loglevel warning -i "$filename" -map a -c copy "/tmp/$hashed_audio_name"
-    # Use `command` here to avoid local shell alias of `rm`.
-    scp /tmp/$hashed_audio_name $server:audio && command rm "/tmp/$hashed_audio_name" &&
-    # Apptainer can't load nvidia kernel modules themselves and will fail if the module is not loaded.
-    # Invoke `nvidia-smi` to load modules and sanity check if server GPUs are too busy.
-    # Usually when LANG contains "utf-8", `less` will support UTF-8.
-    # But when "UsePAM=no" was set in sshd_config, `/etc/locale.conf` was not parsed, and less won't
-    # support UTF-8. Thus, I'm using "LESSCHARSET=utf-8" here.
-    ssh -t $server -- loginctl enable-linger "&&" \
-        nvidia-smi "&&" \
-        touch subs/$hashed_log_name "&&" \
-        systemd-run --user -p "StandardOutput=truncate:\$HOME/subs/$hashed_log_name" \
-        env APPTAINERENV_CUDA_VISIBLE_DEVICES=$device \
-        apptainer run --nv \~/faster-whisper.sif \
-        --vad_filter True --vad_min_silence_duration_ms=5000 --model large-v2 --output_dir=\$HOME/subs --output_format=srt \
-        $language \
-        \~/audio/$hashed_audio_name "&&" \
-        echo Not monitoring log.
-        # env LESSCHARSET=utf-8 less +F subs/$hashed_log_name
-}
-
-function zimuall {
-    function usage() {
-        echo "Usage: zimuall [-l <language>] [-d <deviceID>] [-s <server>] directory_path"
-        echo "directory_path will default to current working directory."
-        echo "Options:"
-        echo "  -l | --language : Optional. Language code (default: leave it empty and let whisper auto detect)."
-        echo "  -d | --device   : Optional. GPU device ID (default: alternate between 0 and 1)."
-        echo "  -s | --server   : Optional. GPU server name (default: gpu)."
-        echo "  -h | --help     : Show this help message."
-    }
-
-    local OPTIND
-    local language_arg=""
-    local device=$((RANDOM % 2))
-    local device_specified=0
-    local server_arg="--server gpu"
-    
-    local parsed_options
-    parsed_options=$(getopt -o 'l:d:s:h' --long 'language:,device:,server:,help' -n 'zimuall' -- "$@")
-
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to parse arguments"
-        usage
-        return 1
-    fi
-
-    eval set -- "$parsed_options"
-    unset parsed_options
-
-    while true; do
-        case "$1" in
-            '-l'|'--language')
-                language_arg="--language $2"
-                shift 2
-                ;;
-            '-d'|'--device')
-                device=$2
-                device_specified=1
-                shift 2
-                ;;
-            '-s'|'--server')
-                server_arg="--server $2"
-                shift 2
-                ;;
-            '-h'|'--help')
-                usage
-                return 0
-                ;;
-            '--')
-                shift
-                break
-                ;;
-            *)
-                echo "Error: Unrecognized argument."
-                usage
-                return 1
-                ;;
-        esac
-    done
-
-    function update_device_no() {
-        if [$device_specified -eq 0]; then
-            device=$(( (device + 1) % 2 ))
-        fi
-    }
-
-    local directory_path="${1:-.}"
-    # for folderLang in *; do
-        # pushd "$folderLang"
-        for filename in "${directory_path}/*.mp4" "${directory_path}/*.mkv"; do
-            local sub_name="${filename%.*}.srt"
-            if [ -f "$sub_name" ]; then
-                echo "Subtitle file $sub_name already exists. Skipping..."
-                continue
-            fi
-            # zimu "$file" "$folder" "$card"
-            zimu $language_arg --device $device $server_arg "$filename"
-            update_device_arg
-        done
-        # popd
-    # done
-}
+case ":$PATH:" in
+    *":$CARGO_HOME/bin:"*) ;;
+    *) export PATH="$CARGO_HOME/bin:$PATH" ;;
+esac
 
 # pnpm
 export PNPM_HOME="{{ .chezmoi.homeDir }}/.local/share/pnpm"
@@ -320,3 +31,12 @@ case ":$PATH:" in
     *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+source /usr/share/doc/pkgfile/command-not-found.bash
+
+alias ls='ls --color=auto'
+
+PS1='[\u@\h \w]\n\$ '
