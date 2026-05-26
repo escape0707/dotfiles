@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+args=("$@")
+
+if ((${#args[@]} >= 2)); then
+    old_path_index=$((${#args[@]} - 2))
+    new_path_index=$((${#args[@]} - 1))
+
+    for path_index in "$old_path_index" "$new_path_index"; do
+        path=${args[$path_index]}
+        if [[ $path != /dev/null && ! -e $path ]]; then
+            args[$path_index]=/dev/null
+        fi
+    done
+fi
+
+exec difft "${args[@]}"
