@@ -1,15 +1,11 @@
-Server = https://repo.archlinuxcn.org/$arch
+# Custom active mirrors. HTTPS only.
 Server = https://mirrors.xtom.jp/archlinuxcn/$arch
-Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
-Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
-Server = https://mirrors.cicku.me/archlinuxcn/$arch
+Server = https://jp.mirrors.cicku.me/archlinuxcn/$arch
+Server = https://repo.archlinuxcn.org/$arch
 
-# CacheServer = https://mirrors.cloud.tencent.com/archlinuxcn/$arch
-# CacheServer = https://mirrors.aliyun.com/archlinuxcn/$arch
-# CacheServer = https://mirrors.xtom.jp/archlinuxcn/$arch
-# CacheServer = https://mirrors.cicku.me/archlinuxcn/$arch
-# CacheServer = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
-# CacheServer = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
+# Package download caches.
+CacheServer = https://mirrors.xtom.jp/archlinuxcn/$arch
+CacheServer = https://jp.mirrors.cicku.me/archlinuxcn/$arch
 
 ##
 ## Arch Linux CN community repository mirrorlist
