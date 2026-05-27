@@ -25,7 +25,6 @@ if status is-interactive
 {{- if $isBareMetal }}
     abbr --add rebootwin 'systemctl reboot --boot-loader-entry=auto-windows'
 {{- end }}
-    abbr --add ghi --set-cursor --function _gh_view_all_fields
-    abbr --add ghpr --set-cursor --function _gh_view_all_fields
+    abbr --add gd git-forge-dump
     abbr --add !! --position anywhere --function last_history_item
 end
