@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-tmp=$(mktemp)
+tmp=$(mktemp --tmpdir commpkg.XXXXXXXXXX)
 trap 'rm --force -- "$tmp"' EXIT
 
 listpkg >"$tmp"

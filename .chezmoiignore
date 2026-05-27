@@ -1,10 +1,19 @@
+{{- $machineForm := get . "machineForm" -}}
+{{- if and $machineForm (ne $machineForm "headless") (ne $machineForm "headed") -}}{{ fail "machineForm must be headless or headed" }}{{- end -}}
+{{- $isWSL := and (eq .chezmoi.os "linux") (.chezmoi.kernel.osrelease | lower | contains "microsoft") -}}
+{{- $isBareMetal := not $isWSL -}}
+{{- $isHeaded := $isBareMetal -}}
+{{- if eq $machineForm "headless" -}}{{- $isHeaded = false -}}{{- end -}}
+{{- if eq $machineForm "headed" -}}{{- $isHeaded = true -}}{{- end -}}
+{{- $isHeadless := not $isHeaded -}}
+{{- $manageEtcMirror := get . "manageEtcMirror" | default false -}}
 AGENTS.md
 HANDOFF.*.md
 README.md
 scripts
 scripts/**
 
-{{- if (get . "isHeadless") }}
+{{- if $isHeadless }}
 .config/fontconfig/**
 .config/fcitx5/**
 .config/fish/functions/setfps.fish
@@ -16,7 +25,7 @@ scripts/**
 .mozilla/**
 {{- end }}
 
-{{- if (get . "isVM") }}
+{{- if $isWSL }}
 .config/aria2/**
 .config/libvirt/**
 .config/systemd/user/aria2cd.service
@@ -25,6 +34,27 @@ scripts/**
 {{- end }}
 
 # /etc mirror is opt-in for templating and review.
-{{- if not (get . "manageEtcMirror") }}
+{{- if not $manageEtcMirror }}
 etc/**
+{{- else }}
+etc/powerpill/**
+{{- if $isHeadless }}
+etc/environment
+etc/interception/**
+etc/systemd/system/bluetooth.service.d/**
+etc/systemd/system/gdm.service.d/**
+{{- end }}
+
+{{- if $isWSL }}
+etc/cmdline.d/**
+etc/inadyn.conf
+etc/mkinitcpio.conf.d/**
+etc/samba/**
+etc/ssh/sshd_config.d/**
+etc/sysctl.d/**
+etc/systemd/logind.conf.d/**
+etc/systemd/system.conf.d/**
+etc/systemd/zram-generator.conf
+etc/xray/**
+{{- end }}
 {{- end }}

@@ -1,8 +1,13 @@
-{{- $isHeadless := get . "isHeadless" -}}
-{{- $isHeaded := not $isHeadless -}}
-{{- $isVM := get . "isVM" -}}
-{{- $isBareMetal := not $isVM -}}
+{{- $machineForm := get . "machineForm" -}}
+{{- if and $machineForm (ne $machineForm "headless") (ne $machineForm "headed") -}}{{ fail "machineForm must be headless or headed" }}{{- end -}}
+{{- $isWSL := and (eq .chezmoi.os "linux") (.chezmoi.kernel.osrelease | lower | contains "microsoft") -}}
+{{- $isBareMetal := not $isWSL -}}
+{{- $isHeaded := $isBareMetal -}}
+{{- if eq $machineForm "headless" -}}{{- $isHeaded = false -}}{{- end -}}
+{{- if eq $machineForm "headed" -}}{{- $isHeaded = true -}}{{- end -}}
+{{- $isHeadless := not $isHeaded -}}
 {{- $isHeadedBareMetal := and $isHeaded $isBareMetal -}}
+{{ ""              -}}  # roots                             {{- "\n" -}}
 {{ ""              -}}  7zip                                {{- "\n" -}}
 {{ ""              -}}  adobe-source-code-pro-fonts         {{- "\n" -}}
 {{ ""              -}}  adobe-source-han-sans-otc-fonts     {{- "\n" -}}
@@ -16,6 +21,7 @@
 {{ if $isHeaded    -}}  arc-solid-gtk-theme                 {{- "\n" -}}{{ end -}}
 {{ ""              -}}  archlinuxcn-keyring                 {{- "\n" -}}
 {{ ""              -}}  archlinuxcn-mirrorlist-git          {{- "\n" -}}
+{{ ""              -}}  ast-grep                            {{- "\n" -}}
 {{ ""              -}}  base                                {{- "\n" -}}
 {{ ""              -}}  base-devel                          {{- "\n" -}}
 {{ ""              -}}  bash-completion                     {{- "\n" -}}
@@ -34,7 +40,7 @@
 {{ if $isHeaded    -}}  code-nautilus-git                   {{- "\n" -}}{{ end -}}
 {{ if $isHeaded    -}}  czkawka-gui-bin                     {{- "\n" -}}{{ end -}}
 {{ if $isHeaded    -}}  dconf-editor                        {{- "\n" -}}{{ end -}}
-{{ ""              -}}  diffutils                           {{- "\n" -}}
+{{ ""              -}}  difftastic                          {{- "\n" -}}
 {{ if $isBareMetal -}}  dnsmasq                             {{- "\n" -}}{{ end -}}
 {{ if $isBareMetal -}}  efibootmgr                          {{- "\n" -}}{{ end -}}
 {{ if $isHeaded    -}}  ente-auth-bin                       {{- "\n" -}}{{ end -}}
@@ -53,10 +59,8 @@
 {{ if $isHeaded    -}}  foliate                             {{- "\n" -}}{{ end -}}
 {{ ""              -}}  fzf                                 {{- "\n" -}}
 {{ if $isHeaded    -}}  gamescope                           {{- "\n" -}}{{ end -}}
-{{ ""              -}}  gdb                                 {{- "\n" -}}
 {{ ""              -}}  gdu                                 {{- "\n" -}}
 {{ if $isHeaded    -}}  geary                               {{- "\n" -}}{{ end -}}
-{{ ""              -}}  git                                 {{- "\n" -}}
 {{ ""              -}}  git-filter-repo                     {{- "\n" -}}
 {{ ""              -}}  gitleaks                            {{- "\n" -}}
 {{ if $isHeaded    -}}  gnome                               {{- "\n" -}}{{ end -}}
@@ -97,18 +101,16 @@
 {{ ""              -}}  libreoffice-fresh                   {{- "\n" -}}
 {{ if $isHeaded    -}}  libreoffice-fresh-ja                {{- "\n" -}}{{ end -}}
 {{ if $isHeaded    -}}  libreoffice-fresh-zh-cn             {{- "\n" -}}{{ end -}}
-{{ ""              -}}  libsodium                           {{- "\n" -}}
-{{ ""              -}}  libtorrent-rasterbar-2_1-git        {{- "\n" -}}
 {{ if $isHeaded    -}}  libva-utils                         {{- "\n" -}}{{ end -}}
 {{ if $isBareMetal -}}  linux                               {{- "\n" -}}{{ end -}}
 {{ if $isBareMetal -}}  linux-firmware                      {{- "\n" -}}{{ end -}}
 {{ ""              -}}  lldb                                {{- "\n" -}}
 {{ if $isHeaded    -}}  localsend                           {{- "\n" -}}{{ end -}}
 {{ ""              -}}  lsof                                {{- "\n" -}}
-{{ ""              -}}  lua                                 {{- "\n" -}}
 {{ ""              -}}  man-db                              {{- "\n" -}}
 {{ ""              -}}  markdownlint-cli2                   {{- "\n" -}}
 {{ if $isHeaded    -}}  mcomix                              {{- "\n" -}}{{ end -}}
+{{ ""              -}}  mergiraf                            {{- "\n" -}}
 {{ ""              -}}  mermaid-cli                         {{- "\n" -}}
 {{ if $isBareMetal -}}  miniserve                           {{- "\n" -}}{{ end -}}
 {{ if $isBareMetal -}}  modprobed-db                        {{- "\n" -}}{{ end -}}
@@ -116,12 +118,10 @@
 {{ if $isHeaded    -}}  mpv-mpris                           {{- "\n" -}}{{ end -}}
 {{ if $isHeaded    -}}  mpv-sponsorblock                    {{- "\n" -}}{{ end -}}
 {{ if $isHeaded    -}}  mpv_inhibit_gnome                   {{- "\n" -}}{{ end -}}
-{{ ""              -}}  neovim                              {{- "\n" -}}
 {{ ""              -}}  neovim-symlinks                     {{- "\n" -}}
 {{ if $isBareMetal -}}  networkmanager                      {{- "\n" -}}{{ end -}}
 {{ if $isBareMetal -}}  networkmanager-openvpn              {{- "\n" -}}{{ end -}}
 {{ if $isHeaded    -}}  nm-connection-editor                {{- "\n" -}}{{ end -}}
-{{ ""              -}}  noto-fonts                          {{- "\n" -}}
 {{ ""              -}}  noto-fonts-cjk                      {{- "\n" -}}
 {{ ""              -}}  noto-fonts-emoji                    {{- "\n" -}}
 {{ ""              -}}  noto-fonts-extra                    {{- "\n" -}}
@@ -141,11 +141,8 @@
 {{ ""              -}}  pnpm                                {{- "\n" -}}
 {{ ""              -}}  podlet                              {{- "\n" -}}
 {{ ""              -}}  podman                              {{- "\n" -}}
-{{ ""              -}}  poppler                             {{- "\n" -}}
 {{ if $isBareMetal -}}  power-profiles-daemon               {{- "\n" -}}{{ end -}}
-{{ ""              -}}  powerpill                           {{- "\n" -}}
 {{ ""              -}}  prettier                            {{- "\n" -}}
-{{ ""              -}}  python                              {{- "\n" -}}
 {{ ""              -}}  python-markdown-it-py               {{- "\n" -}}
 {{ if $isBareMetal -}}  python-mutagen                      {{- "\n" -}}{{ end -}}
 {{ ""              -}}  python-openpyxl                     {{- "\n" -}}
@@ -168,7 +165,6 @@
 {{ if $isHeaded    -}}  sqlitebrowser                       {{- "\n" -}}{{ end -}}
 {{ if $isHeaded    -}}  steam                               {{- "\n" -}}{{ end -}}
 {{ ""              -}}  strace                              {{- "\n" -}}
-{{ ""              -}}  sudo                                {{- "\n" -}}
 {{ if $isHeaded    -}}  sunshine-bin                        {{- "\n" -}}{{ end -}}
 {{ ""              -}}  syncthing                           {{- "\n" -}}
 {{ if $isBareMetal -}}  systemd-boot-pacman-hook            {{- "\n" -}}{{ end -}}
@@ -181,15 +177,14 @@
 {{ ""              -}}  texlive-fontsrecommended            {{- "\n" -}}
 {{ ""              -}}  texlive-langchinese                 {{- "\n" -}}
 {{ ""              -}}  texlive-langjapanese                {{- "\n" -}}
-{{ ""              -}}  texlive-latex                       {{- "\n" -}}
 {{ ""              -}}  texlive-latexextra                  {{- "\n" -}}
-{{ ""              -}}  texlive-latexrecommended            {{- "\n" -}}
 {{ ""              -}}  texlive-luatex                      {{- "\n" -}}
 {{ if $isHeaded    -}}  tk                                  {{- "\n" -}}{{ end -}}
 {{ ""              -}}  tmux                                {{- "\n" -}}
 {{ if $isHeaded    -}}  torbrowser-launcher                 {{- "\n" -}}{{ end -}}
 {{ ""              -}}  trash-cli                           {{- "\n" -}}
 {{ ""              -}}  tree                                {{- "\n" -}}
+{{ ""              -}}  tree-sitter-cli                     {{- "\n" -}}
 {{ ""              -}}  ttf-fira-code                       {{- "\n" -}}
 {{ ""              -}}  unrar                               {{- "\n" -}}
 {{ ""              -}}  unzip                               {{- "\n" -}}
@@ -200,7 +195,6 @@
 {{ if $isHeaded    -}}  vulkan-intel                        {{- "\n" -}}{{ end -}}
 {{ if $isHeaded    -}}  vulkan-radeon                       {{- "\n" -}}{{ end -}}
 {{ ""              -}}  wget                                {{- "\n" -}}
-{{ ""              -}}  which                               {{- "\n" -}}
 {{ ""              -}}  wireguard-tools                     {{- "\n" -}}
 {{ if $isBareMetal -}}  wireless-regdb                      {{- "\n" -}}{{ end -}}
 {{ if $isHeaded    -}}  wireshark-qt                        {{- "\n" -}}{{ end -}}
@@ -211,3 +205,17 @@
 {{ if $isBareMetal -}}  yt-dlp                              {{- "\n" -}}{{ end -}}
 {{ ""              -}}  zoxide                              {{- "\n" -}}
 {{ if $isBareMetal -}}  zram-generator                      {{- "\n" -}}{{ end -}}
+{{ ""              -}}                                     {{- "\n" -}}
+{{ ""              -}}  # pins                              {{- "\n" -}}
+{{ ""              -}}  diffutils                           {{- "\n" -}}
+{{ ""              -}}  git                                 {{- "\n" -}}
+{{ ""              -}}  libtorrent-rasterbar-2_1-git        {{- "\n" -}}
+{{ ""              -}}  lua                                 {{- "\n" -}}
+{{ ""              -}}  neovim                              {{- "\n" -}}
+{{ ""              -}}  noto-fonts                          {{- "\n" -}}
+{{ ""              -}}  poppler                             {{- "\n" -}}
+{{ ""              -}}  python                              {{- "\n" -}}
+{{ ""              -}}  sudo                                {{- "\n" -}}
+{{ ""              -}}  texlive-latex                       {{- "\n" -}}
+{{ ""              -}}  texlive-latexrecommended            {{- "\n" -}}
+{{ ""              -}}  which                               {{- "\n" -}}

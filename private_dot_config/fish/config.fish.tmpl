@@ -1,7 +1,11 @@
-{{- $isHeadless := get . "isHeadless" -}}
-{{- $isHeaded := not $isHeadless -}}
-{{- $isVM := get . "isVM" -}}
-{{- $isBareMetal := not $isVM -}}
+{{- $machineForm := get . "machineForm" -}}
+{{- if and $machineForm (ne $machineForm "headless") (ne $machineForm "headed") -}}{{ fail "machineForm must be headless or headed" }}{{- end -}}
+{{- $isWSL := and (eq .chezmoi.os "linux") (.chezmoi.kernel.osrelease | lower | contains "microsoft") -}}
+{{- $isBareMetal := not $isWSL -}}
+{{- $isHeaded := $isBareMetal -}}
+{{- if eq $machineForm "headless" -}}{{- $isHeaded = false -}}{{- end -}}
+{{- if eq $machineForm "headed" -}}{{- $isHeaded = true -}}{{- end -}}
+{{- $isHeadless := not $isHeaded -}}
 if status is-interactive
     source /usr/share/doc/pkgfile/command-not-found.fish
 

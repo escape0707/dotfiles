@@ -13,6 +13,41 @@ for group in "${configured_groups[@]}"; do
     fi
 done
 
-comm -23 \
-    <({ pacman -Qqe; printf '%s\n' "${installed_groups[@]}"; } | sort -u) \
-    <(printf '%s\n' "${group_packages[@]}" | sort -u)
+print_installed_groups() {
+    ((${#installed_groups[@]} == 0)) || printf '%s\n' "${installed_groups[@]}"
+}
+
+print_group_packages() {
+    ((${#group_packages[@]} == 0)) || printf '%s\n' "${group_packages[@]}"
+}
+
+print_explicit_packages() {
+    {
+        pacman -Qqe
+        print_installed_groups
+    } | sort -u
+}
+
+print_root_packages() {
+    {
+        pacman -Qqtt
+        print_installed_groups
+    } | sort -u
+}
+
+print_collapsed_roots() {
+    comm -23 \
+        <(print_root_packages) \
+        <(print_group_packages | sort -u)
+}
+
+print_collapsed_pins() {
+    comm -23 \
+        <(comm -23 <(print_explicit_packages) <(print_root_packages)) \
+        <(print_group_packages | sort -u)
+}
+
+printf '# roots\n'
+print_collapsed_roots
+printf '\n# pins\n'
+print_collapsed_pins
