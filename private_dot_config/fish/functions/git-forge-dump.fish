@@ -42,21 +42,15 @@ function _git_forge_dump
         return
     end
 
-    set parts (string match --regex --groups-only '^https?://([^/]+)/(.+)/-/issues/([0-9]+)(?:[/?#].*)?$' -- $target)
+    set parts (string match --regex --groups-only '^https?://([^/]+)/(.+)/-/(?:issues|work_items)/([0-9]+)(?:[/?#].*)?$' -- $target)
     if test (count $parts) -eq 3
-        _git_forge_dump_gitlab_issue $target $parts[1] $parts[2] $parts[3] issue
+        _git_forge_dump_gitlab_issue $target $parts[1] $parts[2] $parts[3]
         return
     end
 
     set parts (string match --regex --groups-only '^https?://([^/]+)/(.+)/-/merge_requests/([0-9]+)(?:[/?#].*)?$' -- $target)
     if test (count $parts) -eq 3
         _git_forge_dump_gitlab_mr $target $parts[1] $parts[2] $parts[3]
-        return
-    end
-
-    set parts (string match --regex --groups-only '^https?://([^/]+)/(.+)/-/work_items/([0-9]+)(?:[/?#].*)?$' -- $target)
-    if test (count $parts) -eq 3
-        _git_forge_dump_gitlab_issue $target $parts[1] $parts[2] $parts[3] work_item
         return
     end
 
@@ -69,7 +63,6 @@ function _git_forge_dump_gitlab_issue
     set host $argv[2]
     set project $argv[3]
     set iid $argv[4]
-    set kind $argv[5]
     set repo "https://$host/$project"
     set project_id (jq --null-input --raw-output --arg project "$project" '$project | @uri')
 
