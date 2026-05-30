@@ -73,12 +73,9 @@ function _git_forge_dump_gitlab_issue
     set repo "https://$host/$project"
     set project_id (jq --null-input --raw-output --arg project "$project" '$project | @uri')
 
-    printf '===== gitlab %s view: %s =====\n' $kind $target
-    glab issue view --repo "$repo" --output json $iid
-    or return
-
-    printf '\n===== gitlab %s notes: %s =====\n' $kind $target
-    glab api --hostname "$host" --paginate "projects/$project_id/issues/$iid/notes?per_page=100&sort=asc&order_by=created_at"
+    jq --slurpfile notes (glab api --hostname "$host" --paginate "projects/$project_id/issues/$iid/notes?per_page=100&sort=asc&order_by=created_at" | psub) \
+        '.Notes = $notes[0]' \
+        (glab issue view --repo "$repo" --output json $iid | psub)
 end
 
 function _git_forge_dump_gitlab_mr
