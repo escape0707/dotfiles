@@ -6,26 +6,25 @@ function git-forge-dump
         return 2
     end
 
-    if type -q clip.exe
-        _git_forge_dump $target | clip.exe
-        set statuses $pipestatus
-        if test $statuses[1] -ne 0
-            return $statuses[1]
+    set clipboard_command
+    for command in clip.exe wl-copy
+        if type -q $command
+            set clipboard_command $command
+            break
         end
-        return $statuses[2]
     end
 
-    if type -q wl-copy
-        _git_forge_dump $target | wl-copy
-        set statuses $pipestatus
-        if test $statuses[1] -ne 0
-            return $statuses[1]
-        end
-        return $statuses[2]
+    if test -z "$clipboard_command"
+        echo "git-forge-dump: no clipboard command found; expected clip.exe or wl-copy" >&2
+        return 1
     end
 
-    echo "git-forge-dump: no clipboard command found; expected clip.exe or wl-copy" >&2
-    return 1
+    _git_forge_dump $target | $clipboard_command
+    set statuses $pipestatus
+    if test $statuses[1] -ne 0
+        return $statuses[1]
+    end
+    return $statuses[2]
 end
 
 function _git_forge_dump
