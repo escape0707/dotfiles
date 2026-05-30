@@ -40,12 +40,12 @@ function _git_forge_dump
         if test "$host" = github.com
             switch $kind
                 case issues
-                    gh issue view $target --json (_git_forge_gh_fields issue)
-                    return
+                    set kind issue
                 case pull
-                    gh pr view $target --json (_git_forge_gh_fields pr)
-                    return
+                    set kind pr
             end
+            gh $kind view $target --json (_git_forge_gh_fields $kind)
+            return
         else
             switch $kind
                 case issues work_items
