@@ -29,29 +29,33 @@ end
 
 function _git_forge_dump
     set target $argv[1]
+    set parts (string match --regex --groups-only '^https?://([^/]+)/(.+?)/(?:-/)?(issues|pull|work_items|merge_requests)/([0-9]+)(?:[/?#].*)?$' -- $target)
 
-    set parts (string match --regex --groups-only '^https?://github\.com/([^/]+/[^/]+)/issues/([0-9]+)(?:[/?#].*)?$' -- $target)
-    if test (count $parts) -eq 2
-        gh issue view $target --json (_git_forge_gh_fields issue)
-        return
-    end
+    if test (count $parts) -eq 4
+        set host $parts[1]
+        set project $parts[2]
+        set kind $parts[3]
+        set iid $parts[4]
 
-    set parts (string match --regex --groups-only '^https?://github\.com/([^/]+/[^/]+)/pull/([0-9]+)(?:[/?#].*)?$' -- $target)
-    if test (count $parts) -eq 2
-        gh pr view $target --json (_git_forge_gh_fields pr)
-        return
-    end
-
-    set parts (string match --regex --groups-only '^https?://([^/]+)/(.+)/-/(?:issues|work_items)/([0-9]+)(?:[/?#].*)?$' -- $target)
-    if test (count $parts) -eq 3
-        _git_forge_dump_gitlab_issue $target $parts[1] $parts[2] $parts[3]
-        return
-    end
-
-    set parts (string match --regex --groups-only '^https?://([^/]+)/(.+)/-/merge_requests/([0-9]+)(?:[/?#].*)?$' -- $target)
-    if test (count $parts) -eq 3
-        _git_forge_dump_gitlab_mr $target $parts[1] $parts[2] $parts[3]
-        return
+        if test "$host" = github.com
+            switch $kind
+                case issues
+                    gh issue view $target --json (_git_forge_gh_fields issue)
+                    return
+                case pull
+                    gh pr view $target --json (_git_forge_gh_fields pr)
+                    return
+            end
+        else
+            switch $kind
+                case issues work_items
+                    _git_forge_dump_gitlab_issue $target $host $project $iid
+                    return
+                case merge_requests
+                    _git_forge_dump_gitlab_mr $target $host $project $iid
+                    return
+            end
+        end
     end
 
     echo "unsupported forge URL: $target" >&2
