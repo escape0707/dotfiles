@@ -44,15 +44,16 @@ function _git_forge_dump
                 case pull
                     set kind pr
             end
-            gh $kind view $target --json (_git_forge_dump_github_fields $kind)
+            gh $kind view $target --json (_dump_github_fields $kind)
             return
         else
+            set project_id (jq --null-input --raw-output --arg project "$project" '$project | @uri')
             switch $kind
                 case issues work_items
-                    _git_forge_dump_gitlab_issue $target $host $project $iid
+                    _dump_gitlab_issue $target $host $project $project_id $iid
                     return
                 case merge_requests
-                    _git_forge_dump_gitlab_merge_request $target $host $project $iid
+                    _dump_gitlab_merge_request $target $host $project $project_id $iid
                     return
             end
         end
@@ -62,33 +63,33 @@ function _git_forge_dump
     return 2
 end
 
-function _git_forge_dump_gitlab_issue
+function _dump_gitlab_issue
     set target $argv[1]
     set host $argv[2]
     set project $argv[3]
-    set iid $argv[4]
+    set project_id $argv[4]
+    set iid $argv[5]
     set repo "https://$host/$project"
-    set project_id (jq --null-input --raw-output --arg project "$project" '$project | @uri')
 
     jq --slurpfile notes (glab api --hostname "$host" --paginate "projects/$project_id/issues/$iid/notes?per_page=100&sort=asc&order_by=created_at" | psub) \
         '.Notes = $notes[0]' \
         (glab issue view --repo "$repo" --output json $iid | psub)
 end
 
-function _git_forge_dump_gitlab_merge_request
+function _dump_gitlab_merge_request
     set target $argv[1]
     set host $argv[2]
     set project $argv[3]
-    set iid $argv[4]
+    set project_id $argv[4]
+    set iid $argv[5]
     set repo "https://$host/$project"
-    set project_id (jq --null-input --raw-output --arg project "$project" '$project | @uri')
 
     jq --slurpfile diffs (glab api --hostname "$host" --paginate "projects/$project_id/merge_requests/$iid/diffs?per_page=100&unidiff=true" | psub) \
         '.Diffs = $diffs[0]' \
         (glab mr view --repo "$repo" --comments --system-logs --per-page 100 --output json $iid | psub)
 end
 
-function _git_forge_dump_github_fields
+function _dump_github_fields
     set kind $argv[1]
     gh $kind view --json 2>&1 | tail -n +2 | string trim | string match --invert projectCards | string join ,
 end
