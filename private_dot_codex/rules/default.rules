@@ -1,0 +1,118 @@
+# Never let Codex send mail.
+prefix_rule(
+    pattern = ["gws", "gmail", ["+send", "+reply", "+reply-all", "+forward"]],
+    decision = "forbidden",
+    justification = "Do not send mail automatically. Create or update a draft instead.",
+)
+
+prefix_rule(
+    pattern = ["gws", "gmail", "users", "messages", "send"],
+    decision = "forbidden",
+    justification = "Do not send mail automatically. Create or update a draft instead.",
+)
+
+prefix_rule(
+    pattern = ["gws", "gmail", "users", "drafts", "send"],
+    decision = "forbidden",
+    justification = "Drafts may be created, but never sent by Codex.",
+)
+
+# Prefer pnpm for Node package manager and CLI execution.
+prefix_rule(
+    pattern = [["npm", "npx", "pnpx", "yarn", "yarnpkg", "bun", "bunx"]],
+    decision = "forbidden",
+    justification = "Use pnpm instead: pnpm run <script>, pnpm exec <tool>, pnpm dlx <pkg>, or the matching pnpm install/add/remove/update command.",
+)
+
+# Prefer the globally installed Context7 CLI instead of one-shot runners.
+prefix_rule(
+    pattern = ["pnpm", "dlx", ["ctx7", "ctx7@latest"]],
+    decision = "forbidden",
+    justification = "Use the globally installed ctx7 on PATH instead of pnpm dlx ctx7.",
+)
+
+# Allow running tests based on CloudFlare workers.
+prefix_rule(
+    pattern = ["pnpm", "run", "test:workers"],
+    decision = "allow",
+)
+
+# Allow some easily reversible Git mutative operations.
+prefix_rule(pattern=["git", ["add", "apply", "branch", "checkout", "cherry-pick", "commit", "fetch", "merge", "mv", "rebase", "restore", "rm", "switch"]], decision="allow")
+prefix_rule(pattern=["git", "-c", "core.editor=true", ["cherry-pick", "rebase"]], decision="allow")
+prefix_rule(pattern=["git", "stash", ["branch", "create", "export", "list", "push", "show", "store"]], decision="allow")
+
+# Prompt before mutating remote Git refs.
+prefix_rule(pattern=["git", "lfs", "push"], decision="prompt")
+prefix_rule(pattern=["git", "push"], decision="prompt")
+
+# Allow safe read-only GitHub CLI inspection commands.
+# prefix_rule(pattern=["gh", "agent-task", ["list", "view"]], decision="allow")
+# prefix_rule(pattern=["gh", "alias", "list"], decision="allow")
+# prefix_rule(pattern=["gh", "attestation", ["trusted-root", "verify"]], decision="allow")
+# prefix_rule(pattern=["gh", "auth", "status"], decision="allow")
+# prefix_rule(pattern=["gh", "cache", "list"], decision="allow")
+# prefix_rule(pattern=["gh", "codespace", ["list", "logs", "view"]], decision="allow")
+# prefix_rule(pattern=["gh", "completion"], decision="allow")
+# prefix_rule(pattern=["gh", "config", ["get", "list"]], decision="allow")
+# prefix_rule(pattern=["gh", "extension", ["list", "search"]], decision="allow")
+# prefix_rule(pattern=["gh", "gist", ["list", "view"]], decision="allow")
+# prefix_rule(pattern=["gh", "gpg-key", "list"], decision="allow")
+# prefix_rule(pattern=["gh", "issue", ["list", "view", "status"]], decision="allow")
+# prefix_rule(pattern=["gh", "label", "list"], decision="allow")
+# prefix_rule(pattern=["gh", "licenses"], decision="allow")
+# prefix_rule(pattern=["gh", "org", "list"], decision="allow")
+# prefix_rule(pattern=["gh", "pr", ["list", "view", "status", "checks", "diff"]], decision="allow")
+# prefix_rule(pattern=["gh", "project", ["field-list", "item-list", "list", "view"]], decision="allow")
+# prefix_rule(pattern=["gh", "release", ["download", "list", "verify", "verify-asset", "view"]], decision="allow")
+# prefix_rule(pattern=["gh", "repo", ["gitignore", "license", "list", "view"]], decision="allow")
+# prefix_rule(pattern=["gh", "ruleset", ["check", "list", "view"]], decision="allow")
+# prefix_rule(pattern=["gh", "run", ["list", "view", "watch"]], decision="allow")
+# prefix_rule(pattern=["gh", "search", ["code", "commits", "issues", "prs", "repos"]], decision="allow")
+# prefix_rule(pattern=["gh", "secret", "list"], decision="allow")
+# prefix_rule(pattern=["gh", "skill", "search"], decision="allow")
+# prefix_rule(pattern=["gh", "ssh-key", "list"], decision="allow")
+# prefix_rule(pattern=["gh", "status"], decision="allow")
+# prefix_rule(pattern=["gh", "variable", ["get", "list"]], decision="allow")
+# prefix_rule(pattern=["gh", "workflow", ["list", "view"]], decision="allow")
+
+# Prompt for GitHub CLI commands that mutate GitHub, alter local state, expose secrets, or launch interactive tools.
+prefix_rule(pattern=["gh", "agent-task", "create"], decision="prompt")
+prefix_rule(pattern=["gh", "alias", ["delete", "import", "set"]], decision="prompt")
+prefix_rule(
+    pattern = ["gh", "api"],
+    decision = "forbidden",
+    justification = "Use purpose-built gh subcommands, clone remote source into ~/workspaces/<repo-main-language-abbr>/<repo> for file inspection, or pause and suggest the exact gh api command for the user to run manually when raw API access is truly required.",
+)
+prefix_rule(pattern=["gh", "attestation", "download"], decision="prompt")
+prefix_rule(pattern=["gh", "auth", ["logout", "refresh", "setup-git", "switch", "token"]], decision="prompt")
+prefix_rule(pattern=["gh", "browse"], decision="prompt")
+prefix_rule(pattern=["gh", "cache", "delete"], decision="prompt")
+prefix_rule(pattern=["gh", "co"], decision="prompt")
+prefix_rule(pattern=["gh", "codespace", ["code", "cp", "create", "delete", "edit", "jupyter", "ports", "rebuild", "ssh", "stop"]], decision="prompt")
+prefix_rule(pattern=["gh", "config", ["clear-cache", "set"]], decision="prompt")
+prefix_rule(pattern=["gh", "copilot"], decision="prompt")
+prefix_rule(pattern=["gh", "extension", ["browse", "create", "exec", "install", "remove", "upgrade"]], decision="prompt")
+prefix_rule(pattern=["gh", "gist", ["clone", "create", "delete", "edit", "rename"]], decision="prompt")
+prefix_rule(pattern=["gh", "gpg-key", ["add", "delete"]], decision="prompt")
+prefix_rule(pattern=["gh", "issue", ["close", "comment", "create", "delete", "develop", "edit", "lock", "pin", "reopen", "transfer", "unlock", "unpin"]], decision="prompt")
+prefix_rule(pattern=["gh", "label", ["clone", "create", "delete", "edit"]], decision="prompt")
+prefix_rule(pattern=["gh", "pr", ["checkout", "close", "comment", "create", "edit", "lock", "merge", "ready", "reopen", "revert", "review", "unlock", "update-branch"]], decision="prompt")
+prefix_rule(pattern=["gh", "preview"], decision="prompt")
+prefix_rule(pattern=["gh", "project", ["close", "copy", "create", "delete", "edit", "field-create", "field-delete", "item-add", "item-archive", "item-create", "item-delete", "item-edit", "link", "mark-template", "unlink"]], decision="prompt")
+prefix_rule(pattern=["gh", "release", ["create", "delete", "delete-asset", "edit", "upload"]], decision="prompt")
+prefix_rule(pattern=["gh", "repo", ["archive", "autolink", "create", "delete", "deploy-key", "edit", "fork", "rename", "set-default", "sync", "unarchive"]], decision="prompt")
+prefix_rule(pattern=["gh", "run", ["cancel", "delete", "download", "rerun"]], decision="prompt")
+prefix_rule(pattern=["gh", "secret", ["delete", "set"]], decision="prompt")
+prefix_rule(pattern=["gh", "skill", ["install", "preview", "publish", "update"]], decision="prompt")
+prefix_rule(pattern=["gh", "ssh-key", ["add", "delete"]], decision="prompt")
+prefix_rule(pattern=["gh", "variable", ["delete", "set"]], decision="prompt")
+prefix_rule(pattern=["gh", "workflow", ["disable", "enable", "run"]], decision="prompt")
+
+# Allow read-only Windows package-manager inspection commands.
+prefix_rule(pattern=["winget", ["list", "search", "show"]], decision="allow")
+prefix_rule(pattern=["winget", "source", "list"], decision="allow")
+prefix_rule(pattern=["scoop", ["list", "status", "info", "search", "prefix", "which"]], decision="allow")
+
+prefix_rule(pattern=["ssh"], decision="prompt")
+prefix_rule(pattern=["scp"], decision="prompt")

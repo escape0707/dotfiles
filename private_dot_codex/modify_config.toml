@@ -1,0 +1,70 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $isLinux := eq .chezmoi.os "linux" -}}
+{{- $isWindows := eq .chezmoi.os "windows" -}}
+{{- $windowsLocalAppData := "" -}}
+{{- $windowsRoamingAppData := "" -}}
+{{- if $isWindows -}}
+{{-   $windowsLocalAppData = env "LOCALAPPDATA" -}}
+{{-   $windowsRoamingAppData = env "APPDATA" -}}
+{{- end -}}
+{{- $workspacesDir := printf "%s%sworkspaces" .chezmoi.homeDir .chezmoi.pathSeparator -}}
+{{- $marker := "# Codex app/CLI generated config may be appended below this line." -}}
+{{- $tail := "" -}}
+{{- $parts := splitList $marker .chezmoi.stdin -}}
+{{- if gt (len $parts) 1 -}}
+{{-   $tail = (index $parts 1 | trimPrefix "\n") -}}
+{{- end -}}
+model = "gpt-5.5"
+model_reasoning_effort = "high"
+personality = "pragmatic"
+web_search = "live"
+sandbox_mode = "workspace-write"
+approvals_reviewer = "user"
+check_for_update_on_startup = false
+
+[sandbox_workspace_write]
+network_access = true
+writable_roots = [
+    '{{ .chezmoi.sourceDir }}',
+{{- if $isWindows }}
+    '{{ $windowsLocalAppData }}\fnm_multishells',
+    '{{ $windowsLocalAppData }}\ms-playwright',
+    '{{ $windowsLocalAppData }}\pnpm',
+    '{{ $windowsLocalAppData }}\pnpm-cache',
+    '{{ $windowsLocalAppData }}\uv\cache',
+    '{{ $windowsRoamingAppData }}\fnm',
+    '{{ $windowsRoamingAppData }}\uv\python',
+{{- else if $isLinux }}
+    "~/.cache/chromium",
+    "~/.cache/gh",
+    "~/.cache/go-build",
+    "~/.cache/ms-playwright",
+    "~/.cache/pnpm",
+    "~/.cache/uv",
+    "~/.config/chromium",
+    "~/.config/gws",
+    "~/.local/share/cargo",
+    "~/.local/share/pnpm",
+    "~/.local/share/uv/python",
+    "~/.npm/_cacache/tmp",
+    "~/.texlive/texmf-var",
+    "~/go",
+{{- end }}
+]
+
+{{- if $isWindows }}
+[windows]
+sandbox = "elevated"
+{{- end }}
+
+[projects.'{{ $workspacesDir }}']
+trust_level = "trusted"
+
+[tui]
+status_line = ["model-with-reasoning", "context-remaining", "current-dir", "total-input-tokens", "total-output-tokens", "git-branch", "five-hour-limit", "weekly-limit"]
+session_picker_view = "comfortable"
+
+{{ $marker }}
+{{- if $tail }}
+{{ $tail -}}
+{{- end }}
