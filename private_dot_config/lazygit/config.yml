@@ -1,3 +1,4 @@
 git:
+  autoStageResolvedConflicts: false
   pagers:
     - externalDiffCommand: "difft --color=always --display=inline"
