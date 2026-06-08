@@ -10,6 +10,13 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
+export CONTEXT7_API_KEY="
+{{- if $isWSL -}}
+{{- output "win-chezmoi" "secret" "keyring" "get" "--service" "ctx7" "--user" "api-key" | trim -}}
+{{- else -}}
+{{- keyring "ctx7" "api-key" -}}
+{{- end -}}
+"
 export TEXMFHOME="$XDG_DATA_HOME/texmf"
 export TEXMFVAR="$XDG_CACHE_HOME/texlive/texmf-var"
 export TEXMFCONFIG="$XDG_CONFIG_HOME/texlive/texmf-config"
@@ -34,8 +41,8 @@ esac
 # pnpm
 export PNPM_HOME="{{ .chezmoi.homeDir }}/.local/share/pnpm"
 case ":$PATH:" in
-    *":$PNPM_HOME:"*) ;;
-    *) export PATH="$PNPM_HOME:$PATH" ;;
+    *":$PNPM_HOME/bin:"*) ;;
+    *) export PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
 
