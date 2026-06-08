@@ -9,7 +9,10 @@ if ((${#args[@]} >= 2)); then
 
     for path_index in "$old_path_index" "$new_path_index"; do
         path=${args[$path_index]}
-        if [[ $path != /dev/null && ! -e $path ]]; then
+        if [[ -d $path ]]; then
+            exit 0
+        fi
+        if [[ ! -e $path ]]; then
             args[$path_index]=/dev/null
         fi
     done
