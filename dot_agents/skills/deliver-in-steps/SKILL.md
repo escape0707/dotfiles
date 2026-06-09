@@ -1,6 +1,6 @@
 ---
 name: deliver-in-steps
-description: Enforce a review-gated implementation workflow for coding tasks. Use when the user wants work broken into small reviewable commit-sized steps, asks for a plan before implementation, wants PLAN.md tracking for large changes or new projects, wants pauses for LGTM between steps, or explicitly says to take the fast route while still keeping the work structured.
+description: Only use this skill when user specificlly invoked it.
 ---
 
 # Deliver In Steps
