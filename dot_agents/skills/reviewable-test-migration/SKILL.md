@@ -1,6 +1,6 @@
 ---
 name: reviewable-test-migration
-description: Use when a completed test migration, test-file move, or large test rewrite needs to be reshaped into reviewable commits and reviewed with diff tools; especially when the user asks to split noise from meaningful changes, compare old and new test files, preserve final HEAD content, or review migration hunks one at a time.
+description: Only use this skill when the user specifically invoked it.
 ---
 
 # Reviewable Test Migration
@@ -46,6 +46,8 @@ Turn a hard-to-review test migration into a sequence where each commit has one r
      `git diff --anchored='    def test_'`
    - Once wrapping/rename/reorder noise is isolated, use difftastic:
      `DFT_GRAPH_LIMIT=100000000 git ddiff ...`
+   - When a commit series is rewritten for review, use `git range-diff` to compare the old and new series and explain whether the durable story changed.
+   - When two commits should be patch-equivalent despite metadata or rebasing differences, use `git patch-id --stable` to compare stable patch IDs.
 
 5. During final review, walk only the final squashed surface unless the user asks about internal commits.
    - Quote the relevant old hunk and new hunk.
