@@ -38,7 +38,7 @@ prefix_rule(
 )
 
 # Allow some easily reversible Git mutative operations.
-prefix_rule(pattern=["git", ["add", "apply", "branch", "checkout", "cherry-pick", "commit", "fetch", "merge", "mv", "rebase", "restore", "rm", "switch"]], decision="allow")
+prefix_rule(pattern=["git", ["add", "apply", "branch", "checkout", "cherry-pick", "clone", "commit", "fetch", "merge", "mv", "rebase", "restore", "rm", "switch"]], decision="allow")
 prefix_rule(pattern=["git", "-c", "core.editor=true", ["cherry-pick", "rebase"]], decision="allow")
 prefix_rule(pattern=["git", "stash", ["branch", "create", "export", "list", "push", "show", "store"]], decision="allow")
 

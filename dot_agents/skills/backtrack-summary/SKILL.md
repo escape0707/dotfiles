@@ -1,6 +1,6 @@
 ---
 name: backtrack-summary
-description: Summarize the chain of problems, decisions, fixes, and remaining state that led a long thread to its current point. Use when the user asks to backtrack, recap how we got here, summarize the chain of problems, recover context after finishing a subtask, or explain the causal path across debugging, setup, CI, GitHub, environment, or code-investigation work.
+description: Only use this skill when user explicitly specified it.
 ---
 
 # Backtrack Summary

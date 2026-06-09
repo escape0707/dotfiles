@@ -57,9 +57,6 @@ writable_roots = [
 sandbox = "elevated"
 {{- end }}
 
-[projects.'{{ $workspacesDir }}']
-trust_level = "trusted"
-
 [tui]
 status_line = ["model-with-reasoning", "context-remaining", "current-dir", "total-input-tokens", "total-output-tokens", "git-branch", "five-hour-limit", "weekly-limit"]
 session_picker_view = "comfortable"
