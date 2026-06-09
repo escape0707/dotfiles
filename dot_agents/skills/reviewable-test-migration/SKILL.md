@@ -16,6 +16,8 @@ Turn a hard-to-review test migration into a sequence where each commit has one r
 - make the meaningful transformation easy to inspect with `git diff`, `git ddiff`, and difftastic
 - support hunk-by-hunk explanation as a coworker during review
 
+The finish line is not just a correct migrated test file. The finish line is a reviewable PR boundary and commit history. Recommended review commands should be run by Codex before handoff, and their output should be checked for simplicity; if the output is still noisy, continue reshaping mechanical commits or suggest a better command.
+
 ## Workflow
 
 1. Identify the old source file, final migrated file, and review base.
@@ -36,6 +38,7 @@ Turn a hard-to-review test migration into a sequence where each commit has one r
    - For reorders:
      `git diff --color-moved=blocks --color-moved-ws=ignore-all-space A..B -- path/to/file.py`
    - For function/test-name set checks, prefer existing shell tools such as `rg`, `sort`, `diff`, and `comm` over custom scripts.
+   - Actually run the proposed review commands and inspect the output before presenting them. Do not recommend commands blindly.
 
 4. Choose diff tools by the kind of noise.
    - Word-level renames or `self` additions:
