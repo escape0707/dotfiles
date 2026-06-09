@@ -24,6 +24,7 @@ ctx7 docs [options] <libraryId> "<query>"  Query documentation for a library
 - Python: `uv`, `ruff`, `pyrefly`.
 - Markdown: VS Code `markdownlint` and `markdownlint-cli2`.
 - Prefer modern CLI tools: `rg` over `grep`, `fd` over `find`, `jq`, and `gh`. If missing, stop and tell me to install them.
+- When a file operation is clearly a copy or restore, use `cp` instead of recreating the file with `apply_patch`.
 
 ## Approval Prompts Reviewability
 
