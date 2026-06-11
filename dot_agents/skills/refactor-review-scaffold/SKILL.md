@@ -37,8 +37,10 @@ The finish line is not just a correct migrated file. The finish line is a review
      1. `content_upgrade_old` and `content_upgrade_new`: make the meaningful content changes while blocks are still anchored on their own side.
      2. `rename_old` and `rename_new`: normalize names on both sides to improve alignment. Verify this is rename-only.
      3. `move_blocks_from_old_to_new`: move or reorder the prepared blocks from old to new. Verify this is move-only.
+     4. `remove_old_duplicates`: if a logical hunk already existed on both sides, remove the old-side duplicate only after the move commit. Verify this is deletion-only.
+   - If an atomic hunk exists in both old and new files, preserve one identical final version on both sides through the move commit. Do not hide duplicate removal in the content-upgrade or move commit.
    - Keep the meaningful content-upgrade commit small enough to review with difftastic.
-   - Review scaffolding commits may be non-runnable if their claim is honest and mechanically verifiable. The final result commit/state is what must be runnable and tested.
+   - Review scaffolding commits may be non-runnable and may bypass pre-commit hooks if their claim is honest and mechanically verifiable. Their syntax only needs to be good enough for the chosen review tools such as difftastic/tree-sitter. The final result commit/state is what must be runnable and tested.
    - Each review commit should make one clear claim and include the intended review command in the commit message when useful.
 
 4. Verify mechanical commits with simple tools before asking the user to trust them.
@@ -50,6 +52,9 @@ The finish line is not just a correct migrated file. The finish line is a review
      `git diff --color-moved=blocks --color-moved-ws=ignore-all-space A..B -- path/to/file.py`
    - For cross-file block moves:
      `git diff --color-moved=blocks --color-moved-ws=ignore-all-space A..B -- old/path.py new/path.py`
+   - For duplicate cleanup:
+     `git diff --color-moved=no A..B -- old/path.py new/path.py`
+     Expect only removed duplicate blocks from the old side.
    - For function/test-name set checks, prefer existing shell tools such as `rg`, `sort`, `diff`, and `comm` over custom scripts.
    - Actually run the proposed review commands and inspect the output before presenting them. Do not recommend commands blindly.
 
