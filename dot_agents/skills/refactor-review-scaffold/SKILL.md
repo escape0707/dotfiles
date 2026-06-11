@@ -40,10 +40,14 @@ The finish line is not just a correct migrated file. The finish line is a review
      4. `remove_old_duplicates`: if a logical hunk already existed on both sides, remove the old-side duplicate only after the move commit. Verify this is deletion-only.
    - If an atomic hunk exists in both old and new files, preserve one identical final version on both sides through the move commit. Do not hide duplicate removal in the content-upgrade or move commit.
    - Keep the meaningful content-upgrade commit small enough to review with difftastic.
+   - For the content-upgrade commit, make difftastic clarity the primary review bar. If `git ddiff` is noisy, improve the scaffold where practical before falling back to plain `git diff`.
    - Review scaffolding commits may be non-runnable and may bypass pre-commit hooks if their claim is honest and mechanically verifiable. Their syntax only needs to be good enough for the chosen review tools such as difftastic/tree-sitter. The final result commit/state is what must be runnable and tested.
    - Each review commit should make one clear claim and include the intended review command in the commit message when useful.
 
 4. Verify mechanical commits with simple tools before asking the user to trust them.
+   - For content-upgrade commits:
+     `DFT_GRAPH_LIMIT=100000000 git ddiff A..B -- old/path.py new/path.py`
+     Use this as the primary review command; use `git diff --anchored='    def test_'` only as a fallback or companion view when difftastic still needs help.
    - For restore commits:
      `git diff --quiet BEFORE_REVIEW_COMMITS HEAD -- path/to/file.py`
    - For rename-only commits:
@@ -74,6 +78,7 @@ The finish line is not just a correct migrated file. The finish line is a review
    - Quote the relevant old hunk and new hunk.
    - Explain what behavior is preserved, strengthened, or intentionally added.
    - When reviewing a migrated test file, also quote the corresponding old test when applicable.
+   - Include the `git ddiff` command for the content-upgrade commit in the final handoff.
    - Stop after one logical hunk and wait for `next`.
 
 ## Test Migration Heuristics
