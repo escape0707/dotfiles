@@ -1,4 +1,5 @@
 {{- /* chezmoi:modify-template */ -}}
+{{- $isTermux := eq .chezmoi.os "android" -}}
 {{- $isLinux := eq .chezmoi.os "linux" -}}
 {{- $isWindows := eq .chezmoi.os "windows" -}}
 {{- $windowsLocalAppData := "" -}}
@@ -18,12 +19,17 @@ model = "gpt-5.5"
 model_reasoning_effort = "high"
 personality = "pragmatic"
 web_search = "live"
+{{- if $isTermux }}
+sandbox_mode = "danger-full-access"
+{{- else }}
 sandbox_mode = "workspace-write"
+{{- end }}
 approvals_reviewer = "user"
 check_for_update_on_startup = false
 
 [sandbox_workspace_write]
 network_access = true
+{{- if not $isTermux }}
 writable_roots = [
     '{{ .chezmoi.sourceDir }}',
 {{- if $isWindows }}
@@ -51,6 +57,7 @@ writable_roots = [
     "~/go",
 {{- end }}
 ]
+{{- end }}
 
 {{- if $isWindows }}
 [windows]
@@ -58,8 +65,16 @@ sandbox = "elevated"
 {{- end }}
 
 [tui]
+{{- if $isTermux }}
+status_line = ["model-with-reasoning", "context-remaining", "weekly-limit"]
+{{- else }}
 status_line = ["model-with-reasoning", "context-remaining", "current-dir", "total-input-tokens", "total-output-tokens", "git-branch", "five-hour-limit", "weekly-limit"]
+{{- end }}
 session_picker_view = "comfortable"
+{{- if $isTermux }}
+notification_method = "bel"
+notification_condition = "always"
+{{- end }}
 
 {{ $marker }}
 {{- if $tail }}

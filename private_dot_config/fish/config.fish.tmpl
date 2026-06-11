@@ -7,8 +7,6 @@
 {{- if eq $machineForm "headed" -}}{{- $isHeaded = true -}}{{- end -}}
 {{- $isHeadless := not $isHeaded -}}
 if status is-interactive
-    source /usr/share/doc/pkgfile/command-not-found.fish
-
     abbr --add cmcd 'cd $XDG_DATA_HOME/chezmoi'
     abbr --add enven 'env LANG=en_US.UTF-8 LANGUAGE=en_US'
     abbr --add less 'less -R'

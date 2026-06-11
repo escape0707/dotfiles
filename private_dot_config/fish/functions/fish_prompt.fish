@@ -1,4 +1,4 @@
-source /usr/share/fish/functions/fish_prompt.fish
+source $__fish_data_dir/functions/fish_prompt.fish
 functions --erase __fish_prompt_default
 functions --copy fish_prompt __fish_prompt_default
 
