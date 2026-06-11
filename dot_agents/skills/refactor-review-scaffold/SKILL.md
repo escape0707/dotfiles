@@ -1,22 +1,24 @@
 ---
-name: reviewable-test-migration
+name: refactor-review-scaffold
 description: Only use this skill when the user specifically invoked it.
 ---
 
-# Reviewable Test Migration
+# Refactor Review Scaffold
 
 Use this after the implementation has reached a working final state and the user wants the migration made reviewable. Do not over-constrain the initial implementation with this workflow unless the user asks up front.
 
+Although this skill is named for test migration, the workflow applies to complex migrations, rewrites, and refactors where the final diff mixes meaningful changes with mechanical noise.
+
 ## Goal
 
-Turn a hard-to-review test migration into a sequence where each commit has one review purpose:
+Turn a hard-to-review migration into a sequence where each commit has one review purpose:
 
 - isolate mechanical noise such as wrapping, unwrapping, renaming, moving, or reordering
 - preserve the final desired file content
 - make the meaningful transformation easy to inspect with `git diff`, `git ddiff`, and difftastic
 - support hunk-by-hunk explanation as a coworker during review
 
-The finish line is not just a correct migrated test file. The finish line is a reviewable PR boundary and commit history. Recommended review commands should be run by Codex before handoff, and their output should be checked for simplicity; if the output is still noisy, continue reshaping mechanical commits or suggest a better command.
+The finish line is not just a correct migrated file. The finish line is a reviewable PR boundary and commit history. Recommended review commands should be run by Codex before handoff, and their output should be checked for simplicity; if the output is still noisy, continue reshaping mechanical commits or suggest a better command.
 
 ## Workflow
 
@@ -25,22 +27,33 @@ The finish line is not just a correct migrated test file. The finish line is a r
    - For file-to-file migration review, compare exact blobs when path changes:
      `git ddiff OLDREV:path/to/old.py NEWREV:path/to/new.py`.
 
-2. Build review commits only after the final implementation is correct.
-   - Use small commits for mechanical changes: class wrapping, file rename, function rename, reordering, formatting-only shape changes.
-   - Put semantic migration or behavior changes in a separate commit.
-   - If a review-only rename improves alignment, add one commit that renames tests to old counterpart names, then another commit that restores final names. Verify the restored HEAD is byte-identical to the intended final content.
+2. Let the agent implement freely first.
+   - Solve the task end to end before optimizing the diff shape.
+   - Verify the final implementation with the relevant tests, type checks, and linters.
+   - Treat this final state as the behavior-pinned target that review scaffolding must preserve.
 
-3. Verify mechanical commits with simple tools before asking the user to trust them.
+3. Rebuild review commits only after the final implementation is correct.
+   - Prefer this structure for old-to-new migrations:
+     1. `content_upgrade_old` and `content_upgrade_new`: make the meaningful content changes while blocks are still anchored on their own side.
+     2. `rename_old` and `rename_new`: normalize names on both sides to improve alignment. Verify this is rename-only.
+     3. `move_blocks_from_old_to_new`: move or reorder the prepared blocks from old to new. Verify this is move-only.
+   - Keep the meaningful content-upgrade commit small enough to review with difftastic.
+   - Review scaffolding commits may be non-runnable if their claim is honest and mechanically verifiable. The final result commit/state is what must be runnable and tested.
+   - Each review commit should make one clear claim and include the intended review command in the commit message when useful.
+
+4. Verify mechanical commits with simple tools before asking the user to trust them.
    - For restore commits:
      `git diff --quiet BEFORE_REVIEW_COMMITS HEAD -- path/to/file.py`
    - For rename-only commits:
      `git diff --color-words='[A-Za-z_][A-Za-z0-9_]*|[^[:space:]]' A..B -- path/to/file.py`
-   - For reorders:
+   - For reorders and same-file block moves:
      `git diff --color-moved=blocks --color-moved-ws=ignore-all-space A..B -- path/to/file.py`
+   - For cross-file block moves:
+     `git diff --color-moved=blocks --color-moved-ws=ignore-all-space A..B -- old/path.py new/path.py`
    - For function/test-name set checks, prefer existing shell tools such as `rg`, `sort`, `diff`, and `comm` over custom scripts.
    - Actually run the proposed review commands and inspect the output before presenting them. Do not recommend commands blindly.
 
-4. Choose diff tools by the kind of noise.
+5. Choose diff tools by the kind of noise.
    - Word-level renames or `self` additions:
      `git diff --color-words='[A-Za-z_][A-Za-z0-9_]*|[^[:space:]]'`
    - Moved blocks:
@@ -52,7 +65,7 @@ The finish line is not just a correct migrated test file. The finish line is a r
    - When a commit series is rewritten for review, use `git range-diff` to compare the old and new series and explain whether the durable story changed.
    - When two commits should be patch-equivalent despite metadata or rebasing differences, use `git patch-id --stable` to compare stable patch IDs.
 
-5. During final review, walk only the final squashed surface unless the user asks about internal commits.
+6. During final review, walk only the final squashed surface unless the user asks about internal commits.
    - Quote the relevant old hunk and new hunk.
    - Explain what behavior is preserved, strengthened, or intentionally added.
    - When reviewing a migrated test file, also quote the corresponding old test when applicable.
