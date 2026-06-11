@@ -41,6 +41,7 @@ The finish line is not just a correct migrated file. The finish line is a review
    - If an atomic hunk exists in both old and new files, preserve one identical final version on both sides through the move commit. Do not hide duplicate removal in the content-upgrade or move commit.
    - Keep the meaningful content-upgrade commit small enough to review with difftastic.
    - For the content-upgrade commit, make difftastic clarity the primary review bar. If `git ddiff` is noisy, improve the scaffold where practical before falling back to plain `git diff`.
+   - Preserve parseable source structure during content-upgrade scaffolds when practical. Prefer upgrading tests inside the old file's existing module/class wrapper over replacing the old file with a dangling snippet, because difftastic aligns full syntax trees much better.
    - Review scaffolding commits may be non-runnable and may bypass pre-commit hooks if their claim is honest and mechanically verifiable. Their syntax only needs to be good enough for the chosen review tools such as difftastic/tree-sitter. The final result commit/state is what must be runnable and tested.
    - Each review commit should make one clear claim and include the intended review command in the commit message when useful.
 
