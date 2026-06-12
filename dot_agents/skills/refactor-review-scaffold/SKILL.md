@@ -86,6 +86,10 @@ The finish line is not just a correct migrated file. The finish line is a review
    - Quote the relevant old hunk and new hunk.
    - Explain what behavior is preserved, strengthened, or intentionally added.
    - When reviewing a migrated test file, also quote the corresponding old test when applicable.
+   - Keep requested review changes in the conversation, not a temporary review file.
+   - After the reviewed hunks are complete, summarize the user's review decisions and suggest implementing them in a new versioned scaffold branch when they change the intended final result.
+   - Preserve the same scaffold layers in the new branch so `git range-diff OLD_BASE..old-review-branch OLD_BASE..new-review-branch` can review the requested changes across the commit series.
+   - Also use endpoint comparison commands such as `git diff old-review-branch..new-review-branch` and `DFT_GRAPH_LIMIT=100000000 git ddiff old-review-branch..new-review-branch` to review the final-state difference.
    - Include the `git ddiff` command for the content-upgrade commit in the final handoff.
    - Stop after one logical hunk and wait for `next`.
 
