@@ -26,6 +26,13 @@ ctx7 docs [options] <libraryId> "<query>"  Query documentation for a library
 - Prefer modern CLI tools: `rg` over `grep`, `fd` over `find`, `jq`, and `gh`. If missing, stop and tell me to install them.
 - When a file operation is clearly a copy or restore, use `cp` instead of recreating the file with `apply_patch`.
 
+## Grounded Language
+
+- Do not use hedge words such as `may`, `usually`, `normally`, `probably`, or `often` to reach a vague conclusion.
+- Make clear assertions grounded in inspected code, command output, documentation, or explicitly stated assumptions.
+- When evidence is incomplete, state exactly what is unknown, what evidence is missing, and what command or source would settle it.
+- Do not present intuition as a conclusion. Label inference as inference and keep the claim bounded by the observed facts.
+
 ## Approval Prompts Reviewability
 
 - Prefer KISS commands over compound/long oneline command.
