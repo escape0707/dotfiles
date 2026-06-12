@@ -81,10 +81,12 @@ The finish line is not just a correct migrated file. The finish line is a review
      `DFT_GRAPH_LIMIT=100000000 git ddiff ...`
    - When a commit series is rewritten for review, use `git range-diff` to compare the old and new series and explain whether the durable story changed.
    - For versioned scaffold branches, print this command first:
-     `git range-diff --creation-factor=95 BASE..old-review-branch BASE..new-review-branch`.
+     `git range-diff --no-patch --creation-factor=95 old-review-branch...new-review-branch`.
+     The three-dot form lets Git use the merge base and keeps the command shorter when both scaffold branches share the same base.
    - Present `git range-diff` as a commit-level alignment tool:
      `=` means patch-equivalent commits, `!` means paired commits whose patch changed, `<` means an old-series commit was dropped, and `>` means a new-series commit was added.
-   - Explain that `range-diff` output is a diff of patch texts. In patch-text lines, the outer `+` or `-` belongs to `range-diff`, and the inner patch marker (`+`, `-`, or space) belongs to the commit diff being compared.
+   - Prefer `--no-patch` for the first pass. It gives the ideal scaffold map without noisy patch-text diffs.
+   - If patch output is requested, explain that `range-diff` output is a diff of patch texts. In patch-text lines, the outer `+` or `-` belongs to `range-diff`, and the inner patch marker (`+`, `-`, or space) belongs to the commit diff being compared.
    - Do not use `range-diff` as the main code-review view for a changed `!` commit. After it identifies the changed layer, print direct review commands for the changed layer and endpoint:
      `DFT_GRAPH_LIMIT=100000000 git ddiff OLD_LAYER..NEW_LAYER -- paths...`
      `DFT_GRAPH_LIMIT=100000000 git ddiff NEW_LAYER^..NEW_LAYER -- paths...`
@@ -97,9 +99,9 @@ The finish line is not just a correct migrated file. The finish line is a review
    - When reviewing a migrated test file, also quote the corresponding old test when applicable.
    - Keep requested review changes in the conversation, not a temporary review file.
    - After the reviewed hunks are complete, summarize the user's review decisions and suggest implementing them in a new versioned scaffold branch when they change the intended final result.
-   - Preserve the same scaffold layers in the new branch so `git range-diff OLD_BASE..old-review-branch OLD_BASE..new-review-branch` can review the requested changes across the commit series.
+   - Preserve the same scaffold layers in the new branch so `git range-diff --no-patch --creation-factor=95 old-review-branch...new-review-branch` can review the requested changes across the commit series.
    - Also use endpoint comparison commands such as `git diff old-review-branch..new-review-branch` and `DFT_GRAPH_LIMIT=100000000 git ddiff old-review-branch..new-review-branch` to review the final-state difference.
-   - In the handoff, include a short usage prompt: use `range-diff` to find which scaffold commits changed; for each `!` commit, use `git ddiff OLD_LAYER..NEW_LAYER` to compare the corresponding layer endpoints and `git ddiff NEW_LAYER^..NEW_LAYER` to review the new layer itself.
+   - In the handoff, include a short usage prompt: use no-patch three-dot `range-diff` to find which scaffold commits changed; for each `!` commit, use `git ddiff OLD_LAYER..NEW_LAYER` to compare the corresponding layer endpoints and `git ddiff NEW_LAYER^..NEW_LAYER` to review the new layer itself; use tip `git ddiff old-review-branch new-review-branch` to review the final result difference.
    - Include the `git ddiff` command for the content-upgrade commit in the final handoff.
    - Stop after one logical hunk and wait for `next`.
 
