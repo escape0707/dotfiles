@@ -1,1 +1,4 @@
-{{ get . "gitUserEmail" }} {{ get . "gitSigningPublicKey" }} {{ get . "gitSigningPublicKeyComment" }}
+{{- $gitUserEmail := get . "gitUserEmail" -}}
+{{- range (get . "gitSigningPublicKeys") }}
+{{- $gitUserEmail }} {{ .key }}{{ with .comment }} {{ . }}{{ end }}
+{{ end -}}
