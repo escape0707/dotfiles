@@ -1,4 +1,4 @@
-function update-codex --description 'Install/update Codex for native Termux'
+function termux-update-codex --description 'Install/update Codex for native Termux'
     set -l v $argv[1]
     test -n "$v"; or set v (pnpm view @openai/codex version)
 
