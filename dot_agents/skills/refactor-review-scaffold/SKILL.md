@@ -34,10 +34,13 @@ The finish line is not just a correct migrated file. The finish line is a review
 
 3. Rebuild review commits only after the final implementation is correct.
    - Prefer this structure for old-to-new migrations:
-     1. `content_upgrade_old` and `content_upgrade_new`: make the meaningful content changes while blocks are still anchored on their own side.
-     2. `rename_old` and `rename_new`: normalize names on both sides to improve alignment. Verify this is rename-only.
-     3. `move_blocks_from_old_to_new`: move or reorder the prepared blocks from old to new. Verify this is move-only.
-     4. `remove_old_duplicates`: if a logical hunk already existed on both sides, remove the old-side duplicate only after the move commit. Verify this is deletion-only.
+     1. `static_tool_conformance_old` and `static_tool_conformance_new`: make only formatter, linter, import-order, and type-checker conformance changes on both sides. Verify this is mechanical.
+     2. `content_upgrade_old` and `content_upgrade_new`: make the meaningful content changes while blocks are still anchored on their own side.
+     3. `rename_old` and `rename_new`: normalize names on both sides to improve alignment. Verify this is rename-only.
+     4. `move_blocks_from_old_to_new`: move or reorder the prepared blocks from old to new. Verify this is move-only.
+     5. `remove_old_duplicates`: if a logical hunk already existed on both sides, remove the old-side duplicate only after the move commit. Verify this is deletion-only.
+   - Static tool conformance changes include `-> None`, mock/fixture annotations, import sorting/removal, formatter wrapping, replacing broad test-helper annotations with precise test-local shapes, and type-only casts when they have no runtime behavior effect.
+   - Do not put assertion changes, fixture behavior changes, mock return behavior changes, service call changes, input value changes, or coverage changes in the static conformance commit. Those belong in the content-upgrade commit.
    - If an atomic hunk exists in both old and new files, preserve one identical final version on both sides through the move commit. Do not hide duplicate removal in the content-upgrade or move commit.
    - Keep the meaningful content-upgrade commit small enough to review with difftastic.
    - For the content-upgrade commit, make difftastic clarity the primary review bar. If `git ddiff` is noisy, improve the scaffold where practical before falling back to plain `git diff`.
@@ -49,6 +52,10 @@ The finish line is not just a correct migrated file. The finish line is a review
    - For content-upgrade commits:
      `DFT_GRAPH_LIMIT=100000000 git ddiff A..B -- old/path.py new/path.py`
      Use this as the primary review command; use `git diff --anchored='    def test_'` only as a fallback or companion view when difftastic still needs help.
+   - For static tool conformance commits:
+     `DFT_GRAPH_LIMIT=100000000 git ddiff A..B -- old/path.py new/path.py`
+     `git diff --color-words='[A-Za-z_][A-Za-z0-9_]*|[^[:space:]]' A..B -- old/path.py new/path.py`
+     Expect only annotation, import, wrapping, formatter, and type-helper noise.
    - For restore commits:
      `git diff --quiet BEFORE_REVIEW_COMMITS HEAD -- path/to/file.py`
    - For rename-only commits:
