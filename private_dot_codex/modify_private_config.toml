@@ -13,7 +13,7 @@
 {{- $tail := "" -}}
 {{- $parts := splitList $marker .chezmoi.stdin -}}
 {{- if gt (len $parts) 1 -}}
-{{-   $tail = (index $parts 1 | trimPrefix "\n") -}}
+{{-   $tail = (index $parts 1 | trim) -}}
 {{- end -}}
 model = "gpt-5.5"
 model_reasoning_effort = "high"
@@ -78,5 +78,5 @@ notification_condition = "always"
 
 {{ $marker }}
 {{- if $tail }}
-{{ $tail -}}
+{{ $tail }}
 {{- end }}
