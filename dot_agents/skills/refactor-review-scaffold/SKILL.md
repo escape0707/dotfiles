@@ -9,28 +9,28 @@ Use after an implementation is working and the user wants a migration, rewrite, 
 
 ## Goal
 
-Rewrite the branch into a reviewable commit series without changing the final tested behavior.
+Branch off a branch and rewrite into a reviewable commit series review branch without changing the final tested behavior.
 
 Each scaffold commit must make one clear claim, and that claim must be mechanically checkable with the review command for that layer.
 
 ## Workflow
 
 1. Start from an implementation that is already intended to be final.
-2. Verify the current implementation before scaffolding.
-3. Treat the verified final tree as the endpoint to preserve.
-4. Identify the review base, original verified endpoint, and paths involved in the migration or refactor.
-5. Classify each logical hunk by where it exists at the review base, before migration edits:
+2. Treat the final tree as the endpoint to preserve.
+3. Classify each logical hunk by where it exists at the review base, before migration edits:
    - `left-only`: exists only in one compared file or location.
    - `right-only`: exists only in the other compared file or location.
    - `base duplicate`: the same-content hunk already exists in both compared files or locations.
    - `same-purpose base pair`: both compared files or locations have hunks serving the same purpose, but their text differs.
-6. Rebuild the branch using the five commit layers below, in order.
-7. Verify each scaffold commit with the review command for that layer. The output must match the layer claim: mechanical layers show only mechanical changes, content layers show only meaningful anchored upgrades, movement layers show only moved or reordered blocks, and dedup layers show only deduplication.
-8. Verify the final scaffold tip is runnable, tested, and identical to the original verified endpoint.
+4. Rebuild the branch using the five commit layers below, in order.
+5. Verify each scaffold commit with the review command for that layer. The output must match the layer claim: mechanical layers show only mechanical changes, content layers show only meaningful anchored upgrades, movement layers show only moved or reordered blocks, and dedup layers show only deduplication.
+6. Verify the final scaffold tip is identical to the original endpoint.
 
 ## Commit Layers
 
 Build the scaffold in these five layers, in this order. Each layer keeps its stated purpose. If a layer has no hunks, record that it was intentionally empty/skipped in the handoff instead of mixing its purpose into another layer.
+
+Review scaffold commits are allowed to be non-runnable if their claim is honest and mechanically verifiable. The final tip must be identical to the original endpoint.
 
 1. `static_tool_conformance_*`
 
@@ -61,8 +61,6 @@ Build the scaffold in these five layers, in this order. Each layer keeps its sta
    Deduplication goes exclusively here unless separating it is practically impossible. This layer is strictly deduplication-only. Obsolete hunk removal belongs exclusively in `content_upgrade_*`.
 
    Verify with normal deletion diff plus cross-file endpoint diffs.
-
-Review scaffold commits are allowed to be non-runnable if their claim is honest and mechanically verifiable. The final tip must be runnable, tested, and identical to the original verified endpoint.
 
 ## Verification Commands
 
@@ -117,6 +115,6 @@ Report:
 - intentionally empty/skipped layers
 - test/lint commands run
 - endpoint preservation result
-- final review surface command
-- every layer review command needed to inspect the scaffold
 - range-diff command for comparing scaffold versions
+- every layer review command needed to inspect the scaffold
+- final review surface command
