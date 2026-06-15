@@ -5,132 +5,118 @@ description: Only use this skill when the user specifically invoked it.
 
 # Refactor Review Scaffold
 
-Use this after the implementation has reached a working final state and the user wants the migration made reviewable. Do not over-constrain the initial implementation with this workflow unless the user asks up front.
-
-Although this skill is named for test migration, the workflow applies to complex migrations, rewrites, and refactors where the final diff mixes meaningful changes with mechanical noise.
+Use after an implementation is working and the user wants a migration, rewrite, or refactor made easier to review.
 
 ## Goal
 
-Turn a hard-to-review migration into a sequence where each commit has one review purpose:
+Rewrite the branch into a reviewable commit series without changing the final tested behavior.
 
-- isolate mechanical noise such as wrapping, unwrapping, renaming, moving, or reordering
-- preserve the final desired file content
-- make the meaningful transformation easy to inspect with `git diff`, `git ddiff`, and difftastic
-- support hunk-by-hunk explanation as a coworker during review
-
-The finish line is not just a correct migrated file. The finish line is a reviewable PR boundary and commit history. Recommended review commands should be run by Codex before handoff, and their output should be checked for simplicity; if the output is still noisy, continue reshaping mechanical commits or suggest a better command.
+Each scaffold commit must make one clear claim, and that claim must be mechanically checkable with the review command for that layer.
 
 ## Workflow
 
-1. Identify the old source file, final migrated file, and review base.
-   - Prefer final review from `git diff upstream/main...HEAD`.
-   - For file-to-file migration review, compare exact blobs when path changes:
-     `git ddiff OLDREV:path/to/old.py NEWREV:path/to/new.py`.
+1. Start from an implementation that is already intended to be final.
+2. Verify the current implementation before scaffolding.
+3. Treat the verified final tree as the endpoint to preserve.
+4. Identify the review base, original verified endpoint, and paths involved in the migration or refactor.
+5. Classify each logical hunk by where it exists at the review base, before migration edits:
+   - `left-only`: exists only in one compared file or location.
+   - `right-only`: exists only in the other compared file or location.
+   - `base duplicate`: the same-content hunk already exists in both compared files or locations.
+   - `same-purpose base pair`: both compared files or locations have hunks serving the same purpose, but their text differs.
+6. Rebuild the branch using the five commit layers below, in order.
+7. Verify each scaffold commit with the review command for that layer. The output must match the layer claim: mechanical layers show only mechanical changes, content layers show only meaningful anchored upgrades, movement layers show only moved or reordered blocks, and dedup layers show only deduplication.
+8. Verify the final scaffold tip is runnable, tested, and identical to the original verified endpoint.
 
-2. Let the agent implement freely first.
-   - Solve the task end to end before optimizing the diff shape.
-   - Verify the final implementation with the relevant tests, type checks, and linters.
-   - Treat this final state as the behavior-pinned target that review scaffolding must preserve.
+## Commit Layers
 
-3. Rebuild review commits only after the final implementation is correct.
-   - Before shaping commits, classify each logical hunk by its review-base state:
-     - Old-only: exists only in the old/source file at the review base.
-     - New-only: exists only in the new/destination file at the review base.
-     - Base duplicate: the same logical hunk already exists in both old and new files at the review base.
-     - Same-purpose base pair: both files already have a hunk serving the same purpose, but with different text.
-   - Do not create a copy/add layer. Do not manufacture duplicates solely for scaffolding.
-   - Upgrade old-only hunks only in the old file, then move them old-to-new in one `color-moved` commit.
-   - Upgrade new-only hunks only in the new file; they do not participate in the move layer.
-   - For same-purpose base pairs, upgrade both sides to identical content in the content-upgrade layer, skip that
-     hunk during the move layer, and remove the unwanted duplicate in the dedup layer.
-   - For exact base duplicates, skip the move layer and remove the unwanted duplicate in the dedup layer.
-   - Prefer this structure for old-to-new migrations:
-     1. `static_tool_conformance_old` and `static_tool_conformance_new`: make only formatter, linter, import-order, and type-checker conformance changes on both sides. Verify this is mechanical.
-     2. `content_upgrade_old` and `content_upgrade_new`: make the meaningful content changes while blocks are still anchored on their own side.
-     3. `rename_old` and `rename_new`: normalize names on both sides to improve alignment. Verify this is rename-only.
-     4. `move_blocks_from_old_to_new`: move old-only prepared blocks from old to new. Verify this is move-only:
-        removed from old and added to new in the same commit.
-     5. `remove_old_duplicates`: for base duplicates or same-purpose base pairs only, remove the unwanted duplicate
-        after the move commit. Verify this is deletion-only.
-   - Static tool conformance changes include `-> None`, mock/fixture annotations, import sorting/removal, formatter wrapping, replacing broad test-helper annotations with precise test-local shapes, and type-only casts when they have no runtime behavior effect.
-   - Do not put assertion changes, fixture behavior changes, mock return behavior changes, service call changes, input value changes, or coverage changes in the static conformance commit. Those belong in the content-upgrade commit.
-   - If an atomic hunk exists in both old and new files at the review base, preserve one identical final version on
-     both sides through the move commit. Do not hide duplicate removal in the content-upgrade or move commit.
-   - Keep the meaningful content-upgrade commit small enough to review with difftastic.
-   - For the content-upgrade commit, make difftastic clarity the primary review bar. If `git ddiff` is noisy, improve the scaffold where practical before falling back to plain `git diff`.
-   - Preserve parseable source structure during content-upgrade scaffolds when practical. Prefer upgrading tests inside the old file's existing module/class wrapper over replacing the old file with a dangling snippet, because difftastic aligns full syntax trees much better.
-   - Review scaffolding commits may be non-runnable and may bypass pre-commit hooks if their claim is honest and mechanically verifiable. Their syntax only needs to be good enough for the chosen review tools such as difftastic/tree-sitter. The final result commit/state is what must be runnable and tested.
-   - Each review commit should make one clear claim and include the intended review command in the commit message when useful.
+Build the scaffold in these five layers, in this order. Each layer keeps its stated purpose. If a layer has no hunks, record that it was intentionally empty/skipped in the handoff instead of mixing its purpose into another layer.
 
-4. Verify mechanical commits with simple tools before asking the user to trust them.
-   - For content-upgrade commits:
-     `DFT_GRAPH_LIMIT=100000000 git ddiff A..B -- old/path.py new/path.py`
-     Use this as the primary review command; use `git diff --anchored='    def test_'` only as a fallback or companion view when difftastic still needs help.
-   - For static tool conformance commits:
-     `DFT_GRAPH_LIMIT=100000000 git ddiff A..B -- old/path.py new/path.py`
-     `git diff --color-words='[A-Za-z_][A-Za-z0-9_]*|[^[:space:]]' A..B -- old/path.py new/path.py`
-     Expect only annotation, import, wrapping, formatter, and type-helper noise.
-   - For restore commits:
-     `git diff --quiet BEFORE_REVIEW_COMMITS HEAD -- path/to/file.py`
-   - For rename-only commits:
-     `git diff --color-words='[A-Za-z_][A-Za-z0-9_]*|[^[:space:]]' A..B -- path/to/file.py`
-   - For reorders and same-file block moves:
-     `git diff --color-moved=blocks --color-moved-ws=ignore-all-space A..B -- path/to/file.py`
-   - For cross-file block moves:
-     `git diff --color-moved=blocks --color-moved-ws=ignore-all-space A..B -- old/path.py new/path.py`
-     Expect old-only hunks to be deleted from the old file and added to the new file in this same commit.
-   - For duplicate cleanup:
-     `git diff --color-moved=no A..B -- old/path.py new/path.py`
-     Expect only removed duplicate blocks that already existed on both sides at the review base.
-   - For function/test-name set checks, prefer existing shell tools such as `rg`, `sort`, `diff`, and `comm` over custom scripts.
-   - Actually run the proposed review commands and inspect the output before presenting them. Do not recommend commands blindly.
+1. `static_tool_conformance_*`
 
-5. Choose diff tools by the kind of noise.
-   - Word-level renames or `self` additions:
-     `git diff --color-words='[A-Za-z_][A-Za-z0-9_]*|[^[:space:]]'`
-   - Moved blocks:
-     `git diff --color-moved=blocks --color-moved-ws=ignore-all-space`
-   - Large test files where test definitions anchor review:
-     `git diff --anchored='    def test_'`
-   - Once wrapping/rename/reorder noise is isolated, use difftastic:
-     `DFT_GRAPH_LIMIT=100000000 git ddiff ...`
-   - When a commit series is rewritten for review, use `git range-diff` to compare the old and new series and explain whether the durable story changed.
-   - For versioned scaffold branches, print this command first:
-     `git range-diff --no-patch --creation-factor=95 old-review-branch...new-review-branch`.
-     The three-dot form lets Git use the merge base and keeps the command shorter when both scaffold branches share the same base.
-   - Present `git range-diff` as a commit-level alignment tool:
-     `=` means patch-equivalent commits, `!` means paired commits whose patch changed, `<` means an old-series commit was dropped, and `>` means a new-series commit was added.
-   - Prefer `--no-patch` for the first pass. It gives the ideal scaffold map without noisy patch-text diffs.
-   - If patch output is requested, explain that `range-diff` output is a diff of patch texts. In patch-text lines, the outer `+` or `-` belongs to `range-diff`, and the inner patch marker (`+`, `-`, or space) belongs to the commit diff being compared.
-   - Do not use `range-diff` as the main code-review view for a changed `!` commit. After it identifies the changed layer, print direct review commands for the changed layer and endpoint:
-     `DFT_GRAPH_LIMIT=100000000 git ddiff OLD_LAYER..NEW_LAYER -- paths...`
-     `DFT_GRAPH_LIMIT=100000000 git ddiff NEW_LAYER^..NEW_LAYER -- paths...`
-     `DFT_GRAPH_LIMIT=100000000 git ddiff old-review-branch..new-review-branch -- paths...`
-   - When two commits should be patch-equivalent despite metadata or rebasing differences, use `git patch-id --stable` to compare stable patch IDs.
+   Static-tool and parseability-only changes go exclusively here unless separating them is practically impossible.
 
-6. During final review, walk only the final squashed surface unless the user asks about internal commits.
-   - Quote the relevant old hunk and new hunk.
-   - Explain what behavior is preserved, strengthened, or intentionally added.
-   - When reviewing a migrated test file, also quote the corresponding old test when applicable.
-   - Keep requested review changes in the conversation, not a temporary review file.
-   - After the reviewed hunks are complete, summarize the user's review decisions and suggest implementing them in a new versioned scaffold branch when they change the intended final result.
-   - Preserve the same scaffold layers in the new branch so `git range-diff --no-patch --creation-factor=95 old-review-branch...new-review-branch` can review the requested changes across the commit series.
-   - Also use endpoint comparison commands such as `git diff old-review-branch..new-review-branch` and `DFT_GRAPH_LIMIT=100000000 git ddiff old-review-branch..new-review-branch` to review the final-state difference.
-   - In the handoff, include a short usage prompt: use no-patch three-dot `range-diff` to find which scaffold commits changed; for each `!` commit, use `git ddiff OLD_LAYER..NEW_LAYER` to compare the corresponding layer endpoints and `git ddiff NEW_LAYER^..NEW_LAYER` to review the new layer itself; use tip `git ddiff old-review-branch new-review-branch` to review the final result difference.
-   - Include the `git ddiff` command for the content-upgrade commit in the final handoff.
-   - Stop after one logical hunk and wait for `next`.
+   Verify with word diff.
 
-## Test Migration Heuristics
+2. `content_upgrade_*`
 
-- One PR should finish one old test file migration, not necessarily one changed file.
-- Removing the old file is appropriate after the migrated coverage is present.
-- Some tests may stay in the old unit-test file if they are truly unit tests and do not need DB-backed behavior.
-- Prefer exact old setup values for migrated behavior tests unless there is a concrete reason to change them.
-- Prefer explicit IDs and scalar expected values owned by the test. Setup helpers should create state, not return ORM objects for assertions.
-- Verify persisted state through the public service/API under test when that is the intended contract.
+   Meaning-changing migration/refactor edits go exclusively here unless separating them is practically impossible. Upgrade each hunk where it exists at the review base. For `same-purpose base pair` hunks, upgrade both sides until the final intended content is identical on both sides. Remove obsolete review-base hunks here.
 
-## Do Not
+   Verify with difftastic.
 
-- Do not leave temporary review files in `/tmp` or the worktree when branch commits can make the review path clearer.
-- Do not use custom scripts when existing git/diff tools can verify the mechanical change clearly.
-- Do not rewrite or squash active work unless the user asks for history cleanup.
+3. `rename_*`
+
+   Name-only alignment goes exclusively here unless separating it is practically impossible. Behavior and structure changes stay out of this layer.
+
+   Verify with word diff.
+
+4. `move_or_reorder_blocks`
+
+   Hunk relocation between files and hunk reordering within a file go exclusively here unless separating them is practically impossible. The diff must move or reorder prepared hunks without changing their content.
+
+   Verify with `--color-moved`. The diff must contain only moved or reordered hunks, with no unmoved additions, deletions, or edits.
+
+5. `remove_duplicates`
+
+   Deduplication goes exclusively here unless separating it is practically impossible. This layer is strictly deduplication-only. Obsolete hunk removal belongs exclusively in `content_upgrade_*`.
+
+   Verify with normal deletion diff plus cross-file endpoint diffs.
+
+Review scaffold commits are allowed to be non-runnable if their claim is honest and mechanically verifiable. The final tip must be runnable, tested, and identical to the original verified endpoint.
+
+## Verification Commands
+
+Static conformance:
+```bash
+git diff --color-words='[A-Za-z_][A-Za-z0-9_]*|[^[:space:]]' A..B -- paths...
+```
+
+Content upgrade:
+```bash
+DFT_GRAPH_LIMIT=100000000 git ddiff A..B -- paths...
+```
+
+Moved blocks and in-file reordering:
+```bash
+git diff --color-moved=blocks --color-moved-ws=ignore-all-space A..B -- paths...
+```
+
+Duplicate cleanup commit:
+```bash
+git diff DEDUP_LAYER^..DEDUP_LAYER -- paths...
+```
+
+Duplicate cleanup cross-file endpoint checks:
+```bash
+git diff MOVE_LAYER:path/a.py FINAL:path/b.py
+git diff MOVE_LAYER:path/b.py FINAL:path/a.py
+```
+
+For duplicate cleanup, the normal commit diff must show only removal of duplicate hunks. The cross-file endpoint diffs must show shared final hunks as unchanged context. They must show only left-file final-exclusive hunks as deletions and only right-file final-exclusive hunks as additions.
+
+Endpoint preservation:
+```bash
+git diff --quiet original-final-branch HEAD -- paths...
+```
+
+Final review surface:
+```bash
+DFT_GRAPH_LIMIT=100000000 git ddiff REVIEW_BASE..FINAL -- paths...
+```
+
+Series comparison:
+```bash
+git range-diff --no-patch --creation-factor=95 old-review-branch...new-review-branch
+```
+
+## Handoff
+
+Report:
+- scaffold branch name
+- commits and their review purpose
+- intentionally empty/skipped layers
+- test/lint commands run
+- endpoint preservation result
+- final review surface command
+- every layer review command needed to inspect the scaffold
+- range-diff command for comparing scaffold versions
