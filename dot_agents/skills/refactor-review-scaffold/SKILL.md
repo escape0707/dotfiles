@@ -33,15 +33,29 @@ The finish line is not just a correct migrated file. The finish line is a review
    - Treat this final state as the behavior-pinned target that review scaffolding must preserve.
 
 3. Rebuild review commits only after the final implementation is correct.
+   - Before shaping commits, classify each logical hunk by its review-base state:
+     - Old-only: exists only in the old/source file at the review base.
+     - New-only: exists only in the new/destination file at the review base.
+     - Base duplicate: the same logical hunk already exists in both old and new files at the review base.
+     - Same-purpose base pair: both files already have a hunk serving the same purpose, but with different text.
+   - Do not create a copy/add layer. Do not manufacture duplicates solely for scaffolding.
+   - Upgrade old-only hunks only in the old file, then move them old-to-new in one `color-moved` commit.
+   - Upgrade new-only hunks only in the new file; they do not participate in the move layer.
+   - For same-purpose base pairs, upgrade both sides to identical content in the content-upgrade layer, skip that
+     hunk during the move layer, and remove the unwanted duplicate in the dedup layer.
+   - For exact base duplicates, skip the move layer and remove the unwanted duplicate in the dedup layer.
    - Prefer this structure for old-to-new migrations:
      1. `static_tool_conformance_old` and `static_tool_conformance_new`: make only formatter, linter, import-order, and type-checker conformance changes on both sides. Verify this is mechanical.
      2. `content_upgrade_old` and `content_upgrade_new`: make the meaningful content changes while blocks are still anchored on their own side.
      3. `rename_old` and `rename_new`: normalize names on both sides to improve alignment. Verify this is rename-only.
-     4. `move_blocks_from_old_to_new`: move or reorder the prepared blocks from old to new. Verify this is move-only.
-     5. `remove_old_duplicates`: if a logical hunk already existed on both sides, remove the old-side duplicate only after the move commit. Verify this is deletion-only.
+     4. `move_blocks_from_old_to_new`: move old-only prepared blocks from old to new. Verify this is move-only:
+        removed from old and added to new in the same commit.
+     5. `remove_old_duplicates`: for base duplicates or same-purpose base pairs only, remove the unwanted duplicate
+        after the move commit. Verify this is deletion-only.
    - Static tool conformance changes include `-> None`, mock/fixture annotations, import sorting/removal, formatter wrapping, replacing broad test-helper annotations with precise test-local shapes, and type-only casts when they have no runtime behavior effect.
    - Do not put assertion changes, fixture behavior changes, mock return behavior changes, service call changes, input value changes, or coverage changes in the static conformance commit. Those belong in the content-upgrade commit.
-   - If an atomic hunk exists in both old and new files, preserve one identical final version on both sides through the move commit. Do not hide duplicate removal in the content-upgrade or move commit.
+   - If an atomic hunk exists in both old and new files at the review base, preserve one identical final version on
+     both sides through the move commit. Do not hide duplicate removal in the content-upgrade or move commit.
    - Keep the meaningful content-upgrade commit small enough to review with difftastic.
    - For the content-upgrade commit, make difftastic clarity the primary review bar. If `git ddiff` is noisy, improve the scaffold where practical before falling back to plain `git diff`.
    - Preserve parseable source structure during content-upgrade scaffolds when practical. Prefer upgrading tests inside the old file's existing module/class wrapper over replacing the old file with a dangling snippet, because difftastic aligns full syntax trees much better.
@@ -64,9 +78,10 @@ The finish line is not just a correct migrated file. The finish line is a review
      `git diff --color-moved=blocks --color-moved-ws=ignore-all-space A..B -- path/to/file.py`
    - For cross-file block moves:
      `git diff --color-moved=blocks --color-moved-ws=ignore-all-space A..B -- old/path.py new/path.py`
+     Expect old-only hunks to be deleted from the old file and added to the new file in this same commit.
    - For duplicate cleanup:
      `git diff --color-moved=no A..B -- old/path.py new/path.py`
-     Expect only removed duplicate blocks from the old side.
+     Expect only removed duplicate blocks that already existed on both sides at the review base.
    - For function/test-name set checks, prefer existing shell tools such as `rg`, `sort`, `diff`, and `comm` over custom scripts.
    - Actually run the proposed review commands and inspect the output before presenting them. Do not recommend commands blindly.
 
