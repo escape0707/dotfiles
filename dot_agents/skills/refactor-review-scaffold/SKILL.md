@@ -28,7 +28,7 @@ Each scaffold commit must make one clear claim, and that claim must be mechanica
 
 ## Commit Layers
 
-Build the scaffold in these five layers, in this order. Each layer keeps its stated purpose. If a layer has no hunks, record that it was intentionally empty/skipped in the handoff instead of mixing its purpose into another layer.
+Build the scaffold in these exact five layers and order. Each layer keeps its stated purpose. If a layer has no hunks, record that it was intentionally empty/skipped in an empty commit.
 
 Review scaffold commits are allowed to be non-runnable if their claim is honest and mechanically verifiable. The final tip must be identical to the original endpoint.
 
@@ -66,22 +66,22 @@ Review scaffold commits are allowed to be non-runnable if their claim is honest 
 
 Static conformance:
 ```bash
-git diff --color-words='[A-Za-z_][A-Za-z0-9_]*|[^[:space:]]' A..B -- paths...
+DFT_GRAPH_LIMIT=100000000 git ddiff LAYER~..LAYER
 ```
 
 Content upgrade:
 ```bash
-DFT_GRAPH_LIMIT=100000000 git ddiff A..B -- paths...
+DFT_GRAPH_LIMIT=100000000 git ddiff LAYER~..LAYER
 ```
 
 Moved blocks and in-file reordering:
 ```bash
-git diff --color-moved=blocks --color-moved-ws=ignore-all-space A..B -- paths...
+git diff --color-moved=blocks --color-moved-ws=ignore-all-space LAYER~..LAYER
 ```
 
 Duplicate cleanup commit:
 ```bash
-git diff DEDUP_LAYER^..DEDUP_LAYER -- paths...
+git diff LAYER~..LAYER
 ```
 
 Duplicate cleanup cross-file endpoint checks:
@@ -94,12 +94,12 @@ For duplicate cleanup, the normal commit diff must show only removal of duplicat
 
 Endpoint preservation:
 ```bash
-git diff --quiet original-final-branch HEAD -- paths...
+git diff --quiet original-final-branch HEAD
 ```
 
 Final review surface:
 ```bash
-DFT_GRAPH_LIMIT=100000000 git ddiff REVIEW_BASE..FINAL -- paths...
+DFT_GRAPH_LIMIT=100000000 git ddiff upstream/main...new-review-branch
 ```
 
 Series comparison:
