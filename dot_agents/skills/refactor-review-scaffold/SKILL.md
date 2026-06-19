@@ -16,22 +16,23 @@ Each scaffold commit must make one clear claim, and that claim must be mechanica
 ## Workflow
 
 1. Start from an implementation that is already intended to be final.
-2. Treat the final tree as the endpoint to preserve.
+2. Identify the scaffold mode and comparison target:
+   - First scaffold: the comparison target is the original feature branch being scaffolded. Rebuild the five-layer scaffold so the scaffold tip matches that endpoint.
+   - Scaffold revision: the comparison target is the previous `vN-1` scaffold branch. Create a new `codex/...-vN` branch and implement the requested review feedback into the correct layer while rebuilding.
 3. Classify each logical hunk by where it exists at the review base, before migration edits:
    - `left-only`: exists only in one compared file or location.
    - `right-only`: exists only in the other compared file or location.
    - `base duplicate`: the same-content hunk already exists in both compared files or locations.
    - `same-purpose base pair`: both compared files or locations have hunks serving the same purpose, but their text differs.
 4. Rebuild the branch using the five commit layers below, in order.
-5. When review feedback changes a scaffolded branch, create a new `codex/...-vN` branch. Rebuild the same five-layer scaffold. Implement the requested change into the correct layer.
-6. Verify each scaffold commit with the review command for that layer. The output must match the layer claim: mechanical layers show only mechanical changes, content layers show only meaningful anchored upgrades, movement layers show only moved or reordered blocks, and dedup layers show only deduplication.
-7. Verify the final scaffold tip is identical to the original endpoint.
+5. Verify each scaffold commit with the review command for that layer. The output must match the layer claim: mechanical layers show only mechanical changes, content layers show only meaningful anchored upgrades, movement layers show only moved or reordered blocks, and dedup layers show only deduplication.
+6. Verify the endpoint check. For a first scaffold, the diff against the comparison target must be empty. For a scaffold revision, the diff against the comparison target must contain only the requested review-feedback change.
 
 ## Commit Layers
 
 Build the scaffold in these exact five layers and order. Each layer keeps its stated purpose. If a layer has no hunks, record that it was intentionally empty/skipped in an empty commit.
 
-Review scaffold commits are allowed to be non-runnable if their claim is honest and mechanically verifiable. The final tip must be identical to the original endpoint.
+Review scaffold commits are allowed to be non-runnable if their claim is honest and mechanically verifiable. The final tip must satisfy the endpoint check.
 
 1. `static_tool_conformance_*`
 
@@ -93,9 +94,9 @@ git diff MOVE_LAYER:path/b.py FINAL:path/a.py
 
 For duplicate cleanup, the normal commit diff must show only removal of duplicate hunks. The cross-file endpoint diffs must show shared final hunks as unchanged context. They must show only left-file final-exclusive hunks as deletions and only right-file final-exclusive hunks as additions.
 
-Endpoint preservation:
+Endpoint check:
 ```bash
-git diff --quiet original-final-branch HEAD
+git diff comparison-target...HEAD
 ```
 
 Final review surface:
