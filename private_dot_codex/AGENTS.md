@@ -61,7 +61,7 @@ ctx7 docs [options] <libraryId> "<query>"  Query documentation for a library
 ## Git Note
 
 - Prefer using `gh` for GitHub inspection and workflow tasks. Prefer purpose-built CLI subcommands over `gh api` for easier approval-rule matching when practical.
-- For remote source inspection, prefer cloning the repository into `~/workspaces/<repo-main-language-abbr>/<repo>` and inspecting or updating the local checkout instead of using raw API file reads.
+- For remote source inspection, cloning the repository into `~/workspaces/<repo-main-language-abbr>/<repo>` and inspecting or updating the local checkout instead of using raw API file reads.
 - If `gh api` is genuinely required to get complete context or finish the job without losing important information, pause and suggest the exact command for me to run manually.
 - Prefer SSH Git remote URLs for GitHub/GitLab clone, fetch, and push operations. Use HTTPS for browser links, API endpoints, documentation, or when SSH authentication is unavailable.
 - Respect my git triangular fork workflows:
