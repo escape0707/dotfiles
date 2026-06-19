@@ -36,7 +36,9 @@ Review scaffold commits are allowed to be non-runnable if their claim is honest 
 
 1. `static_tool_conformance_*`
 
-   Static-tool and parseability-only changes go exclusively here unless separating them is practically impossible.
+   Static-tool, parseability, and review-minded typing/schema improvements go exclusively here unless separating them is practically impossible.
+
+   This includes replacing `Any`, `cast`, loose mock payloads, or manual shape checks with typed/Pydantic validation, even when stricter helper validation changes where invalid internal data would fail.
 
    Verify with word diff.
 
@@ -44,17 +46,23 @@ Review scaffold commits are allowed to be non-runnable if their claim is honest 
 
    Meaning-changing migration/refactor edits go exclusively here unless separating them is practically impossible. Upgrade each hunk where it exists at the review base. For `same-purpose base pair` hunks, upgrade both sides until the final intended content is identical on both sides. Remove obsolete review-base hunks here.
 
+   For migrations between files or locations, the review-base location rule means upgraded hunks are prepared before they move; do not create them directly at their final destination.
+
    Verify with difftastic.
 
 3. `rename_*`
 
    Name-only alignment goes exclusively here unless separating it is practically impossible. Behavior and structure changes stay out of this layer.
 
+   If a hunk will later move, apply name-only alignment before the move so the movement layer can relocate unchanged hunks.
+
    Verify with word diff.
 
 4. `move_or_reorder_blocks`
 
    Hunk relocation between files and hunk reordering within a file go exclusively here unless separating them is practically impossible. The diff must move or reorder prepared hunks without changing their content.
+
+   For migrations, this layer moves the already-upgraded and already-renamed hunks from their review-base location to their final location.
 
    Verify with `--color-moved`. The diff must contain only moved or reordered hunks, with no unmoved additions, deletions, or edits.
 
