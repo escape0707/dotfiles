@@ -23,8 +23,9 @@ Each scaffold commit must make one clear claim, and that claim must be mechanica
    - `base duplicate`: the same-content hunk already exists in both compared files or locations.
    - `same-purpose base pair`: both compared files or locations have hunks serving the same purpose, but their text differs.
 4. Rebuild the branch using the five commit layers below, in order.
-5. Verify each scaffold commit with the review command for that layer. The output must match the layer claim: mechanical layers show only mechanical changes, content layers show only meaningful anchored upgrades, movement layers show only moved or reordered blocks, and dedup layers show only deduplication.
-6. Verify the final scaffold tip is identical to the original endpoint.
+5. When review feedback changes a scaffolded branch, create a new `codex/...-vN` branch. Rebuild the same five-layer scaffold. Implement the requested change into the correct layer.
+6. Verify each scaffold commit with the review command for that layer. The output must match the layer claim: mechanical layers show only mechanical changes, content layers show only meaningful anchored upgrades, movement layers show only moved or reordered blocks, and dedup layers show only deduplication.
+7. Verify the final scaffold tip is identical to the original endpoint.
 
 ## Commit Layers
 
