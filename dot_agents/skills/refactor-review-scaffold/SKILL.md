@@ -66,7 +66,7 @@ Review scaffold commits are allowed to be non-runnable if their claim is honest 
 
    For migrations, this layer moves the already-upgraded and already-renamed hunks from their review-base location to their final location.
 
-   Verify with `--color-moved`. The diff must contain only moved or reordered hunks, with no unmoved additions, deletions, or edits.
+   Verify with `--color-moved`. The diff must be explainable as relocation or reordering of already-prepared hunks. Pure added, deleted, or edited lines are allowed only as mechanical integration residue of the move, such as import merging, deleting an emptied source file/module/class shell, or inserting moved methods into an existing class. They must not carry semantic content; if they do, move that change to the earlier content or rename layer.
 
 5. `remove_duplicates`
 
@@ -106,7 +106,7 @@ For duplicate cleanup, the normal commit diff must show only removal of duplicat
 
 Endpoint check:
 ```bash
-git diff comparison-target...HEAD
+git diff comparison-target..HEAD
 ```
 
 Final review surface:
