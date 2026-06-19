@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+comm -3 \
+    <(comm -23 \
+        <(pacman -Qqe | sort --unique) \
+        <(pacman -Qqtt | sort --unique)) \
+    "$HOME/pkg-pin-if-present.txt"

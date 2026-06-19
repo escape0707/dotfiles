@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+configured_groups=('gnome' 'fcitx5-im')
+
+group_atoms() {
+    for group in "${configured_groups[@]}"; do
+        pacman -Qqg "$group" 2>/dev/null | sed -n "1s/.*/$group/p"
+    done | sort --unique
+}
+
+missing_install=$(comm -23 \
+    "$HOME/pkg-install.txt" \
+    <(sort --unique <(pacman -Qq) <(group_atoms)) |
+    paste --serial --delimiters=' ')
+
+need_explicit=$(comm -12 \
+    <(sort --unique "$HOME/pkg-install.txt" "$HOME/pkg-pin-if-present.txt") \
+    <(pacman -Qqd | sort --unique) |
+    paste --serial --delimiters=' ')
+
+printf '# install missing packages\n'
+[[ -z $missing_install ]] || printf 'paru --sync --needed %s\n' "$missing_install"
+
+printf '\n'
+
+printf '# mark installed install/pin packages explicit\n'
+[[ -z $need_explicit ]] || printf 'sudo pacman -D --asexplicit %s\n' "$need_explicit"
+
+printf '\n'
+printf '# live install candidates not in repo install; review before removal\n'
+comm -23 <(listpkg | sort --unique) "$HOME/pkg-install.txt"

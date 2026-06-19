@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-tmp=$(mktemp --tmpdir commpkg.XXXXXXXXXX)
-trap 'rm --force -- "$tmp"' EXIT
-
-listpkg >"$tmp"
-nvim -d "$HOME/pkglist.txt" "$tmp"

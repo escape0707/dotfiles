@@ -2,52 +2,27 @@
 set -euo pipefail
 
 configured_groups=('gnome' 'fcitx5-im')
-installed_groups=()
-group_packages=()
 
-for group in "${configured_groups[@]}"; do
-    mapfile -t packages < <(pacman -Qqg "$group" 2>/dev/null || true)
-    if ((${#packages[@]} > 0)); then
-        installed_groups+=("$group")
-        group_packages+=("${packages[@]}")
-    fi
-done
-
-print_installed_groups() {
-    ((${#installed_groups[@]} == 0)) || printf '%s\n' "${installed_groups[@]}"
+group_packages() {
+    pacman -Qqg "${configured_groups[@]}" 2>/dev/null | sort --unique
 }
 
-print_group_packages() {
-    ((${#group_packages[@]} == 0)) || printf '%s\n' "${group_packages[@]}"
+group_atoms() {
+    for group in "${configured_groups[@]}"; do
+        pacman -Qqg "$group" 2>/dev/null | sed -n "1s/.*/$group/p"
+    done | sort --unique
 }
 
-print_explicit_packages() {
-    {
-        pacman -Qqe
-        print_installed_groups
-    } | sort -u
-}
-
-print_root_packages() {
-    {
-        pacman -Qqtt
-        print_installed_groups
-    } | sort -u
-}
-
-print_collapsed_roots() {
+roots() {
     comm -23 \
-        <(print_root_packages) \
-        <(print_group_packages | sort -u)
+        <(pacman -Qqtt | sort --unique) \
+        <(group_packages)
 }
 
-print_collapsed_pins() {
-    comm -23 \
-        <(comm -23 <(print_explicit_packages) <(print_root_packages)) \
-        <(print_group_packages | sort -u)
+installed_pins() {
+    comm -12 \
+        <(sort --unique "$HOME/pkg-pin-if-present.txt") \
+        <(pacman -Qq | sort --unique)
 }
 
-printf '# roots\n'
-print_collapsed_roots
-printf '\n# pins\n'
-print_collapsed_pins
+sort --unique <(roots) <(group_atoms) <(installed_pins)
