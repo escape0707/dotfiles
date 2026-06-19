@@ -16,7 +16,7 @@
 {{-   $tail = (index $parts 1 | trim) -}}
 {{- end -}}
 model = "gpt-5.5"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 personality = "pragmatic"
 web_search = "live"
 {{- if $isTermux }}
@@ -73,8 +73,8 @@ status_line = ["model-with-reasoning", "context-remaining", "current-dir", "tota
 session_picker_view = "comfortable"
 {{- if $isTermux }}
 notification_method = "bel"
-notification_condition = "always"
 {{- end }}
+notification_condition = "always"
 
 {{ $marker }}
 {{- if $tail }}
