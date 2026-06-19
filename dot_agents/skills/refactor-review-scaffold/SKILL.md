@@ -48,6 +48,8 @@ Review scaffold commits are allowed to be non-runnable if their claim is honest 
 
    For migrations between files or locations, the review-base location rule means upgraded hunks are prepared before they move; do not create them directly at their final destination.
 
+   `git ddiff` alignment is a critical review-quality metric for this layer. Structure upgraded helper/function/class order so Difftastic pairs each review-base hunk with its intended replacement. If `git ddiff` aligns a hunk with the wrong replacement and the endpoint can stay unchanged, revise the content-layer ordering before moving on.
+
    Verify with difftastic.
 
 3. `rename_*`
