@@ -4,8 +4,7 @@ function termux-update-codex --description 'Install/update Codex for native Term
 
     command -q tinyproxy; or pkg install -y tinyproxy; or return
 
-    pnpm add -g --force --os=linux --cpu=arm64 @openai/codex-linux-arm64@npm:@openai/codex@$v-linux-arm64; or return
-    set -l codex_bin (find -L ~/.local/share/pnpm/global/v11 -path '*/node_modules/@openai/codex-linux-arm64/vendor/aarch64-unknown-linux-musl/bin/codex' -type f -print -quit)
+    pnpm add -g @openai/codex@$v; or return
 
     mkdir -p ~/.local/bin
     printf '%s\n' \
@@ -14,7 +13,7 @@ function termux-update-codex --description 'Install/update Codex for native Term
         'export HTTPS_PROXY=http://127.0.0.1:8888' \
         'export SSL_CERT_FILE=/data/data/com.termux/files/usr/etc/tls/cert.pem' \
         'tinyproxy' \
-        "exec $codex_bin \"\$@\"" \
+        'exec "$PNPM_HOME/bin/codex" "$@"' \
         > ~/.local/bin/codex
     chmod 700 ~/.local/bin/codex
     fish_add_path -m ~/.local/bin

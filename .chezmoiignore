@@ -11,6 +11,10 @@ scripts/**
 .config/fish/conf.d/15-pkgfile-command-not-found.fish
 {{- end }}
 
+{{- if not $isTermux }}
+.local/share/pnpm/global/v11/pnpm-workspace.yaml
+{{- end }}
+
 # /etc mirror is opt-in for templating and review.
 {{- if not $manageEtcMirror }}
 etc/**
