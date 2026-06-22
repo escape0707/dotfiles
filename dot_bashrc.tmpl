@@ -1,4 +1,10 @@
+{{- $machineForm := get . "machineForm" -}}
+{{- if and $machineForm (ne $machineForm "headless") (ne $machineForm "headed") -}}{{ fail "machineForm must be headless or headed" }}{{- end -}}
 {{- $isWSL := and (eq .chezmoi.os "linux") (.chezmoi.kernel.osrelease | lower | contains "microsoft") -}}
+{{- $isBareMetal := not $isWSL -}}
+{{- $isHeaded := $isBareMetal -}}
+{{- if eq $machineForm "headless" -}}{{- $isHeaded = false -}}{{- end -}}
+{{- if eq $machineForm "headed" -}}{{- $isHeaded = true -}}{{- end -}}
 #
 # ~/.bashrc
 #
@@ -10,13 +16,13 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
-export CONTEXT7_API_KEY="
-{{- if $isWSL -}}
-{{- output "win-chezmoi" "secret" "keyring" "get" "--service" "ctx7" "--user" "api-key" | trim -}}
-{{- else -}}
-{{- keyring "ctx7" "api-key" -}}
-{{- end -}}
-"
+{{- if and (not $isWSL) (not $isHeaded) }}
+export CONTEXT7_API_KEY=
+{{- else if $isWSL }}
+export CONTEXT7_API_KEY="$(win-chezmoi secret keyring get --service=ctx7 --user=api-key 2>/dev/null)"
+{{- else }}
+export CONTEXT7_API_KEY="$(chezmoi secret keyring get --service=ctx7 --user=api-key 2>/dev/null)"
+{{- end }}
 export TEXMFHOME="$XDG_DATA_HOME/texmf"
 export TEXMFVAR="$XDG_CACHE_HOME/texlive/texmf-var"
 export TEXMFCONFIG="$XDG_CONFIG_HOME/texlive/texmf-config"

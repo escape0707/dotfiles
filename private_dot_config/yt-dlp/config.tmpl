@@ -1,5 +1,11 @@
+{{ $machineForm := get . "machineForm" -}}
+{{ if and $machineForm (ne $machineForm "headless") (ne $machineForm "headed") -}}{{ fail "machineForm must be headless or headed" }}{{ end -}}
 --concurrent-fragments 32
+{{ if eq $machineForm "headless" -}}
+--cookies ~/.config/yt-dlp/cookies.txt
+{{ else -}}
 --cookies-from-browser firefox
+{{ end -}}
 #--downloader aria2c
 --embed-metadata
 --embed-subs
