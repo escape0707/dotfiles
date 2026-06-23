@@ -26,6 +26,7 @@ sandbox_mode = "workspace-write"
 {{- end }}
 approvals_reviewer = "user"
 check_for_update_on_startup = false
+plan_mode_reasoning_effort = "xhigh"
 
 [sandbox_workspace_write]
 network_access = true
@@ -68,13 +69,14 @@ sandbox = "elevated"
 {{- if $isTermux }}
 status_line = ["model-with-reasoning", "context-remaining", "weekly-limit"]
 {{- else }}
-status_line = ["model-with-reasoning", "context-remaining", "current-dir", "total-input-tokens", "total-output-tokens", "git-branch", "five-hour-limit", "weekly-limit"]
+status_line = ["model-with-reasoning", "context-remaining", "total-input-tokens", "total-output-tokens", "five-hour-limit", "weekly-limit", "git-branch", "current-dir"]
 {{- end }}
 session_picker_view = "comfortable"
 {{- if $isTermux }}
 notification_method = "bel"
 {{- end }}
 notification_condition = "always"
+status_line_use_colors = true
 
 {{ $marker }}
 {{- if $tail }}
