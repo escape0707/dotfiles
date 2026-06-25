@@ -42,6 +42,7 @@ writable_roots = [
     '{{ $windowsRoamingAppData }}\fnm',
     '{{ $windowsRoamingAppData }}\uv\python',
 {{- else if $isLinux }}
+    "~/.cache/ccache",
     "~/.cache/chromium",
     "~/.cache/gh",
     "~/.cache/go-build",
