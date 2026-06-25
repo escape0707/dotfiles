@@ -60,3 +60,8 @@ source /usr/share/doc/pkgfile/command-not-found.bash
 alias ls='ls --color=auto'
 
 PS1='[\u@\h \w]\n\$ '
+
+if [[ -n ${SSH_CONNECTION:-} && -z ${__BASHRC_EXEC_FISH:-} ]] && command -v fish >/dev/null 2>&1; then
+    export __BASHRC_EXEC_FISH=1
+    exec fish
+fi
