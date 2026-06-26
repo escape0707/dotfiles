@@ -1,7 +1,17 @@
 [diff]
-    command = "chezmoi-difft"
-    args = ["{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
+command = "chezmoi-difft"
+args = [
+  "--color=always",
+  "--display=inline",
+  "{{ "{{" }} .Destination {{ "}}" }}",
+  "{{ "{{" }} .Target {{ "}}" }}",
+]
 
 [merge]
-    command = "nvim"
-    args = ["-d", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Source {{ "}}" }}"]
+command = "nvim"
+args = [
+  "-d",
+  "{{ "{{" }} .Target {{ "}}" }}",
+  "{{ "{{" }} .Source {{ "}}" }}",
+  "{{ "{{" }} .Destination {{ "}}" }}",
+]
