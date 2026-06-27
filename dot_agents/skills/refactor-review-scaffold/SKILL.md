@@ -134,7 +134,7 @@ the layer claim; final-tip checks validate behavior.
    Use this layer for source imports whose destination equivalent already exists after relocation. Whole-file, module-shell,
    or class-shell deletion belongs here only when every contained responsibility is already retained elsewhere or is pure duplicate/mechanical residue.
 
-   Verify with normal deletion show plus cross-file endpoint diffs.
+   Verify with normal deletion show plus source-vs-destination blob diffs for each dedup relationship.
 
 ## Verification Commands
 
@@ -165,13 +165,16 @@ Duplicate cleanup commit:
 git show LAYER
 ```
 
-Duplicate cleanup cross-file endpoint checks:
+Duplicate cleanup source-vs-destination checks:
 ```bash
-git diff MOVE_LAYER:path/a.py FINAL:path/b.py
-git diff MOVE_LAYER:path/b.py FINAL:path/a.py
+git diff DEDUP_LAYER~:path/source.py DEDUP_LAYER:path/destination.py
+git diff DEDUP_LAYER~:path/destination.py DEDUP_LAYER:path/source.py
 ```
 
-For duplicate cleanup, the normal commit diff must show only removal of duplicate hunks. The cross-file endpoint diffs must show shared final hunks as unchanged context. They must show only left-file final-exclusive hunks as deletions and only right-file final-exclusive hunks as additions.
+For duplicate cleanup, `git show DEDUP_LAYER` must show only removal of duplicate or same-purpose source hunks.
+It is not sufficient by itself. For every dedup relationship, run source-vs-destination blob diffs across the dedup
+commit. These diffs must show shared retained hunks as unchanged context. They must show only source-file-exclusive
+pre-dedup hunks as deletions and only destination-file-exclusive final hunks as additions.
 
 Endpoint check:
 ```bash
