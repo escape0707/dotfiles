@@ -184,6 +184,9 @@ For duplicate cleanup, `git show DEDUP_LAYER` must show only removal of duplicat
 It is not sufficient by itself. For every dedup relationship, run source-vs-destination blob diffs across the dedup
 commit. These diffs must show shared retained hunks as unchanged context. They must show only source-file-exclusive
 pre-dedup hunks as deletions and only destination-file-exclusive final hunks as additions.
+The only extra permitted deletion residue is a source-side support line whose responsibility is visibly retained by a
+destination equivalent or superset line, such as merged imports, narrowed type aliases, or pure file/module/class shell
+residue. Call out this residue in the handoff instead of treating it as semantic deletion.
 If the default blob diff does not align the retained hunk as context, select and report the clearest concrete command
 using the diff options above; replace `<chosen alignment options>` with the options that worked for that relationship.
 
