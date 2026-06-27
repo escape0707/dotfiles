@@ -53,6 +53,8 @@ Do not make a later mechanical layer empty until every candidate hunk has been c
    `content_upgrade_*` only for the irreducible semantic remainder.
 5. Rebuild the branch using the five commit layers below, in order.
 6. Verify each scaffold commit with the review command for that layer. The output must match the layer claim: mechanical layers show only mechanical changes, content layers show only meaningful anchored upgrades, movement layers show only moved or reordered blocks, and dedup layers show only deduplication.
+   Diff alignment is part of verification. Try Git diff alignment options when the first output pairs hunks poorly,
+   then keep and report the command that gives the clearest honest review surface.
 7. Verify the endpoint check. For a first scaffold, the diff against the comparison target must be empty. For a scaffold-only revision, the diff against the previous scaffold tip must be empty. For an endpoint-changing revision, the diff against the previous scaffold tip must contain only the requested final-tree change.
 
 ## Commit Layers
@@ -140,6 +142,12 @@ the layer claim; final-tip checks validate behavior.
 
 Use commit-show commands for single-layer review. Use `git diff` only for endpoint checks and cross-file/blob comparisons.
 
+When reviewing alignment, choose the best command instead of stopping at the default output. Use combinations of
+`--histogram`, `--patience`, `--anchored=<unique prefix>`, `--ignore-all-space`, `--color-words`, `--word-diff`,
+`--color-moved=blocks`, and `--color-moved-ws=ignore-all-space` when they make same-responsibility hunks align as
+context, moved blocks, or focused word changes. Use the least misleading command if no option aligns perfectly, and
+record what still needs human attention.
+
 Static conformance:
 ```bash
 DFT_GRAPH_LIMIT=100000000 git dshow LAYER
@@ -169,12 +177,15 @@ Duplicate cleanup source-vs-destination checks:
 ```bash
 git diff DEDUP_LAYER~:path/source.py DEDUP_LAYER:path/destination.py
 git diff DEDUP_LAYER~:path/destination.py DEDUP_LAYER:path/source.py
+git diff <chosen alignment options> DEDUP_LAYER~:path/source.py DEDUP_LAYER:path/destination.py
 ```
 
 For duplicate cleanup, `git show DEDUP_LAYER` must show only removal of duplicate or same-purpose source hunks.
 It is not sufficient by itself. For every dedup relationship, run source-vs-destination blob diffs across the dedup
 commit. These diffs must show shared retained hunks as unchanged context. They must show only source-file-exclusive
 pre-dedup hunks as deletions and only destination-file-exclusive final hunks as additions.
+If the default blob diff does not align the retained hunk as context, select and report the clearest concrete command
+using the diff options above; replace `<chosen alignment options>` with the options that worked for that relationship.
 
 Endpoint check:
 ```bash
@@ -201,5 +212,5 @@ Report:
 - final-tip test/lint/type commands run
 - endpoint preservation result
 - range-diff command for comparing scaffold versions
-- every layer review command needed to inspect the scaffold
+- every layer review command needed to inspect the scaffold, using the exact alignment options chosen during validation
 - final review surface command
