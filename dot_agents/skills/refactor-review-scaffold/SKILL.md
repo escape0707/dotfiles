@@ -88,6 +88,11 @@ the layer claim; final-tip checks validate behavior.
 
    `git ddiff` alignment is a critical review-quality metric for this layer. Structure upgraded helper/function/class order so Difftastic pairs each review-base hunk with its intended replacement. If `git ddiff` aligns a hunk with the wrong replacement and the endpoint can stay unchanged, revise the content-layer ordering before moving on.
 
+   Preserve review-base hunk order before endpoint style order in this layer. If new helpers, fixtures, class wrappers,
+   or extracted support code placed before converted review-base hunks causes wrong Difftastic pairing, place that
+   support code after the converted hunks or at another alignment-preserving position. Move or reorder it into final
+   endpoint order in `move_or_reorder_blocks`.
+
    Verify with difftastic.
 
 3. `rename_*`
