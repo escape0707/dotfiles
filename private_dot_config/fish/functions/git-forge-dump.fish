@@ -7,7 +7,7 @@ function git-forge-dump
     end
 
     set clipboard_command
-    for command in clip.exe wl-copy
+    for command in clip.exe wl-copy termux-clipboard-set
         if type -q $command
             set clipboard_command $command
             break
@@ -15,7 +15,7 @@ function git-forge-dump
     end
 
     if test -z "$clipboard_command"
-        echo "git-forge-dump: no clipboard command found; expected clip.exe or wl-copy" >&2
+        echo "git-forge-dump: no clipboard command found; expected clip.exe, wl-copy, or termux-clipboard-set" >&2
         return 1
     end
 
