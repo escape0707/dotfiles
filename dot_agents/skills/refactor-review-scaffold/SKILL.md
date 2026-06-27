@@ -72,7 +72,7 @@ the layer claim; final-tip checks validate behavior.
 
    This includes replacing `Any`, `cast`, loose mock payloads, or manual shape checks with typed/Pydantic validation, even when stricter helper validation changes where invalid internal data would fail.
 
-   Verify with word diff.
+   Verify with Difftastic show.
 
 2. `content_upgrade_*`
 
@@ -93,7 +93,7 @@ the layer claim; final-tip checks validate behavior.
    support code after the converted hunks or at another alignment-preserving position. Move or reorder it into final
    endpoint order in `move_or_reorder_blocks`.
 
-   Verify with difftastic.
+   Verify with Difftastic show.
 
 3. `rename_*`
 
@@ -101,7 +101,7 @@ the layer claim; final-tip checks validate behavior.
 
    If a hunk will later move, apply name-only alignment before the move so the movement layer can relocate unchanged hunks.
 
-   Verify with word diff.
+   Verify with word-diff show.
 
 4. `move_or_reorder_blocks`
 
@@ -113,7 +113,7 @@ the layer claim; final-tip checks validate behavior.
    location to the endpoint location. If it cannot be expressed as a moved/reordered block with only mechanical
    integration residue, record why.
 
-   Verify with `--color-moved`. The diff must be explainable as relocation or reordering of already-prepared hunks. Pure added, deleted, or edited lines are allowed only as mechanical integration residue of the move, such as deleting an emptied source file/module/class shell or inserting moved methods into an existing class. They must not carry semantic content; if they do, move that change to the earlier content or rename layer.
+   Verify with `git show --color-moved`. The diff must be explainable as relocation or reordering of already-prepared hunks. Pure added, deleted, or edited lines are allowed only as mechanical integration residue of the move, such as deleting an emptied source file/module/class shell or inserting moved methods into an existing class. They must not carry semantic content; if they do, move that change to the earlier content or rename layer.
 
    Relocation-coupled imports follow the hunk path. If an import line is needed at the destination and absent there,
    move the import line here. If the destination already contains an equivalent import, keep the source import through
@@ -134,28 +134,35 @@ the layer claim; final-tip checks validate behavior.
    Use this layer for source imports whose destination equivalent already exists after relocation. Whole-file, module-shell,
    or class-shell deletion belongs here only when every contained responsibility is already retained elsewhere or is pure duplicate/mechanical residue.
 
-   Verify with normal deletion diff plus cross-file endpoint diffs.
+   Verify with normal deletion show plus cross-file endpoint diffs.
 
 ## Verification Commands
 
+Use commit-show commands for single-layer review. Use `git diff` only for endpoint checks and cross-file/blob comparisons.
+
 Static conformance:
 ```bash
-DFT_GRAPH_LIMIT=100000000 git ddiff LAYER~..LAYER
+DFT_GRAPH_LIMIT=100000000 git dshow LAYER
 ```
 
 Content upgrade:
 ```bash
-DFT_GRAPH_LIMIT=100000000 git ddiff LAYER~..LAYER
+DFT_GRAPH_LIMIT=100000000 git dshow LAYER
+```
+
+Rename-only:
+```bash
+git show --word-diff LAYER
 ```
 
 Moved blocks and in-file reordering:
 ```bash
-git diff --color-moved=blocks --color-moved-ws=ignore-all-space LAYER~..LAYER
+git show --color-moved=blocks --color-moved-ws=ignore-all-space LAYER
 ```
 
 Duplicate cleanup commit:
 ```bash
-git diff LAYER~..LAYER
+git show LAYER
 ```
 
 Duplicate cleanup cross-file endpoint checks:
