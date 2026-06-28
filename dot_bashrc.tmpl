@@ -26,6 +26,7 @@ export CONTEXT7_API_KEY="$(chezmoi secret keyring get --service=ctx7 --user=api-
 export TEXMFHOME="$XDG_DATA_HOME/texmf"
 export TEXMFVAR="$XDG_CACHE_HOME/texlive/texmf-var"
 export TEXMFCONFIG="$XDG_CONFIG_HOME/texlive/texmf-config"
+export DFT_GRAPH_LIMIT=100000000
 
 export DOCKER_HOST="unix://$XDG_RUNTIME_DIR/podman/podman.sock"
 {{ if $isWSL -}}
