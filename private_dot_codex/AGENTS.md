@@ -2,7 +2,7 @@
 
 ## Docs & API references (Context7)
 
-Always use ctx7 cli when I need library/API documentation, code generation, setup or configuration steps without me explicitly asking. It's installed
+Use ctx7 cli when you need library/API documentation, code generation, setup or configuration steps. It's installed
 globally already.
 
 ```shell
