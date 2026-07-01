@@ -58,6 +58,17 @@ The finish line is not just a correct migrated test file. The finish line is a r
    - When reviewing a migrated test file, also quote the corresponding old test when applicable.
    - Stop after one logical hunk and wait for `next`.
 
+## Review Values
+
+- Review ergonomics matters more than preserving legacy test style. Once a migrated test endpoint is correct, cleanup
+  in the touched file is in scope when it makes the final review stricter, smaller, or easier to reason about.
+- Before line-by-line review, summarize only meaningful technical decisions Codex introduced. Do not repeat decisions
+  already settled with the user or mandated by this skill.
+- Do not invent generic cleanup topics. Quote file evidence before presenting a decision point. If no honest, worthy
+  point remains, say so and move to implementation.
+- Prefer explicit behavior and test signatures over narration. Test names, helper names, typed parameters, and exact
+  assertions should carry the review, not boilerplate comments or docstrings.
+
 ## Test Migration Heuristics
 
 - One PR should finish one old test file migration, not necessarily one changed file.
@@ -66,6 +77,32 @@ The finish line is not just a correct migrated test file. The finish line is a r
 - Prefer exact old setup values for migrated behavior tests unless there is a concrete reason to change them.
 - Prefer explicit IDs and scalar expected values owned by the test. Setup helpers should create state, not return ORM objects for assertions.
 - Verify persisted state through the public service/API under test when that is the intended contract.
+- Prefer module-level pytest tests and module-level underscore helpers. Keep a test class only when it provides real
+  value such as marks, class-scoped fixtures, behavior grouping, inheritance, or plugin integration.
+- Remove boilerplate test/helper docstrings and comments that restate the code. Keep a docstring or comment only for a
+  non-obvious contract, edge case, or review hazard.
+- Name helpers concisely without filler such as `test`. Create helpers should build valid persisted state; separate
+  active-user/auth-context mutation into an explicit helper such as `_set_current_user`.
+- Fixtures should patch or provide scoped dependencies, not secretly create database rows. Prefer a simple typed data
+  stub over `MagicMock` when the code under test only reads attributes.
+- For same-session integration setup, prefer `flush()` to obtain generated IDs and make rows queryable. Use `commit()`
+  only when committed transaction behavior or cross-session visibility is part of the test.
+- Prefer deterministic literals, with a UUID suffix only when uniqueness matters, over Faker. Use Faker only when
+  realistic variation is part of the behavior being tested.
+- Keep useful dimensions in generated names when they aid failure readability, for example including tag type in tag
+  names for tenant/type filtering tests.
+- Modernize touched SQLAlchemy tests toward `select()`, `scalar()`, and `scalars()` rather than legacy
+  `query(...).first()` style.
+- Use strict domain types in tests and service DTOs. If a service currently accepts strings but tests should pass enums,
+  prefer a minimal production type-hint widening that preserves existing callers over casts or broad production API
+  rewrites.
+- Do not keep service integration tests that only prove Pydantic or framework validation. Keep tests that exercise
+  service-owned behavior; rely on static typing and boundary tests for framework coercion.
+- Make invalid-branch tests minimal. Avoid setup that could mask accidental database queries or current-user access.
+- Prefer scoped, exact assertions over broad table assertions. Use `pytest.raises(..., match=...)` for expected error
+  messages, and avoid pointless `assert ... is None` for "does not raise" methods.
+- Keep long fixture names when they improve searchability; do not introduce local aliases just to shorten repeated
+  fixture names.
 
 ## Do Not
 
