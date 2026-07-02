@@ -69,11 +69,15 @@ the layer claim; final-tip checks validate behavior.
 
 1. `static_tool_conformance_*`
 
-   Static-tool, parseability, and review-minded typing/schema improvements go exclusively here unless separating them is practically impossible.
-   Import-only adjustments go here only when they are independent of later relocation or duplicate cleanup.
-   In test-file scaffolds, aggressively remove boilerplate comments and docstrings here unless they explain non-obvious regression intent, adversarial fixtures, ordering, or timing.
+   Static-tool conformance and review-surface normalization go here unless separating them is practically impossible.
+   This layer prepares touched files into a clean, typed, parseable, idiomatic review shape before meaning changes.
+   In test-file scaffolds, this includes boilerplate comment/docstring removal, formatting cleanup, strict typing,
+   fixture/helper signature cleanup, mock-to-stub replacement, enum/schema conformance, and behavior-preserving pytest
+   shape normalization such as class-to-module flattening.
 
    This includes replacing `Any`, `cast`, loose mock payloads, or manual shape checks with typed/Pydantic validation, even when stricter helper validation changes where invalid internal data would fail.
+   Do not put assertion changes, fixture data meaning changes, production behavior changes, or hunk relocation/dedup here.
+   Import-only adjustments go here only when they are independent of later relocation or duplicate cleanup.
 
    Verify with Difftastic show.
 
