@@ -14,6 +14,21 @@ export EDITOR=nvim
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+
+export HISTFILE="$XDG_STATE_HOME/bash/history"
+export LESSHISTFILE="$XDG_STATE_HOME/less/history"
+export NODE_REPL_HISTORY="$XDG_STATE_HOME/node/repl_history"
+export PYTHON_HISTORY="$XDG_STATE_HOME/python/history"
+
+for _xdg_user_dir in \
+    "$XDG_STATE_HOME/bash" \
+    "$XDG_STATE_HOME/less" \
+    "$XDG_STATE_HOME/node" \
+    "$XDG_STATE_HOME/python"; do
+    [[ -d $_xdg_user_dir ]] || mkdir --parents "$_xdg_user_dir"
+done
+unset _xdg_user_dir
 
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 {{- if and (not $isWSL) (not $isHeaded) }}
