@@ -71,6 +71,7 @@ the layer claim; final-tip checks validate behavior.
 
    Static-tool, parseability, and review-minded typing/schema improvements go exclusively here unless separating them is practically impossible.
    Import-only adjustments go here only when they are independent of later relocation or duplicate cleanup.
+   In test-file scaffolds, aggressively remove boilerplate comments and docstrings here unless they explain non-obvious regression intent, adversarial fixtures, ordering, or timing.
 
    This includes replacing `Any`, `cast`, loose mock payloads, or manual shape checks with typed/Pydantic validation, even when stricter helper validation changes where invalid internal data would fail.
 
