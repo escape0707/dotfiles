@@ -79,8 +79,8 @@ The finish line is not just a correct migrated test file. The finish line is a r
 - Verify persisted state through the public service/API under test when that is the intended contract.
 - Prefer module-level pytest tests and module-level underscore helpers. Keep a test class only when it provides real
   value such as marks, class-scoped fixtures, behavior grouping, inheritance, or plugin integration.
-- Remove boilerplate test/helper docstrings and comments that restate the code. Keep a docstring or comment only for a
-  non-obvious contract, edge case, or review hazard.
+- Remove boilerplate test/helper docstrings and comments that restate the code, and clean up the resulting whitespace
+  in the same pass. Keep a docstring or comment only for a non-obvious contract, edge case, or review hazard.
 - Name helpers concisely without filler such as `test`. Create helpers should build valid persisted state; separate
   active-user/auth-context mutation into an explicit helper such as `_set_current_user`.
 - Fixtures should patch or provide scoped dependencies, not secretly create database rows. Prefer a simple typed data
@@ -93,9 +93,10 @@ The finish line is not just a correct migrated test file. The finish line is a r
   names for tenant/type filtering tests.
 - Modernize touched SQLAlchemy tests toward `select()`, `scalar()`, and `scalars()` rather than legacy
   `query(...).first()` style.
-- Use strict domain types in tests and service DTOs. If a service currently accepts strings but tests should pass enums,
-  prefer a minimal production type-hint widening that preserves existing callers over casts or broad production API
-  rewrites.
+- Use strict domain types in tests and service DTOs. When modernizing touched tests against a loose production API,
+  temporarily narrow the touched production API to the ideal strict type so type checkers expose every touched-test
+  mismatch. Fix the touched tests to conform, then restore or widen production annotations to the chosen compatibility
+  type when untouched call sites require it.
 - Do not keep service integration tests that only prove Pydantic or framework validation. Keep tests that exercise
   service-owned behavior; rely on static typing and boundary tests for framework coercion.
 - Make invalid-branch tests minimal. Avoid setup that could mask accidental database queries or current-user access.

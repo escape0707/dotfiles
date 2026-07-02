@@ -24,9 +24,10 @@ the required layer order:
    These layers are mechanically reviewable and should carry every hunk that can honestly be made name-only,
    moved-only, reordered-only, or dedup-only.
 2. Maximize `static_tool_conformance_*`.
-   Put every static-tool, typing, parseability, formatting, and lint-only adjustment here when it can be separated
+   Put every static-tool, typing, parseability, and lint-only adjustment here when it can be separated
    without making the layer claim false. Put import-only adjustments here only when they are independent of later hunk
    relocation or duplicate cleanup.
+   Keep boilerplate comment/docstring removal out of this layer so it cannot hide real static-tool decisions.
 3. Minimize `content_upgrade_*`.
    This is the reviewer-attention layer. It should contain only irreducible meaning changes and deletion of
    review-base hunks that have no rename, move, reorder, dedup, or same-purpose upgrade path.
@@ -37,7 +38,7 @@ Do not make a later mechanical layer empty until every candidate hunk has been c
 
 1. Start from an implementation that is already intended to be final.
 2. Identify the scaffold mode and comparison target:
-   - First scaffold: the comparison target is the original feature branch being scaffolded. Rebuild the five-layer scaffold so the scaffold tip matches that endpoint.
+   - First scaffold: the comparison target is the original feature branch being scaffolded. Rebuild the six-layer scaffold so the scaffold tip matches that endpoint.
    - Scaffold revision: the comparison target is the previous `vN-1` scaffold branch. Create a new `codex/...-vN` branch and classify the requested feedback as `scaffold-only` or `endpoint-changing`. Scaffold-only feedback changes commit boundaries, layer placement, or reviewability while keeping the new tip tree-identical to the previous scaffold tip. Endpoint-changing feedback changes the final tree and must be implemented in the correct layer while rebuilding.
 3. Classify each logical hunk by review-base topology and endpoint diff dynamic. The source/base location is where the
    hunk exists before migration edits. The endpoint location is where the final tree keeps that responsibility.
@@ -51,7 +52,7 @@ Do not make a later mechanical layer empty until every candidate hunk has been c
    `rename_*`, then moved in `move_or_reorder_blocks`. Prefer paths that shift the largest honest portion into
    `rename_*`, `move_or_reorder_blocks`, `remove_duplicates`, then `static_tool_conformance_*`; use
    `content_upgrade_*` only for the irreducible semantic remainder.
-5. Rebuild the branch using the five commit layers below, in order.
+5. Rebuild the branch using the six commit layers below, in order.
 6. Verify each scaffold commit with the review command for that layer. The output must match the layer claim: mechanical layers show only mechanical changes, content layers show only meaningful anchored upgrades, movement layers show only moved or reordered blocks, and dedup layers show only deduplication.
    Diff alignment is part of verification. Try Git diff alignment options when the first output pairs hunks poorly,
    then keep and report the command that gives the clearest honest review surface.
@@ -59,7 +60,7 @@ Do not make a later mechanical layer empty until every candidate hunk has been c
 
 ## Commit Layers
 
-Build the scaffold in these exact five layers and order. Each layer keeps its stated purpose. If a layer has no hunks, record that it was intentionally empty/skipped in an empty commit.
+Build the scaffold in these exact six layers and order. Each layer keeps its stated purpose. If a layer has no hunks, record that it was intentionally empty/skipped in an empty commit.
 
 Review scaffold commits are allowed to be non-runnable if their claim is honest and mechanically verifiable. The final tip must satisfy the endpoint check.
 
@@ -67,13 +68,25 @@ Run test, lint, type, and functional verification at the final tip. Do not move 
 layer only to make an intermediate scaffold commit pass lint, type, or test checks. Per-layer review commands validate
 the layer claim; final-tip checks validate behavior.
 
-1. `static_tool_conformance_*`
+1. `comment_docstring_cleanup_*`
+
+   In touched test files, remove boilerplate comments and docstrings before any other scaffold work. Clean up the
+   whitespace and formatting residue caused by that removal in this same layer.
+
+   Keep only comments/docstrings that explain non-obvious regression intent, adversarial fixtures, ordering, timing,
+   or a future-maintenance trap.
+
+   This layer must not change executable code except whitespace left by the removal.
+
+   Verify with normal show, optionally with blank-line noise ignored.
+
+2. `static_tool_conformance_*`
 
    Static-tool conformance and review-surface normalization go here unless separating them is practically impossible.
-   This layer prepares touched files into a clean, typed, parseable, idiomatic review shape before meaning changes.
-   In test-file scaffolds, this includes boilerplate comment/docstring removal, formatting cleanup, strict typing,
-   fixture/helper signature cleanup, mock-to-stub replacement, enum/schema conformance, and behavior-preserving pytest
-   shape normalization such as class-to-module flattening.
+   This layer prepares touched executable code into a clean, typed, parseable, idiomatic review shape before meaning
+   changes. In test-file scaffolds, this includes strict typing, fixture/helper signature cleanup, mock-to-stub
+   replacement, enum/schema conformance, and behavior-preserving pytest shape normalization such as class-to-module
+   flattening.
 
    This includes replacing `Any`, `cast`, loose mock payloads, or manual shape checks with typed/Pydantic validation, even when stricter helper validation changes where invalid internal data would fail.
    Do not put assertion changes, fixture data meaning changes, production behavior changes, or hunk relocation/dedup here.
@@ -81,7 +94,7 @@ the layer claim; final-tip checks validate behavior.
 
    Verify with Difftastic show.
 
-2. `content_upgrade_*`
+3. `content_upgrade_*`
 
    Meaning-changing migration/refactor edits go exclusively here unless separating them is practically impossible. Upgrade each hunk where it exists at the review base. For `same-purpose base pair` hunks, upgrade both sides until the final intended content is identical on both sides. Remove only `deleted-obsolete` review-base hunks here.
 
@@ -102,7 +115,7 @@ the layer claim; final-tip checks validate behavior.
 
    Verify with Difftastic show.
 
-3. `rename_*`
+4. `rename_*`
 
    Name-only alignment goes exclusively here unless separating it is practically impossible. Behavior and structure changes stay out of this layer.
 
@@ -110,7 +123,7 @@ the layer claim; final-tip checks validate behavior.
 
    Verify with word-diff show.
 
-4. `move_or_reorder_blocks`
+5. `move_or_reorder_blocks`
 
    Hunk relocation between files and hunk reordering within a file go exclusively here unless separating them is practically impossible. The diff must move or reorder prepared hunks without changing their content.
 
@@ -126,7 +139,7 @@ the layer claim; final-tip checks validate behavior.
    move the import line here. If the destination already contains an equivalent import, keep the source import through
    this layer and remove it in `remove_duplicates`.
 
-5. `remove_duplicates`
+6. `remove_duplicates`
 
    Deduplication goes exclusively here unless separating it is practically impossible. This layer is strictly deduplication-only. Do not use this layer for `deleted-obsolete` hunks; those belong in `content_upgrade_*`.
 
@@ -152,6 +165,11 @@ When reviewing alignment, choose the best command instead of stopping at the def
 `--color-moved=blocks`, and `--color-moved-ws=ignore-all-space` when they make same-responsibility hunks align as
 context, moved blocks, or focused word changes. Use the least misleading command if no option aligns perfectly, and
 record what still needs human attention.
+
+Comment/docstring cleanup:
+```bash
+git show --ignore-blank-lines LAYER
+```
 
 Static conformance:
 ```bash
