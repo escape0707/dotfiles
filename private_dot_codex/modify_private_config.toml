@@ -55,7 +55,7 @@ writable_roots = [
     "~/.local/share/pnpm",
     "~/.local/share/uv/python",
     "~/.npm/_cacache/tmp",
-    "~/.texlive/texmf-var",
+    "~/.cache/texlive/texmf-var",
     "~/go",
 {{- end }}
 ]

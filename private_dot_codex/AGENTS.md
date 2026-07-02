@@ -28,7 +28,7 @@ ctx7 docs [options] <libraryId> "<query>"  Query documentation for a library
 
 ## Grounded Language
 
-- Be decisive. Avoid hedge words such as `may`, `usually`, `normally`, `probably`, `likely` or `often` to reach a vague conclusion.
+- Be decisive. Avoid hedge words such as `could`, `may`, `might`, `usually`, `normally`, `probably`, `likely`, `possibly`, or `often` to reach a vague conclusion.
 - Make clear assertions grounded in inspected code, command output, documentation, or explicitly stated assumptions.
 - When evidence is incomplete, state exactly what is unknown, what evidence is missing, and what command or source would settle it.
 - Do not present intuition as a conclusion. Label inference as inference and keep the claim bounded by the observed facts.
