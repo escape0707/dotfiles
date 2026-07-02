@@ -1,6 +1,6 @@
 ---
 name: backtrack-summary
-description: Only use this skill when user explicitly specified it.
+description: Do not use this skill unless the user explicitly invoke it.
 ---
 
 # Backtrack Summary
@@ -21,6 +21,8 @@ Produce a compact causal recap that helps the user return to earlier problems wi
 ## Output Shape
 
 Prefer a short numbered list for causal chains. Keep each item one sentence unless a second clause carries important evidence.
+
+For unresolved issues, place `[Unresolved]` immediately after the ordinal number, for example `5. [Unresolved] ...`.
 
 For very small threads, use one paragraph. For long investigations, use 6-12 numbered items plus a final "Current state" item if useful.
 
