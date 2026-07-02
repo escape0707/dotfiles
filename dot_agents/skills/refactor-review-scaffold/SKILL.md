@@ -180,6 +180,14 @@ When reviewing alignment, choose the best command instead of stopping at the def
 context, moved blocks, or focused word changes. Use the least misleading command if no option aligns perfectly, and
 record what still needs human attention.
 
+If a Difftastic command is slow and the result will be reviewed interactively, cache the colored output once and quote
+from that cache instead of rerunning the command:
+```bash
+mkdir -p /tmp/difft-cache
+DFT_COLOR=always DFT_GRAPH_LIMIT=100000000 git --no-pager dshow LAYER | tee /tmp/difft-cache/LAYER.dshow.ansi
+less -R /tmp/difft-cache/LAYER.dshow.ansi
+```
+
 Comment/docstring cleanup:
 ```bash
 git show --ignore-blank-lines --unified=0 LAYER
