@@ -78,7 +78,7 @@ the layer claim; final-tip checks validate behavior.
 
    This layer must not change executable code except whitespace left by the removal.
 
-   Verify with normal show, optionally with blank-line noise ignored.
+   Verify with zero-context show and blank-line noise ignored.
 
 2. `static_tool_conformance_*`
 
@@ -168,7 +168,7 @@ record what still needs human attention.
 
 Comment/docstring cleanup:
 ```bash
-git show --ignore-blank-lines LAYER
+git show --ignore-blank-lines --unified=0 LAYER
 ```
 
 Static conformance:
