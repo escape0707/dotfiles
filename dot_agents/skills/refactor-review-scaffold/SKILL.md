@@ -104,7 +104,7 @@ the layer claim; final-tip checks validate behavior.
    and indentation/formatting caused by unwrapping.
 
    Do not put assertion changes, fixture data meaning changes, helper behavior changes, production behavior changes,
-   rename-only test-name alignment, hunk relocation, or dedup here.
+   rename-only identifier alignment, hunk relocation, or dedup here.
 
    Verify with moved/word show and whitespace ignored.
 
@@ -120,6 +120,10 @@ the layer claim; final-tip checks validate behavior.
    the prepared hunk mechanically. Delete a review-base hunk here only when it is `deleted-obsolete` or cannot honestly
    be prepared for a later mechanical layer.
 
+   Do not fold name-only cleanup into this layer just because the named body changes here. Keep review-base helper,
+   fixture, support class, test, and call-site names through the semantic upgrade when possible; rename them in
+   `rename_*` after the content is prepared.
+
    `git ddiff` alignment is a critical review-quality metric for this layer. Structure upgraded helper/function/class order so Difftastic pairs each review-base hunk with its intended replacement. If `git ddiff` aligns a hunk with the wrong replacement and the endpoint can stay unchanged, revise the content-layer ordering before moving on.
 
    Preserve review-base hunk order before endpoint style order in this layer. If new helpers, fixtures, class wrappers,
@@ -132,6 +136,8 @@ the layer claim; final-tip checks validate behavior.
 5. `rename_*`
 
    Name-only alignment goes exclusively here unless separating it is practically impossible. Behavior and structure changes stay out of this layer.
+   This includes test names, helper/function/fixture/support class names, and their call sites. If a helper body or
+   signature changed earlier, preserve its review-base name there and rename it here once the content is stable.
 
    If a hunk will later move, apply name-only alignment before the move so the movement layer can relocate unchanged hunks.
 
