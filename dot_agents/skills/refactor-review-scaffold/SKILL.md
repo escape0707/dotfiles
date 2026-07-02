@@ -28,7 +28,9 @@ the required layer order:
    without making the layer claim false. Put import-only adjustments here only when they are independent of later hunk
    relocation or duplicate cleanup.
    Keep boilerplate comment/docstring removal out of this layer so it cannot hide real static-tool decisions.
-3. Minimize `content_upgrade_*`.
+3. Maximize `pytest_shape_normalization_*`.
+   Put behavior-preserving pytest structure changes here so they do not pollute static-tool or content review.
+4. Minimize `content_upgrade_*`.
    This is the reviewer-attention layer. It should contain only irreducible meaning changes and deletion of
    review-base hunks that have no rename, move, reorder, dedup, or same-purpose upgrade path.
 
@@ -38,7 +40,7 @@ Do not make a later mechanical layer empty until every candidate hunk has been c
 
 1. Start from an implementation that is already intended to be final.
 2. Identify the scaffold mode and comparison target:
-   - First scaffold: the comparison target is the original feature branch being scaffolded. Rebuild the six-layer scaffold so the scaffold tip matches that endpoint.
+   - First scaffold: the comparison target is the original feature branch being scaffolded. Rebuild the seven-layer scaffold so the scaffold tip matches that endpoint.
    - Scaffold revision: the comparison target is the previous `vN-1` scaffold branch. Create a new `codex/...-vN` branch and classify the requested feedback as `scaffold-only` or `endpoint-changing`. Scaffold-only feedback changes commit boundaries, layer placement, or reviewability while keeping the new tip tree-identical to the previous scaffold tip. Endpoint-changing feedback changes the final tree and must be implemented in the correct layer while rebuilding.
 3. Classify each logical hunk by review-base topology and endpoint diff dynamic. The source/base location is where the
    hunk exists before migration edits. The endpoint location is where the final tree keeps that responsibility.
@@ -50,9 +52,9 @@ Do not make a later mechanical layer empty until every candidate hunk has been c
    - `same-purpose base pair`: both compared files or locations have hunks serving the same purpose, but their text differs.
 4. For every hunk, choose a layer path, not just one layer. A hunk can be upgraded in `content_upgrade_*`, renamed in
    `rename_*`, then moved in `move_or_reorder_blocks`. Prefer paths that shift the largest honest portion into
-   `rename_*`, `move_or_reorder_blocks`, `remove_duplicates`, then `static_tool_conformance_*`; use
-   `content_upgrade_*` only for the irreducible semantic remainder.
-5. Rebuild the branch using the six commit layers below, in order.
+   `rename_*`, `move_or_reorder_blocks`, `remove_duplicates`, `pytest_shape_normalization_*`, then
+   `static_tool_conformance_*`; use `content_upgrade_*` only for the irreducible semantic remainder.
+5. Rebuild the branch using the seven commit layers below, in order.
 6. Verify each scaffold commit with the review command for that layer. The output must match the layer claim: mechanical layers show only mechanical changes, content layers show only meaningful anchored upgrades, movement layers show only moved or reordered blocks, and dedup layers show only deduplication.
    Diff alignment is part of verification. Try Git diff alignment options when the first output pairs hunks poorly,
    then keep and report the command that gives the clearest honest review surface.
@@ -60,7 +62,7 @@ Do not make a later mechanical layer empty until every candidate hunk has been c
 
 ## Commit Layers
 
-Build the scaffold in these exact six layers and order. Each layer keeps its stated purpose. If a layer has no hunks, record that it was intentionally empty/skipped in an empty commit.
+Build the scaffold in these exact seven layers and order. Each layer keeps its stated purpose. If a layer has no hunks, record that it was intentionally empty/skipped in an empty commit.
 
 Review scaffold commits are allowed to be non-runnable if their claim is honest and mechanically verifiable. The final tip must satisfy the endpoint check.
 
@@ -85,16 +87,28 @@ the layer claim; final-tip checks validate behavior.
    Static-tool conformance and review-surface normalization go here unless separating them is practically impossible.
    This layer prepares touched executable code into a clean, typed, parseable, idiomatic review shape before meaning
    changes. In test-file scaffolds, this includes strict typing, fixture/helper signature cleanup, mock-to-stub
-   replacement, enum/schema conformance, and behavior-preserving pytest shape normalization such as class-to-module
-   flattening.
+   replacement, and enum/schema conformance.
 
    This includes replacing `Any`, `cast`, loose mock payloads, or manual shape checks with typed/Pydantic validation, even when stricter helper validation changes where invalid internal data would fail.
-   Do not put assertion changes, fixture data meaning changes, production behavior changes, or hunk relocation/dedup here.
+   Do not put pytest shape normalization such as class-to-module flattening, assertion changes, fixture data meaning
+   changes, production behavior changes, or hunk relocation/dedup here.
    Import-only adjustments go here only when they are independent of later relocation or duplicate cleanup.
 
    Verify with Difftastic show.
 
-3. `content_upgrade_*`
+3. `pytest_shape_normalization_*`
+
+   Behavior-preserving pytest structure normalization goes here unless separating it is practically impossible.
+   In test-file scaffolds, this includes class-to-module flattening, removing `self` from test/helper/fixture
+   signatures, converting `self._helper(...)` calls to `_helper(...)`, fixture/helper relocation caused by unwrapping,
+   and indentation/formatting caused by unwrapping.
+
+   Do not put assertion changes, fixture data meaning changes, helper behavior changes, production behavior changes,
+   rename-only test-name alignment, hunk relocation, or dedup here.
+
+   Verify with moved/word show and whitespace ignored.
+
+4. `content_upgrade_*`
 
    Meaning-changing migration/refactor edits go exclusively here unless separating them is practically impossible. Upgrade each hunk where it exists at the review base. For `same-purpose base pair` hunks, upgrade both sides until the final intended content is identical on both sides. Remove only `deleted-obsolete` review-base hunks here.
 
@@ -115,7 +129,7 @@ the layer claim; final-tip checks validate behavior.
 
    Verify with Difftastic show.
 
-4. `rename_*`
+5. `rename_*`
 
    Name-only alignment goes exclusively here unless separating it is practically impossible. Behavior and structure changes stay out of this layer.
 
@@ -123,7 +137,7 @@ the layer claim; final-tip checks validate behavior.
 
    Verify with word-diff show.
 
-5. `move_or_reorder_blocks`
+6. `move_or_reorder_blocks`
 
    Hunk relocation between files and hunk reordering within a file go exclusively here unless separating them is practically impossible. The diff must move or reorder prepared hunks without changing their content.
 
@@ -139,7 +153,7 @@ the layer claim; final-tip checks validate behavior.
    move the import line here. If the destination already contains an equivalent import, keep the source import through
    this layer and remove it in `remove_duplicates`.
 
-6. `remove_duplicates`
+7. `remove_duplicates`
 
    Deduplication goes exclusively here unless separating it is practically impossible. This layer is strictly deduplication-only. Do not use this layer for `deleted-obsolete` hunks; those belong in `content_upgrade_*`.
 
@@ -174,6 +188,11 @@ git show --ignore-blank-lines --unified=0 LAYER
 Static conformance:
 ```bash
 DFT_GRAPH_LIMIT=100000000 git dshow LAYER
+```
+
+Pytest shape normalization:
+```bash
+git show --color-moved --ignore-all-space --color-words LAYER
 ```
 
 Content upgrade:
