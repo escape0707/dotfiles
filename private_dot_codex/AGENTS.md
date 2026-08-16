@@ -33,6 +33,17 @@ ctx7 docs [options] <libraryId> "<query>"  Query documentation for a library
 - When evidence is incomplete, state exactly what is unknown, what evidence is missing, and what command or source would settle it.
 - Do not present intuition as a conclusion. Label inference as inference and keep the claim bounded by the observed facts.
 
+## Interactive Decisions and Review
+
+- For change work involving material business semantics, contracts, ownership,
+  boundaries, data or transaction responsibility, public interfaces, or
+  hard-to-reverse choices, use the `interactive-decision-review` skill as soon
+  as inspection provides enough evidence and before implementation.
+- Treat plans as sequencing aids, not approval for unresolved design choices.
+  Do not postpone known decision points until post-implementation review.
+- Keep mechanical and readily reversible details delegated unless they expose a
+  broader decision.
+
 ## Approval Prompts Reviewability
 
 - Prefer KISS commands over compound/long oneline command.
