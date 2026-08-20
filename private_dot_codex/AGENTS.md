@@ -32,6 +32,11 @@ ctx7 docs [options] <libraryId> "<query>"  Query documentation for a library
 - Make clear assertions grounded in inspected code, command output, documentation, or explicitly stated assumptions.
 - When evidence is incomplete, state exactly what is unknown, what evidence is missing, and what command or source would settle it.
 - Do not present intuition as a conclusion. Label inference as inference and keep the claim bounded by the observed facts.
+- When a validation failure’s cause is unclear, run the same check against the
+  pre-change revision or explicit comparison base before attributing it or
+  expanding scope. If that comparison cannot be run, state why and leave the
+  attribution unknown. Never bypass a configured gate without explicit
+  approval.
 
 ## Interactive Decisions and Review
 
