@@ -40,10 +40,14 @@ Use `interactive-decision-review` for material choices and
    authority. A passing test proves only what its setup and assertions exercise;
    deployed behavior constrains compatibility but does not prove that every
    implementation detail is intentional.
-5. When sources disagree, quote the contradiction and identify the decision
+5. Treat type-checker failures as evidence of a test, fixture, double,
+   annotation, or production contract mismatch. Inspect runtime behavior and
+   callers, then correct the responsible side instead of suppressing the
+   diagnostic or weakening the type.
+6. When sources disagree, quote the contradiction and identify the decision
    required to resolve it. Do not silently make the test match current code,
    legacy mocks, or the easiest available fixture.
-6. Before designing the test, state the bounded contract it will prove, the
+7. Before designing the test, state the bounded contract it will prove, the
    behavior it must reject or leave untouched, and every material point it will
    not claim.
 
