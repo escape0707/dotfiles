@@ -27,3 +27,31 @@ This repository is managed with chezmoi.
   role-specific ignore rules, or system-keyring lookups like
   `{{ keyring "service" "user" }}`.
 - Do not put real secrets in tracked files or local `[data]`.
+
+## Archived Workflows
+
+### Refactor Review Scaffold v1
+
+`refactor-review-scaffold` is preserved at Git tag
+`archive/refactor-review-scaffold-v1`, anchored to commit
+`fa7c1975f531930c4bb305041023c5572dbb7cf9`.
+
+It is intentionally not installed as an active skill. Its reviewer-attention,
+endpoint-equivalence, and diff-alignment techniques remain useful, but its fixed
+seven-layer and pytest-specific workflow must be adapted to the target
+refactor’s semantics before reuse.
+
+Inspect the archived source:
+
+```shell
+git show \
+  archive/refactor-review-scaffold-v1:dot_agents/skills/refactor-review-scaffold/SKILL.md
+```
+
+Restore it into the working tree for adaptation:
+
+```shell
+git restore \
+  --source=archive/refactor-review-scaffold-v1 \
+  -- dot_agents/skills/refactor-review-scaffold/SKILL.md
+```
