@@ -1,6 +1,5 @@
 diffutils
 git
-libtorrent-rasterbar-2_1-git
 lua
 neovim
 noto-fonts
