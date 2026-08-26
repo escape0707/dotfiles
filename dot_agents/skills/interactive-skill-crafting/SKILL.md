@@ -15,7 +15,11 @@ file until the content decision pass is complete.
    existing.
 2. When updating a skill, read its complete `SKILL.md` before proposing changes.
 3. Inventory the user’s approved decisions, unresolved choices, and constraints.
-4. Keep the resulting skill minimalist and concise. Prefer in-place revisions
+4. Present a concise ordered hunk map using `Hunk N of M`. Use that label as the
+   progress indicator without adding a duplicate progress summary. If later
+   discussion changes the map, state what was added, removed, or regrouped
+   instead of silently changing `M`.
+5. Keep the resulting skill minimalist and concise. Prefer in-place revisions
    over appending overlapping instructions or explanations.
 
 ## Decide Hunk by Hunk
