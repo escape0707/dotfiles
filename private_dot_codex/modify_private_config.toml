@@ -15,8 +15,10 @@
 {{- if gt (len $parts) 1 -}}
 {{-   $tail = (index $parts 1 | trim) -}}
 {{- end -}}
-model = "gpt-5.5"
-model_reasoning_effort = "xhigh"
+model = "gpt-5.6-sol"
+model_context_window = 872000
+model_auto_compact_token_limit = 800000
+model_reasoning_effort = "medium"
 personality = "pragmatic"
 web_search = "live"
 {{- if $isTermux }}
@@ -27,6 +29,7 @@ sandbox_mode = "workspace-write"
 approvals_reviewer = "user"
 check_for_update_on_startup = false
 plan_mode_reasoning_effort = "xhigh"
+service_tier = "default"
 
 [sandbox_workspace_write]
 network_access = true
@@ -46,6 +49,7 @@ writable_roots = [
     "~/.cache/chromium",
     "~/.cache/gh",
     "~/.cache/go-build",
+    "~/.cache/theme-liquid-docs-nodejs",
     "~/.cache/ms-playwright",
     "~/.cache/pnpm",
     "~/.cache/uv",
