@@ -38,6 +38,9 @@ default_subagent_reasoning_effort = "max"
 [features.multi_agent_v2]
 enabled = true
 
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
+
 [sandbox_workspace_write]
 network_access = true
 {{- if not $isTermux }}
