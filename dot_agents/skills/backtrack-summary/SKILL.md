@@ -1,6 +1,6 @@
 ---
 name: backtrack-summary
-description: Do not use this skill unless the user explicitly invoke it.
+description: Use only when the user explicitly invokes `$backtrack-summary` by name. Do not use for ordinary summary requests.
 ---
 
 # Backtrack Summary
