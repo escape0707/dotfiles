@@ -31,6 +31,13 @@ check_for_update_on_startup = false
 plan_mode_reasoning_effort = "xhigh"
 service_tier = "default"
 
+[agents]
+default_subagent_model = "gpt-5.6-luna"
+default_subagent_reasoning_effort = "max"
+
+[features.multi_agent_v2]
+enabled = true
+
 [sandbox_workspace_write]
 network_access = true
 {{- if not $isTermux }}
