@@ -4,8 +4,8 @@ description:
   Operate Playwright CLI reliably from WSL2 against Windows Microsoft Edge
   through Playwright Extension. Use when starting, attaching, recovering, or
   troubleshooting extension-backed Edge sessions across WSL2 and Windows,
-  including relay timeouts, short-lived agent-started bridges, hung commands,
-  or lost sessions.
+  including relay timeouts, short-lived agent-started bridges, hung commands, or
+  lost sessions.
 ---
 
 # Playwright WSL2 Edge Extension
@@ -19,11 +19,10 @@ artifact policies in the calling workflow.
 
 1. Ensure the user has a Playwright Extension token, but do not ask them to
    paste or echo it into the conversation.
-2. While
-   [`openai/codex#14875`](https://github.com/openai/codex/issues/14875) remains
-   unresolved for the installed Codex build, have the user own the extension
-   bridge in a persistent external shell. Do not run `open`, `attach`, or another
-   Playwright startup command from a one-shot agent tool call.
+2. While [`openai/codex#14875`](https://github.com/openai/codex/issues/14875)
+   remains unresolved for the installed Codex build, have the user own the
+   extension bridge in a persistent external shell. Do not run `open`, `attach`,
+   or another Playwright startup command from a one-shot agent tool call.
 3. Have the user configure and start the session in their persistent `fish`
    shell:
 

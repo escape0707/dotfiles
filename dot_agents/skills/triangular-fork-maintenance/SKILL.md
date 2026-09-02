@@ -1,6 +1,9 @@
 ---
 name: triangular-fork-maintenance
-description: Use when maintaining a triangular Git fork, rebasing branches onto upstream, evaluating conflicts between overlapping branches or refactors, realigning dependent branches, or preparing focused upstream PR history.
+description:
+  Use when maintaining a triangular Git fork, rebasing branches onto upstream,
+  evaluating conflicts between overlapping branches or refactors, realigning
+  dependent branches, or preparing focused upstream PR history.
 ---
 
 # Triangular Fork Maintenance
@@ -100,8 +103,8 @@ contract decision, use `interactive-decision-review` before resolving it.
 
 1. Use `git range-diff` with the recorded old and new ranges to confirm patch
    equivalence.
-2. Inspect `git diff upstream/main...<branch>` for the intended scope and absence
-   of private scaffolding on upstream PR branches.
+2. Inspect `git diff upstream/main...<branch>` for the intended scope and
+   absence of private scaffolding on upstream PR branches.
 3. Verify every rewritten commit reports a good signature with `%G? = G`.
 4. Run checks proportionate to conflict or code-change risk; a conflict-free
    metadata-only rebase does not require costly tests.

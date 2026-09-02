@@ -1,12 +1,15 @@
 ---
 name: quote-explain-hunk
-description: Use when the user asks to review or explain an existing change, patch, diff, or implementation interactively, one review point and its concrete hunks at a time.
+description:
+  Use when the user asks to review or explain an existing change, patch, diff,
+  or implementation interactively, one review point and its concrete hunks at a
+  time.
 ---
 
 # Quote Explain Hunk
 
-Interactively review an existing implementation through digestible, evidence-backed
-change explanations.
+Interactively review an existing implementation through digestible,
+evidence-backed change explanations.
 
 ## Responsibility
 
@@ -81,5 +84,5 @@ representative hunk.
 5. Report the comparison range, targeted review commands, reviewed points, and
    remaining delivery or verification work.
 
-Do not claim complete review coverage when any unique change remains
-unaccounted for.
+Do not claim complete review coverage when any unique change remains unaccounted
+for.
