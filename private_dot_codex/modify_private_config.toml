@@ -91,7 +91,6 @@ session_picker_view = "comfortable"
 notification_method = "bel"
 {{- end }}
 notification_condition = "always"
-status_line_use_colors = true
 
 {{ $marker }}
 {{- if $tail }}
