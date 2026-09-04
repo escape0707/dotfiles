@@ -87,6 +87,7 @@ status_line = ["model-with-reasoning", "context-remaining", "weekly-limit"]
 status_line = ["model-with-reasoning", "context-remaining", "total-input-tokens", "total-output-tokens", "five-hour-limit", "weekly-limit", "git-branch", "current-dir"]
 {{- end }}
 session_picker_view = "comfortable"
+auto_recap = false
 {{- if $isTermux }}
 notification_method = "bel"
 {{- end }}
