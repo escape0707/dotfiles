@@ -123,6 +123,8 @@ ctx7 docs [options] <libraryId> "<query>"  Query documentation for a library
   - Set local branch to track `upstream` not `origin`.
   - Then `git push` and `git pull` will run for triangular fork workflows as
     expected.
+- Run SSH-based Git operations directly in the sandbox, without standalone SSH
+  preflight checks or preemptive escalation.
 - Run `git push` with sandbox escalation because `.git/refs/remotes/*` is not
   writable in the sandbox.
 - During active PR or feature work, do not amend commits by default. Make new
