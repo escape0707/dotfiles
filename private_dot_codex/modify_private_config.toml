@@ -68,6 +68,7 @@ writable_roots = [
     "~/.local/share/cargo",
     "~/.local/share/pnpm",
     "~/.local/share/uv/python",
+    "~/.local/share/vite-plus",
     "~/.npm/_cacache/tmp",
     "~/.cache/texlive/texmf-var",
     "~/go",
