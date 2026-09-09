@@ -22,7 +22,7 @@ The same `SKILL.md` is intended for both Main Agents and Subagents.
 
 1. **The Main Agent owns strategy; the Subagent owns delegated execution.**
 2. **One relay branch = exactly one Main↔Subagent writer pair.**
-3. **All relay branches live in the dedicated private repository `escape0707/agent-relay`.**
+3. **All relay branches live in the dedicated private repository `<GitHub-login>/agent-relay`.**
 4. **Local relay Git state lives under `~/workspaces/agent-relay`, separate from task-project worktrees.**
 5. **Only the Main Agent creates new rounds.**
 6. **Role is contextual and relational, not fixed by model or product identity.**
@@ -176,8 +176,10 @@ If user authorization changes the upstream permission boundary, report it under 
 All relay branches MUST live in the dedicated private repository:
 
 ```text
-escape0707/agent-relay
+<GitHub-login>/agent-relay
 ```
+
+`<GitHub-login>` is the authenticated GitHub account login.
 
 This relay repository is independent of the repository, machine, or filesystem task being worked on. Do not place relay protocol state inside an unrelated project repository merely because the current agent is running there.
 
@@ -196,7 +198,7 @@ Recommended local layout:
     └── <relay-branch-safe-name>/
 ```
 
-`repo/` is the reusable local clone of `escape0707/agent-relay`. Per-channel worktrees are disposable local execution surfaces. The GitHub relay branch is the durable communication record.
+`repo/` is the reusable local clone of `<GitHub-login>/agent-relay`. Per-channel worktrees are disposable local execution surfaces. The GitHub relay branch is the durable communication record.
 
 On first local use, the Subagent SHOULD:
 
@@ -265,19 +267,18 @@ The relay branch and work branch normally belong to different repositories. Do n
 
 ## 6. Minimal Relay Tree
 
-Use only this persistent protocol structure unless explicitly asked otherwise:
+Use only this visible branch-root protocol structure unless explicitly asked otherwise:
 
 ```text
-.agent-relay/
-├── session.json
-└── rounds/
-    ├── 0001-<slug>/
-    │   ├── round.json
-    │   ├── prompt.md
-    │   ├── response.md       # appears when published
-    │   └── artifacts.json    # only when needed
-    └── 0002-<slug>/
-        └── ...
+session.json
+rounds/
+├── 0001-<slug>/
+│   ├── round.json
+│   ├── prompt.md
+│   ├── response.md       # appears when published
+│   └── artifacts.json    # only when needed
+└── 0002-<slug>/
+    └── ...
 ```
 
 ### `session.json`
@@ -1054,7 +1055,7 @@ None.
 
 - **MUST** infer role from environment and context, not model identity alone.
 - **MUST** keep one relay branch to one Main↔Subagent writer pair.
-- **MUST** use the dedicated private relay repository `escape0707/agent-relay`.
+- **MUST** use the dedicated private relay repository `<GitHub-login>/agent-relay`.
 - **MUST** keep local relay Git state under `~/workspaces/agent-relay`.
 - **MUST NOT** place relay protocol state inside an unrelated project repository merely for convenience.
 - **MUST** let only the Main Agent create formal new rounds.
