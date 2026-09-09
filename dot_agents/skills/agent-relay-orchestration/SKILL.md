@@ -373,7 +373,15 @@ Cleanup is explicit, not automatic. Do not create a final-summary file by defaul
 
 Use Git for GitHub-safe relay materials such as text, compact structured data, scripts, source code, and small reports.
 
-Use manual transfer for required artifacts that are sensitive, private, large, binary, or otherwise unsuitable for durable Git history. Never commit passwords, private keys, access tokens, credentials, or similar secrets. A private repository is not a secret vault.
+Use GitHub by default. A private repository alone does not require manual transfer.
+
+Use manual transfer for required artifacts that are sensitive, large, binary,
+awkward for Git, or otherwise unsuitable for durable Git history.
+
+Use manual transfer as a GitHub-access fallback only when the required access
+has been confirmed unavailable.
+
+Never commit passwords, private keys, access tokens, credentials, or similar secrets. A private repository is not a secret vault.
 
 If any manual return is required:
 
