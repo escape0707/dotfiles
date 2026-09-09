@@ -10,10 +10,10 @@
 {{- end -}}
 {{- $workspacesDir := printf "%s%sworkspaces" .chezmoi.homeDir .chezmoi.pathSeparator -}}
 {{- $live := fromToml .chezmoi.stdin -}}
-model = "gpt-5.6-luna"
+model = {{ get . "codexModel" | default "gpt-5.6-luna" | quote }}
+model_reasoning_effort = {{ get . "codexReasoningEffort" | default "max" | quote }}
 model_context_window = 872000
 model_auto_compact_token_limit = 800000
-model_reasoning_effort = "max"
 personality = "pragmatic"
 web_search = "live"
 {{- if $isTermux }}
