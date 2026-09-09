@@ -46,6 +46,7 @@ network_access = true
 {{- if not $isTermux }}
 writable_roots = [
     '{{ .chezmoi.sourceDir }}',
+    '{{ $workspacesDir }}{{ .chezmoi.pathSeparator }}agent-relay',
 {{- if $isWindows }}
     '{{ $windowsLocalAppData }}\fnm_multishells',
     '{{ $windowsLocalAppData }}\ms-playwright',
