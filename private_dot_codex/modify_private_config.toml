@@ -9,16 +9,11 @@
 {{-   $windowsRoamingAppData = env "APPDATA" -}}
 {{- end -}}
 {{- $workspacesDir := printf "%s%sworkspaces" .chezmoi.homeDir .chezmoi.pathSeparator -}}
-{{- $marker := "# Codex app/CLI generated config may be appended below this line." -}}
-{{- $tail := "" -}}
-{{- $parts := splitList $marker .chezmoi.stdin -}}
-{{- if gt (len $parts) 1 -}}
-{{-   $tail = (index $parts 1 | trim) -}}
-{{- end -}}
-model = "gpt-5.6-sol"
+{{- $live := fromToml .chezmoi.stdin -}}
+model = "gpt-5.6-luna"
 model_context_window = 872000
 model_auto_compact_token_limit = 800000
-model_reasoning_effort = "medium"
+model_reasoning_effort = "max"
 personality = "pragmatic"
 web_search = "live"
 {{- if $isTermux }}
@@ -40,6 +35,27 @@ enabled = true
 
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
+
+[mcp_servers.figma]
+url = "https://mcp.figma.com/mcp"
+
+[mcp_servers.penpot]
+url = "http://localhost:4401/mcp"
+
+[mcp_servers.penpot.tools.execute_code]
+approval_mode = "approve"
+
+[mcp_servers.penpot.tools.export_shape]
+approval_mode = "approve"
+
+[mcp_servers.penpot.tools.high_level_overview]
+approval_mode = "approve"
+
+[mcp_servers.penpot.tools.import_image]
+approval_mode = "approve"
+
+[mcp_servers.penpot.tools.penpot_api_info]
+approval_mode = "approve"
 
 [sandbox_workspace_write]
 network_access = true
@@ -98,7 +114,21 @@ notification_method = "bel"
 {{- end }}
 notification_condition = "always"
 
-{{ $marker }}
-{{- if $tail }}
-{{ $tail }}
-{{- end }}
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+gpt-6-astra = 4
+
+[[skills.config]]
+path = '{{ .chezmoi.homeDir }}{{ .chezmoi.pathSeparator }}.codex{{ .chezmoi.pathSeparator }}skills{{ .chezmoi.pathSeparator }}.system{{ .chezmoi.pathSeparator }}skill-creator{{ .chezmoi.pathSeparator }}SKILL.md'
+enabled = false
+
+[[skills.config]]
+path = '{{ .chezmoi.homeDir }}{{ .chezmoi.pathSeparator }}.codex{{ .chezmoi.pathSeparator }}skills{{ .chezmoi.pathSeparator }}.system{{ .chezmoi.pathSeparator }}skill-installer{{ .chezmoi.pathSeparator }}SKILL.md'
+enabled = false
+
+[notice]
+hide_rate_limit_model_nudge = true
+
+{{ if hasKey $live "projects" -}}
+{{ dict "projects" (get $live "projects") | toToml -}}
+{{ end -}}
