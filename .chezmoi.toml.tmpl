@@ -15,3 +15,7 @@ args = [
   "{{ "{{" }} .Source {{ "}}" }}",
   "{{ "{{" }} .Destination {{ "}}" }}",
 ]
+
+{{ with .chezmoi.config.data }}
+{{ dict "data" . | toToml -}}
+{{ end -}}
