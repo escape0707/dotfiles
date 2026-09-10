@@ -5,6 +5,6 @@ function pacup
         sudo pacman --sync --refresh --sysupgrade
     end
 
-    pnpm update --global --latest
+    pnpm update --global
     skills update --global
 end
