@@ -15,8 +15,3 @@ args = [
   "{{ "{{" }} .Source {{ "}}" }}",
   "{{ "{{" }} .Destination {{ "}}" }}",
 ]
-
-{{- $codexOverrides := pick . "codexModel" "codexReasoningEffort" }}
-{{ if $codexOverrides }}
-{{ dict "data" $codexOverrides | toToml -}}
-{{ end -}}
