@@ -42,6 +42,8 @@ prefix_rule(pattern=["git", ["add", "apply", "branch", "checkout", "cherry-pick"
 prefix_rule(pattern=["git", "-c", "core.editor=true", ["cherry-pick", "rebase"]], decision="allow")
 prefix_rule(pattern=["git", "stash", ["branch", "create", "export", "list", "push", "show", "store"]], decision="allow")
 
+prefix_rule(pattern=["git", "ls-remote"], decision="allow")
+
 # Prompt before mutating remote Git refs.
 prefix_rule(pattern=["git", "lfs", "push"], decision="prompt")
 prefix_rule(pattern=["git", "push"], decision="prompt")
