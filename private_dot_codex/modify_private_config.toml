@@ -102,6 +102,7 @@ sandbox = "elevated"
 {{- end }}
 
 [tui]
+whimsy = false
 {{- if $isTermux }}
 status_line = ["model-with-reasoning", "context-remaining", "weekly-limit"]
 {{- else }}
