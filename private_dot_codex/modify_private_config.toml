@@ -36,9 +36,6 @@ enabled = true
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
 
-[mcp_servers.figma]
-url = "https://mcp.figma.com/mcp"
-
 [mcp_servers.penpot]
 url = "http://localhost:4401/mcp"
 
