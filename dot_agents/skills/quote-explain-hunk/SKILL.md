@@ -8,81 +8,75 @@ description:
 
 # Quote Explain Hunk
 
-Interactively review an existing implementation through digestible,
-evidence-backed change explanations.
+Review concrete code through dependency-ordered, evidence-backed explanations,
+one digestible hunk at a time.
 
 ## Responsibility
 
-This skill owns post-implementation explanation and review of a concrete diff.
-It organizes review by durable change intent while quoting every meaningful
-implementation hunk.
+Explain existing code independently or with `interactive-decision-review`.
+Understanding code need not produce decisions or implementation work.
 
-It does not design unresolved semantics or implement corrections during the
-review pass. When a hunk exposes a material decision, return to
-`interactive-decision-review`. Remain review-only until the user completes or
-explicitly ends the review pass and authorizes corrections.
+Review can uncover corrections, new decisions, or changes to plan and scope.
+Use `interactive-decision-review` for material choices, preserving review state.
+Accepting steering does not authorize edits. By default, finish the full pass
+before reconciling steering and obtaining implementation authorization. Only
+explicit authorization for bounded or rolling implementation permits mid-pass
+changes.
+
+Keep progress, approvals, deferred judgments, and steering in conversation
+context. Do not create or expand repository documents to track review; update
+durable documentation only when requested or required by approved work.
 
 ## Prepare the Review Map
 
-1. Inspect `git status --short --branch` and identify the exact implementation
-   being reviewed.
-2. Determine the comparison base from the user, branch history, merge base, or
-   reviewed commit range. Do not mix unrelated upstream drift into the review.
-3. Inspect the commit series, changed-file inventory, targeted diff, final code,
-   relevant call sites, and tests before explaining individual hunks. Prefer
-   `git ddiff` or `git dshow <commit> -- <path>` when Difftastic provides the
-   clearest review surface.
-4. Group the changes into durable intents rather than raw file order or Git’s
-   incidental hunk boundaries. Review supporting imports, types, fixtures, and
-   helpers with the consumer that gives them meaning.
-5. Present a concise ordered map using `Review point N of M`. Use that label as
-   the progress indicator without adding a duplicate progress summary. If later
-   inspection changes the map, state what was added, removed, or regrouped.
-
-Do not abbreviate repeated changes until their locations, semantics, and
-consequences have been compared.
+1. Inspect `git status --short --branch` and identify the exact implementation.
+2. Establish the comparison base from the requested range, history, or merge
+   base. Exclude unrelated upstream drift.
+3. Inspect commits, changed files, targeted diffs, final code, call sites, and
+   tests before explaining hunks. Prefer `git ddiff` or `git dshow <commit> --
+   <path>` when Difftastic gives the clearest view.
+4. Group by durable intent, not file order or incidental diff boundaries. Order
+   explanations by dependency: introduce inputs, imports, types, and helpers
+   before consumers, with enough context to explain their purpose.
+5. Label points `Review point N of M`, without a duplicate progress summary.
+   Explain additions, removals, or regrouping when the map changes.
 
 ## Explain Each Review Point
 
-A review point represents one durable change intent and can contain several
-concrete hunks. For each review point:
+A point can contain several hunks. For each hunk:
 
-1. Label it `Review point N of M` and identify every affected relative path.
-2. Quote each unique consumer hunk with its relative path and line number.
-   Include the exact targeted command the user can run to inspect it.
-3. Use diff format for a modification, a syntax-appropriate code block for a
-   pure addition or removal, and prose for explanation. Quote the actual change
-   rather than reconstructing an approximate example.
-4. Explain the old behavior, new behavior, owning responsibility, and concrete
-   correctness, contract, testing, or maintenance consequences.
-5. Distinguish verified behavior, inference, and missing evidence. State a
-   grounded review conclusion or recommendation.
-6. Pause for the user’s questions and judgment. Answer against the same review
-   point before continuing, then record accepted corrections, deferred concerns,
-   and rejected suggestions.
+1. Identify the point and affected relative paths. Quote the actual hunk with
+   line numbers and an exact inspection command. Use diff format for changes
+   and syntax-appropriate code blocks for pure additions or removals.
+2. For unfamiliar data shapes, demonstrate representative input and output
+   before terminology. Distinguish illustrative examples from actual
+   code or data; do not substitute approximations for the hunk being reviewed.
+3. Connect syntax to old and new behavior at the user's demonstrated knowledge
+   level. Explain ownership and the concrete correctness, contract, testing,
+   and maintenance consequences.
+4. Distinguish verified facts, inferences, and missing evidence. Give a grounded
+   conclusion or recommendation.
+5. Wait for understanding and approval, or explicit deferral, before advancing.
+   Answer questions against the same hunk; return to deferred judgments once
+   their needed context is covered. Distinguish hunk approval from point approval.
 
-For repeated instances of one pattern, list every affected location, quote a
-representative instance, and explain the evidence that makes the remaining
-instances equivalent. Do not hide a unique semantic change behind a
-representative hunk.
+For repeated patterns, compare every location and its consequences before
+abbreviating. List the locations, quote a representative instance, and explain
+why it covers the others. Never hide a unique change behind a representative.
 
 ## Complete and Hand Off
 
-1. Reconcile the review map against the comparison range. Account for every
-   unique behavioral change as individually reviewed, explicitly abbreviated as
-   a verified repeated pattern, delegated, or still unreviewed.
-2. Summarize accepted corrections, rejected suggestions, deferred concerns, and
-   unresolved evidence without silently treating the implementation as fully
-   approved.
-3. If the user authorizes corrections, hand the bounded correction set to
-   `interactive-decision-review` for implementation and commit handling. After
-   implementation, review every resulting behavioral change at the requested
-   granularity.
-4. If the user delegates the remaining review or requests a fast-forward,
-   consolidate the remaining intents and locations, but state which points were
-   not reviewed individually.
-5. Report the comparison range, targeted review commands, reviewed points, and
-   remaining delivery or verification work.
-
-Do not claim complete review coverage when any unique change remains unaccounted
-for.
+1. Reconcile the map against the comparison range. Account for every meaningful
+   hunk as reviewed, explicitly abbreviated, delegated, or still unreviewed.
+2. Reconcile accumulated steering before seeking implementation authorization:
+   accepted changes, rejected suggestions, deferred concerns, and missing evidence.
+3. For authorized implementation, use `interactive-decision-review` with the
+   bounded scope, decisions, comparison range, and review state. Afterward,
+   resume the pass and re-review changed hunks and unchanged code whose meaning
+   was affected. Retain other approvals and deferred judgments; do not require
+   the user to invoke both skills again at each handoff.
+4. If the user delegates remaining review or approves a batch through their own
+   editor, honor that scope and identify what was not reviewed individually.
+5. Report the comparison range, inspection commands, coverage, outstanding
+   concerns, and remaining verification or delivery work. Do not claim complete
+   review coverage while unique changes remain unaccounted for.
