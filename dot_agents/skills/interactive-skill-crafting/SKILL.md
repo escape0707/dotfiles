@@ -5,22 +5,22 @@ description: Use when the user wants to create or update a SKILL.md collaborativ
 
 # Interactive Skill Crafting
 
-Collaboratively create or revise one skill through small, user-approved content
-hunks. Treat the conversation as the source of truth, and do not edit the target
-file until the content decision pass is complete.
+Collaboratively create or revise a skill or cohesive set of related skills
+through small, user-approved content hunks. Keep decisions in the conversation,
+not repository tracking documents. Do not edit targets during the decision pass.
 
 ## Prepare
 
-1. Confirm the skill’s name, purpose, target path, and whether it is new or
-   existing.
-2. When updating a skill, read its complete `SKILL.md` before proposing changes.
+1. Establish each skill's name, purpose, target path, and whether it is new or
+   existing. For related skills, establish their responsibilities and handoffs.
+2. Read each existing target's complete `SKILL.md` before proposing changes.
 3. Inventory the user’s approved decisions, unresolved choices, and constraints.
 4. Present a concise ordered hunk map using `Hunk N of M`. Use that label as the
    progress indicator without adding a duplicate progress summary. If later
    discussion changes the map, state what was added, removed, or regrouped
    instead of silently changing `M`.
-5. Keep the resulting skill minimalist and concise. Prefer in-place revisions
-   over appending overlapping instructions or explanations.
+5. Keep revisions concise and targeted. Appending exact approved wording is
+   appropriate when it adds a distinct instruction without overlap.
 
 ## Decide Hunk by Hunk
 
@@ -36,17 +36,20 @@ file until the content decision pass is complete.
 
 ## Assemble Faithfully
 
-1. Assemble only approved content after the decision pass.
-2. Preserve approved wording byte-for-byte when practical. Limit integration
-   edits to headings, numbering, deduplication, and grammatical continuity.
-3. Present any material integration change before editing.
+1. After the content decision pass, ask whether to retain the approved wording
+   as targeted edits or prepare a fused revision, unless the user has already
+   specified their preference.
+2. Assemble only approved content. Preserve approved wording by default; limit
+   routine integration to headings, numbering, and grammatical continuity.
+3. If fusion is requested, integrate the changes into existing sections and
+   remove overlap. Present the revised wording for approval before editing.
 4. Audit the result for contradiction, duplication, stale wording, and scope
    creep, then show the complete diff for final approval.
 
 ## Install and Verify
 
 1. Respect the target’s configuration manager. For a chezmoi-managed skill, edit
-   its source file, apply only that target, and verify source and target match.
+   its source file, apply only the approved targets, and verify each match.
 2. Validate the frontmatter, skill name and directory, Markdown, and clean diff.
-3. Commit and push only after final approval, following the repository’s normal
-   workflow.
+3. Commit and push after final approval or explicit delivery authorization,
+   respecting review holds and the repository's normal workflow.
