@@ -30,6 +30,16 @@ ctx7 docs [options] <libraryId> "<query>"  Query documentation for a library
 - When a file operation is clearly a copy or restore, use `cp` instead of
   recreating the file with `apply_patch`.
 
+## Code Clarity and Comments
+
+- Prefer self-explanatory naming, straightforward control flow, and cohesive
+  function/module organization.
+- For non-obvious logic—especially algorithms—add concise local comments that
+  explain intent, state representations, invariants, or why an operation is
+  necessary.
+- Avoid comments that merely repeat obvious code. Improve unclear names or
+  structure when that resolves the confusion without adding complexity.
+
 ## Grounded Language
 
 - Be decisive. Avoid hedge words such as `could`, `may`, `might`, `usually`,
