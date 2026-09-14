@@ -24,11 +24,15 @@ Update durable documentation only when requested or required by approved work.
 
 ## Build the Decision Map
 
-1. Establish the intended outcome, scope, and controlling constraints.
+1. Establish the intended outcome, scope, and controlling constraints. Before
+   proposing a workaround that changes a stated constraint, check its source
+   and explain any conflict with external requirements.
 2. Inspect relevant code, tests, documentation, history, and call sites. Separate
    verified behavior from assumptions and missing evidence.
 3. Identify material choices about semantics, contracts, ownership, boundaries,
    data responsibility, public interfaces, error behavior, testing, or scope.
+   Trace actual data flow and I/O boundaries before proposing schemas or
+   ownership splits.
 4. Exclude settled choices and routine details that expose no broader concern.
 5. Order decisions by their dependencies. Label them `Decision N of M`, without
    a duplicate progress summary. Explain additions, removals, or regrouping
@@ -48,11 +52,15 @@ For each decision:
    data shapes or contracts, show a small representative example before relying
    on terminology; label illustrative examples separately from actual evidence.
 3. Explain credible alternatives and their effects on behavior, boundaries,
-   implementation, testing, and future change. Give a grounded recommendation,
-   distinguishing facts, assumptions, and unresolved evidence.
-4. Use a proposed code example when helpful, without speculative full
-   implementation or artificial micro-decisions. Group repeated instances only
-   after verifying that their semantics and consequences agree.
+   implementation, testing, and future change, including what the user must
+   learn, review, and maintain before investing in a custom foundation. Give a
+   grounded recommendation, distinguishing facts, assumptions, and unresolved
+   evidence.
+4. When an abstract proposal is difficult to judge, use a bounded runnable
+   example or explicitly authorized prototype. Follow the write-experiment
+   authorization above; avoid speculative full implementation or artificial
+   micro-decisions. Group repeated instances only after verifying that their
+   semantics and consequences agree.
 5. Wait for the user's decision. Resolve questions against the same decision
    before advancing; preserve explicitly deferred judgments.
 6. Track accepted, rejected, revised, and deferred outcomes and concerns in
