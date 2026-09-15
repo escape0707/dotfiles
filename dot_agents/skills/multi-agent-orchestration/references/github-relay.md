@@ -23,9 +23,21 @@ their commits instead of copying large diffs into the relay.
 
 Fetch the relevant branch and reuse or establish its isolated worktree. Use the
 intended Git operations to establish access; do not add authentication probes.
-Give a new session a short bootstrap naming this skill, its role, relay branch,
-and assigned round. Provide the project workspace and model/effort settings when
-needed to start the intended session.
+
+Give a new session this copyable bootstrap. The first line is a concise task
+title suitable for the session title.
+
+```text
+<Task title>
+
+Use $multi-agent-orchestration skill.
+Relay repository: <owner>/agent-relay
+Relay branch: <branch>
+```
+
+On receiving this bootstrap, fetch the branch and follow the pending-round
+selection rules below. Assignment details belong in the relay prompt.
+Provide any necessary session launch instructions separately.
 
 Formal prompts, responses, and relay commits use English unless the user requests
 another language or task semantics require it. User conversation follows the
@@ -60,17 +72,25 @@ Judge completion against the assigned outcome. Implementation can be `Completed`
 with tests or documentation review explicitly deferred. Required unfinished work
 is `Partial`, or `Blocked` when a blocker prevents progress. State what remains.
 
-An explicitly selected round takes precedence. Otherwise, for `next round`,
-synchronize the branch and select the lowest-numbered pending round. If none
-exists, report that without creating one. Main keeps one open round per channel
-unless intentionally queuing independent work. A separately assigned
-retrospective can finish while earlier paused work remains open.
+An explicitly selected round takes precedence. Otherwise:
 
-`pause` stops execution and leaves the round open; publish a partial response only
-when requested. `resume` reconstructs the open round from its prompt, Git state,
-artifacts, and actual machine state without repeating non-idempotent actions.
-Interpret `next` and `continue` in the active conversation; neither automatically
-abandons the current discussion for a new round.
+- `next round`: Fetch the channel and execute the lowest-numbered pending
+  round. If none exists, report that without creating one.
+- `next`: In an idle relay session, mean `next round`. During active discussion
+  or review, continue that discussion or review.
+- `check relay` / `check relays`: Fetch and inspect the specified channel or
+  the current task's channels. Read new reports and steering artifacts, then
+  summarize changes, pending requests, and blockers. Inspection alone does
+  not resume worker execution or create new assignments.
+- `pause`: Stop execution and leave the round open. Publish a partial response
+  only when requested.
+- `resume`: Reconstruct the open round from its prompt, Git state, artifacts,
+  and actual machine state without repeating non-idempotent actions.
+- `continue`: Continue the current discussion or execution context.
+
+Main keeps one open round per channel unless intentionally queuing independent
+work. A separately assigned retrospective can finish while earlier paused
+work remains open.
 
 ## Prompt and Response
 
@@ -127,7 +147,9 @@ effect on the outcome rather than promising it in a `Completed` response.
 
 Publish material interim steering in a supplementary round artifact when needed;
 do not create `response.md` merely to notify Main while the round remains open.
-Notify Main through the available mechanism or a user-forwardable message.
+Notify Main through the available mechanism or a short user-forwardable
+message. Keep its format flexible. In chat handoffs and relay reports,
+present paths and URLs as plain, copyable text, not Markdown links.
 
 ## Publication and Recovery
 
