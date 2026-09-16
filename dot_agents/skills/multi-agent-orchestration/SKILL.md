@@ -12,6 +12,15 @@ final delivery. Workers own their assigned outcomes. Roles follow responsibility
 not model family or reasoning level. Apply this skill as Main, worker, or advisor
 according to the assignment.
 
+## Resolve Your Role First
+
+Before announcing an execution or delegation plan, read the assignment and its
+referenced protocol and context. Determine who owns overall direction, what this
+session must deliver, and where its results return. A session receiving an
+existing relay assignment is its worker or advisor; execute that assignment and
+return to Main. The harness's local `/root` identity does not establish the
+workflow's Main role. Apply Main-only guidance only when assigned that role.
+
 ## Delegation Patterns
 
 - **Bounded execution:** perform selected investigation, implementation, or
@@ -28,6 +37,13 @@ Assign any useful subset of stages. Main can retain all discussion, decisions,
 and implementation while delegating only formatting, compilation, testing, or
 execution in another environment. Check-only permission does not authorize
 implementation repairs.
+
+Invoking this skill or receiving an assignment does not itself authorize further
+delegation. Use explicit delegation authority from the user or assignment within
+the platform's constraints. An assigned worker or advisor executes its outcome
+directly by default; do not pass the whole assignment to a child and become its
+supervisor unless orchestration is itself assigned. Authorized assistance with
+bounded subtasks does not transfer ownership of the assigned outcome.
 
 Choose reasoning capability, trust, and environment access separately. A
 closed-weight Main can own implementation while a trusted open-weight worker
