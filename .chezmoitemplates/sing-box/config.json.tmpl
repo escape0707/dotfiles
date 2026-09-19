@@ -1,0 +1,241 @@
+{{- $credentials := .credentials -}}
+{{- $password := printf "%s:%s" $credentials.username $credentials.password -}}
+{{- $globalIPv6 := dict "default_interface_address" (list "2000::/3") -}}
+{{- if eq .platform "android" -}}
+  {{/* Pair the address matcher with the active network type so inactive
+       cellular IPv6 does not disable AAAA suppression on IPv4-only Wi-Fi. */}}
+  {{- $networks := list -}}
+  {{- range $network := list "wifi" "cellular" "ethernet" "other" -}}
+    {{- $networks = append $networks (dict "network_type" $network "network_interface_address" (dict $network (list "2000::/3"))) -}}
+  {{- end -}}
+  {{- $globalIPv6 = dict "type" "logical" "mode" "or" "rules" $networks -}}
+{{- end -}}
+{{- $noGlobalIPv6 := set (deepCopy $globalIPv6) "invert" true -}}
+{
+  "log": {
+    "level": "warn"
+  },
+  "dns": {
+    "servers": [
+      {
+        "type": "https",
+        "tag": "cf",
+        "detour": "select",
+        "server": "1.1.1.1"
+      },
+      {
+        "type": "udp",
+        "tag": "default-dns",
+        "server": "223.5.5.5"
+      },
+      {
+        "type": "fakeip",
+        "tag": "fakeip",
+        "inet4_range": "198.18.0.0/15",
+        "inet6_range": "fc00::/18"
+      }
+    ],
+    "rules": [
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          { "ip_version": 6, "rule_set": "geosite-cn" },
+          {{ $noGlobalIPv6 | toJson }}
+        ],
+        "action": "predefined",
+        "rcode": "NOERROR"
+      },
+      {
+        "rule_set": "geosite-cn",
+        "server": "default-dns"
+      },
+      {
+        "query_type": ["A", "AAAA"],
+        "server": "fakeip"
+      }
+    ]
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "address": ["172.18.0.1/30", "fdfe:dcba:9876::1/126"],
+      "auto_route": true,
+      "strict_route": true,
+      "exclude_package": [
+        "cmb.pb",
+        "cn.gov.tax.its",
+        "cn.hsa.app",
+        "com.MobileTicket",
+        "com.alibaba.android.rimet",
+        "com.android.bankabc",
+        "com.autonavi.minimap",
+        "com.baidu.BaiduMap",
+        "com.baidu.netdisk",
+        "com.baidu.searchbox",
+        "com.baidu.tieba",
+        "com.bankcomm.Bankcomm",
+        "com.bankcomm.maidanba",
+        "com.bilibili.app.in",
+        "com.boc.bocsoft.bocmbovsa.buss",
+        "com.cainiao.wireless",
+        "com.chinamworld.bocmbci",
+        "com.chinamworld.main",
+        "com.cmbchina.ccd.pluto.cmbActivity",
+        "com.ct.client",
+        "com.deepseek.chat",
+        "com.dianping.v1",
+        "com.eg.android.AlipayGphone",
+        "com.greenpoint.android.mc10086.activity",
+        "com.hicorenational.antifraud",
+        "com.hunantv.imgo.activity",
+        "com.icbc",
+        "com.jingdong.app.mall",
+        "com.kuaishou.nebula",
+        "com.kugou.android",
+        "com.larus.nova",
+        "com.netease.cloudmusic",
+        "com.pingan.paces.ccms",
+        "com.qiyi.video",
+        "com.sankuai.meituan",
+        "com.sankuai.meituan.takeoutnew",
+        "com.sdu.didi.psnger",
+        "com.service.android.gov.cn",
+        "com.sina.weibo",
+        "com.sinovatech.unicom.ui",
+        "com.smile.gifmaker",
+        "com.ss.android.article.news",
+        "com.ss.android.lark",
+        "com.ss.android.ugc.aweme",
+        "com.ss.android.ugc.aweme.lite",
+        "com.taobao.idlefish",
+        "com.taobao.taobao",
+        "com.tencent.androidqqmail",
+        "com.tencent.map",
+        "com.tencent.mm",
+        "com.tencent.mobileqq",
+        "com.tencent.qqlive",
+        "com.tencent.qqmusic",
+        "com.tencent.wemeet.app",
+        "com.tencent.wework",
+        "com.tmri.app.main",
+        "com.unionpay",
+        "com.ximalaya.ting.android",
+        "com.xingin.xhs",
+        "com.xunmeng.pinduoduo",
+        "com.yitong.mbank.psbc",
+        "com.youku.phone",
+        "com.zhihu.android",
+        "ctrip.android.view",
+        "me.ele",
+        "org.proninyaroslav.libretorrent",
+        "tv.danmaku.bili"
+      ]
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "selector",
+      "tag": "select",
+      "outbounds": ["jp", "shit-net", "direct"]
+    },
+    {
+      "type": "hysteria2",
+      "tag": "jp",
+      "server": {{ $credentials.hy2Host | toJson }},
+      "server_port": 443,
+      "up_mbps": 40,
+      "down_mbps": 150,
+      "password": {{ $password | toJson }},
+      "tls": {
+        "enabled": true,
+        "server_name": {{ $credentials.hy2Host | toJson }}
+      }
+    },
+    {
+      "type": "hysteria2",
+      "tag": "shit-net",
+      {{/* Realm STUN reads the outbound resolver directly, not the route default. */}}
+      "domain_resolver": "default-dns",
+      "up_mbps": 40,
+      "down_mbps": 150,
+      "password": {{ $password | toJson }},
+      "tls": {
+        "enabled": true,
+        "server_name": {{ $credentials.hy2Host | toJson }}
+      },
+      "realm": {
+        "server_url": {{ printf "https://%s" $credentials.realmHost | toJson }},
+        "ip_version": 4,
+        "token": {{ $credentials.realmToken | toJson }},
+        "realm_id": {{ $credentials.realmId | toJson }},
+        "stun_servers": [
+          "stun.nextcloud.com:3478",
+          "global.stun.twilio.com:3478"
+        ]
+      }
+    },
+    {
+      "type": "direct",
+      "tag": "direct"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "inbound": "tun-in",
+        "action": "sniff"
+      },
+      {
+        "protocol": "dns",
+        "action": "hijack-dns"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "direct"
+      },
+      {
+        "protocol": "bittorrent",
+        "outbound": "direct"
+      },
+      {
+        "process_name": ["qbittorrent", "qbittorrent-nox", "qbittorrent.exe"],
+        "outbound": "direct"
+      },
+      {
+        "domain_suffix": {{ $credentials.hy2Host | toJson }},
+        "outbound": "select"
+      },
+      {
+        "rule_set": ["geoip-cn", "geosite-cn"],
+        "outbound": "direct"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "geoip-cn",
+        "url": "https://cdn.jsdelivr.net/gh/SagerNet/sing-geoip@rule-set/geoip-cn.srs"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-cn",
+        "url": "https://cdn.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-cn.srs"
+      }
+    ],
+    "auto_detect_interface": true,
+    "default_domain_resolver": "default-dns"
+  },
+  "http_clients": [
+    {
+      "tag": "rule-set-direct"
+    }
+  ],
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "store_fakeip": true
+    }
+  }
+}
