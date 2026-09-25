@@ -263,6 +263,8 @@ Assign every candidate a stable identifier such as:
 
 where the identifier survives discussion and feedback.
 
+Optional seeds: generated mockup images may seed a high-temperature generation. Treat them as inspiration: reproduce them as live code candidates; never ship or evaluate the images themselves.
+
 ## Represent Candidate DNA
 
 Track enough genotype information to explain and reproduce each candidate.
@@ -282,6 +284,8 @@ Useful fields include:
 Dimensions may be categorical, ordinal, continuous, structural, or semantic.
 
 Do not overformalize candidate DNA merely to create metadata. Record what materially supports search, reproduction, comparison, and preference inference.
+
+Keep the generation archive (DNA, feedback, rejected families) in the project's agent-notes location, not in the product repository.
 
 The human does not need to inspect candidate DNA unless it helps discussion.
 
@@ -421,6 +425,8 @@ Refine an accepted direction:
 
 Use low temperature.
 
+When the user prefers, hand micro search to the user in browser DevTools. Capture the changed computed values and encode them into tokens or code; do not ask the user to transcribe numbers.
+
 Do not mutate macro structure during micro refinement without evidence that the current basin is wrong.
 
 ## Converge and Promote
@@ -439,6 +445,7 @@ Once a candidate or family is selected:
 2. normalize arbitrary experimental values into the production design-token system;
 3. rebuild or clean the implementation according to production conventions;
 4. validate accessibility, responsiveness, performance, and maintainability;
+   4a. record the chosen design as a target contract and protect it with rendering-engine checks (geometry, computed styles, contrast, target size), not screenshot comparison;
 5. move component-level refinement into the real component environment;
 6. move integration-level refinement into the real application or product environment.
 
@@ -451,6 +458,10 @@ or the project's equivalent.
 **Promote the design; do not blindly promote the experimental code.**
 
 Experimental code may contain duplication, magic numbers, temporary fixtures, or candidate-specific hacks that are acceptable during search but unacceptable in production.
+
+## Raster Media
+
+For image-generated media such as logos, put many small numbered candidates in each generated image (single-candidate images came out too complex and too similar). Keep numbering stable across batches.
 
 ## Interaction With `interactive-decision-review`
 
