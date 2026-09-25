@@ -39,9 +39,11 @@ artifact policies in the calling workflow.
 
 4. Replace `<purpose-specific-session>` with a stable descriptive name for the
    current workflow, such as `job-application`, `ui-review`, or `site-debug`.
-5. Keep that shell and its blocking `attach` command running for the lifetime of
-   the browser session.
-6. Reuse the same session name for agent-controlled commands:
+5. Wait for attachment to succeed. The installed CLI returns after connecting;
+   its detached daemon maintains the session. A returned prompt after successful
+   attachment does not mean the bridge stopped.
+6. Reuse the same session name and Playwright workspace for agent-controlled
+   commands:
 
    ```bash
    playwright-cli -s=<purpose-specific-session> snapshot
@@ -60,3 +62,24 @@ Codex startup-process issue.
 Before removing the persistent-shell restriction, verify both that the Codex
 issue is resolved and that the installed Codex build preserves the bridge after
 a one-shot tool call exits.
+
+## Recover an Initial WebSocket Error
+
+If Edge's connection tab shows `Failed to connect to MCP relay: WebSocket error`,
+wait briefly and refresh that same tab while `attach` is still waiting. This
+recovered an observed `net::ERR_CONNECTION_REFUSED` with an IPv4 relay address;
+the precise cause was not established.
+
+If `attach` has already timed out and exited, the old tab's relay has stopped.
+Rerun `attach` from the external shell and use the newly opened connection tab.
+For more time to refresh, the installed CLI supports this temporary timeout
+override (an internal test setting, not a stable public option):
+
+```fish
+env PWTEST_EXTENSION_CONNECT_TIMEOUT=180000 \
+  playwright-cli attach --extension=msedge --session=<purpose-specific-session>
+```
+
+If refreshing still fails, inspect the new tab's Console error and relay host
+and port. Do not share the full connection URL or token, or infer a token mismatch
+from the CLI's generic timeout message alone.
