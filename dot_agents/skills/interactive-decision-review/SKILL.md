@@ -14,7 +14,7 @@ This skill owns decision discovery, interactive decisions, implementation
 batches, and handoffs when material choices remain. Mechanical, readily
 reversible details stay delegated unless they expose a broader concern.
 
-Use it independently or with `quote-explain-hunk`, according to the user's task.
+Use it independently or alongside code review, according to the user's task.
 Implementation does not require an interactive hunk review: the user's own
 editor review and batch approval are sufficient when that is their preference.
 
@@ -118,9 +118,10 @@ Do not turn explanation-only review into mandatory design or implementation.
    Confirm accepted work is implemented and rejected or deferred scope excluded.
 2. Report completed checks, their results, and any remaining verification or
    delegated work. Do not declare completion while required work is outstanding.
-3. Use `quote-explain-hunk` when interactive implementation review is requested;
-   otherwise honor the user's chosen review method. Use domain-specific review
-   where needed. Carry decisions, plan changes, comparison range, validation,
+3. Honor the user's chosen review method; explain implementation changes in
+   coherent batches unless one-at-a-time review is explicitly requested. Use
+   domain-specific review where needed. Carry decisions, plan changes, comparison
+   range, validation,
    and deferred judgments across handoffs without requiring repeated invocation.
 4. After authorized implementation during review, resume the paused pass.
    Re-review changed hunks and unchanged code whose meaning was affected;

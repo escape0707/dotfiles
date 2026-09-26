@@ -58,6 +58,9 @@ ctx7 docs [options] <libraryId> "<query>"  Query documentation for a library
 
 ## Interactive Decisions and Review
 
+- Explain code and diffs in coherent batches by default. Do not require
+  understanding or approval after every hunk; use one-at-a-time review only
+  when I explicitly request it.
 - For change work involving material business semantics, contracts, ownership,
   boundaries, data or transaction responsibility, public interfaces, or
   hard-to-reverse choices, use the `interactive-decision-review` skill as soon

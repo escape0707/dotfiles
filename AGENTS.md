@@ -7,9 +7,10 @@ baseline, then fetch `origin/main`.
 Compare that baseline, the fetched remote, the local
 working tree, and live files to understand what changed and where they disagree.
 
-Use `quote-explain-hunk` to explain each problem and `interactive-decision-review`
-to decide with me which changes to keep, combine, or defer and why. After review,
-carry the agreed resolutions through local source, live files, and remote `main`,
+Explain problems with concrete diffs in coherent batches. Use
+`interactive-decision-review` to decide with me which changes to keep, combine,
+or defer and why. After review, carry the agreed resolutions through local
+source, live files, and remote `main`,
 including commit and push. Verify that all three agree on the resolved changes
 and report any remaining drift.
 

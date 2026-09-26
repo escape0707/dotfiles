@@ -114,10 +114,10 @@ duplicate approval merely because they came through another conversation. Main
 raises genuine conflicts or new consequences with the user. Platform constraints
 still apply; scope changes do not imply unrelated permissions.
 
-Use `interactive-decision-review` for material choices and `quote-explain-hunk`
-for interactive code explanation. Preserve their review and implementation
-boundaries. Do not turn deferred review into approval or delay an implementation
-report solely because review was explicitly deferred.
+Use `interactive-decision-review` for material choices. Explain code in coherent
+batches unless the user explicitly requests one-at-a-time review. Preserve
+review and implementation boundaries. Do not turn deferred review into approval
+or delay an implementation report solely because review was explicitly deferred.
 
 ## Integrate and Verify
 
