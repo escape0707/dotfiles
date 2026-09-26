@@ -36,24 +36,6 @@ enabled = true
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
 
-[mcp_servers.penpot]
-url = "http://localhost:4401/mcp"
-
-[mcp_servers.penpot.tools.execute_code]
-approval_mode = "approve"
-
-[mcp_servers.penpot.tools.export_shape]
-approval_mode = "approve"
-
-[mcp_servers.penpot.tools.high_level_overview]
-approval_mode = "approve"
-
-[mcp_servers.penpot.tools.import_image]
-approval_mode = "approve"
-
-[mcp_servers.penpot.tools.penpot_api_info]
-approval_mode = "approve"
-
 [sandbox_workspace_write]
 network_access = true
 {{- if not $isTermux }}
@@ -111,6 +93,7 @@ auto_recap = false
 notification_method = "bel"
 {{- end }}
 notification_condition = "always"
+screen_reader_detection_done = true
 
 [tui.model_availability_nux]
 gpt-6-astra = 4
