@@ -27,10 +27,16 @@ When asked to persist Codex behavior or workflow learnings:
    version; preserve unrelated instructions and settings.
 4. Treat `~/.codex` and `~/.agents` as chezmoi-managed:
    - Edit the corresponding source file under `~/.local/share/chezmoi/`.
-   - Apply only the target file with `chezmoi apply <target-path>` after
-     editing.
+   - When moving, archiving, or deleting managed files, record the retired
+     destination paths in `.chezmoiremove` so applying the source also removes
+     stale copies on other machines. Use narrowly scoped paths relative to the
+     chezmoi destination; do not remove directories containing unrelated files.
+   - Apply only the affected targets with `chezmoi apply <target-path>...`
+     after editing, including retired paths when removing them.
    - Verify the intended change reached the live target and unrelated content
      remains intact. Check source and target match where directly comparable.
+     For moves or archives, verify the replacement exists and the retired path
+     is absent; for deletions, verify the retired path is absent.
 5. Use `interactive-skill-crafting` when the user wants collaborative skill
    authorship. A straightforward approved rule change needs no crafting pass.
 6. When a target file is outside the sandbox, request escalation instead of
