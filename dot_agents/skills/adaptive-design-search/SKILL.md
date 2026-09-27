@@ -79,7 +79,7 @@ Do not use this skill merely for:
 - mechanical refactoring;
 - architectural or semantic decisions whose alternatives are already explicit and hard to reverse.
 
-Use `interactive-decision-review` for material architectural, semantic, contract, ownership, or hard-to-reverse decisions that require explicit deliberation rather than design-space search.
+Discuss unresolved material architectural, semantic, contract, ownership, or hard-to-reverse decisions with the user before implementation; these require explicit deliberation rather than design-space search.
 
 ## Algorithmic Model
 
@@ -463,7 +463,7 @@ Experimental code may contain duplication, magic numbers, temporary fixtures, or
 
 For image-generated media such as logos, put many small numbered candidates in each generated image (single-candidate images came out too complex and too similar). Keep numbering stable across batches.
 
-## Interaction With `interactive-decision-review`
+## Explicit Decisions During Exploration
 
 This skill owns search when:
 
@@ -472,7 +472,7 @@ This skill owns search when:
 - human preference is discovered through examples;
 - multiple generations are useful.
 
-Use `interactive-decision-review` when exploration exposes a material explicit decision involving:
+Discuss the choice with the user when exploration exposes an unresolved material decision involving:
 
 - architecture;
 - semantics;

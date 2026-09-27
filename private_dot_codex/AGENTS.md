@@ -63,8 +63,9 @@ ctx7 docs [options] <libraryId> "<query>"  Query documentation for a library
   when I explicitly request it.
 - For change work involving material business semantics, contracts, ownership,
   boundaries, data or transaction responsibility, public interfaces, or
-  hard-to-reverse choices, use the `interactive-decision-review` skill as soon
-  as inspection provides enough evidence and before implementation.
+  hard-to-reverse choices, discuss unresolved decisions with me once inspection
+  provides enough evidence and before implementation. Use plain explanations
+  and questions, without a mandatory numbered decision workflow.
 - Treat plans as sequencing aids, not approval for unresolved design choices. Do
   not postpone known decision points until post-implementation review.
 - Keep mechanical and readily reversible details delegated unless they expose a

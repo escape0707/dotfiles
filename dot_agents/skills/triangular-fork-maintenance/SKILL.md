@@ -15,7 +15,7 @@ PR diffs throughout rebases and cleanup.
 This skill owns Git topology, history transformation, conflict diagnosis, and
 safe delivery. It does not decide unresolved application semantics merely to
 complete a rebase. When a conflict exposes a material ownership, boundary, or
-contract decision, use `interactive-decision-review` before resolving it.
+contract decision, discuss the unresolved choice with the user before resolving it.
 
 ## Inspect the Topology
 
@@ -70,7 +70,7 @@ contract decision, use `interactive-decision-review` before resolving it.
 3. Resolve toward the intended final state. Do not select blanket “ours” or
    “theirs”, concatenate both implementations, or preserve obsolete structure
    solely to resemble the old patch.
-4. For competing changes, invoke `interactive-decision-review` before choosing
+4. For competing changes, discuss the unresolved choice with the user before choosing
    the final semantics. For equivalent changes, record the evidence before
    dropping or adapting the duplicate patch.
 5. Inspect cleanly applied overlapping patches and skipped commits too. A rebase
