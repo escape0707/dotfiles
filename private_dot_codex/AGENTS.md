@@ -1,9 +1,10 @@
 # Codex Agent Guidelines
 
-## Docs & API references (Context7)
+## Docs & API references
 
-Use ctx7 cli when you need library/API documentation, code generation, setup or
-configuration steps. It's installed globally already.
+For OpenAI and Codex documentation, follow the `openai-docs` skill and its
+preference for the OpenAI Docs MCP. For other library/API documentation, code
+generation, setup or configuration steps, use the globally installed ctx7 CLI.
 
 ```shell
 ctx7 --help
@@ -15,6 +16,11 @@ ctx7 docs [options] <libraryId> "<query>"  Query documentation for a library
 
 ## Tooling
 
+- When an instruction or skill prefers an MCP tool, search the available and
+  deferred tool catalogs before choosing a fallback. Absence from the initial
+  tool list does not establish unavailability. Use the preferred tool when
+  available; if it is unavailable, fails, or lacks the needed information,
+  state that specific reason when using a fallback.
 - Environment: Codex App on Windows 11 or codex on ArchLinux WSL2.
 - Windows sandbox: escalate commands that invoke `wsl.exe`.
 - In ArchLinux WSL2, use rootless Podman instead of Docker when needed.
