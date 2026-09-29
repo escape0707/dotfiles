@@ -1,0 +1,13 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- /* Owns only the cache keep-alive hooks; every other key stays live. */ -}}
+{{- $live := dict -}}
+{{- if .chezmoi.stdin -}}
+{{-   $live = fromJson .chezmoi.stdin -}}
+{{- end -}}
+{{- $cmd := "~/.claude/hooks/cache-keepalive.sh" -}}
+{{- $hooks := get $live "hooks" | default dict -}}
+{{- $_ := set $hooks "Stop" (list (dict "hooks" (list (dict "type" "command" "command" $cmd "asyncRewake" true "timeout" 3600)))) -}}
+{{- $_ := set $hooks "UserPromptSubmit" (list (dict "hooks" (list (dict "type" "command" "command" $cmd)))) -}}
+{{- $_ := set $hooks "SessionEnd" (list (dict "hooks" (list (dict "type" "command" "command" $cmd)))) -}}
+{{- $_ := set $live "hooks" $hooks -}}
+{{ toPrettyJson "  " $live }}
