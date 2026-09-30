@@ -1,10 +1,38 @@
 {
+  // Unified config. The formatter (oxfmt, or Prettier where a Prettier plugin is
+  // needed; both print Markdown identically at printWidth 80, proseWrap always)
+  // owns layout, so every rule it controls is off. Repos copy this block and
+  // change only "globs" and "ignores".
   "config": {
-    "MD004": { "style": "dash" },
-    "MD013": { "code_blocks": false, "tables": false, "stern": true },
-    "MD014": false,
-    "MD029": { "style": "ordered" },
-    "MD060": { "style": "compact" },
+    // markdownlint/style/prettier, inlined so no node_modules is needed.
+    "blanks-around-fences": false,
+    "blanks-around-headings": false,
+    "blanks-around-lists": false,
+    "code-fence-style": false,
+    "emphasis-style": false,
+    "heading-start-left": false,
+    "heading-style": false,
+    "hr-style": false,
+    "line-length": false,
+    "list-indent": false,
+    "list-marker-space": false,
+    "no-blanks-blockquote": false,
+    "no-hard-tabs": false,
+    "no-missing-space-atx": false,
+    "no-missing-space-closed-atx": false,
+    "no-multiple-blanks": false,
+    "no-multiple-space-atx": false,
+    "no-multiple-space-blockquote": false,
+    "no-multiple-space-closed-atx": false,
+    "no-trailing-spaces": false,
+    "ol-prefix": false,
+    "strong-style": false,
+    "ul-indent": false,
+    // Also formatter-owned: bullet marker and table padding.
+    "ul-style": false,
+    "table-column-style": false,
+    // Shell examples may show "$ " prompts without output.
+    "commands-show-output": false,
   },
   "globs": ["**/*.md", "!node_modules"],
 }
