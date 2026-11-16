@@ -78,7 +78,13 @@ fi
 
 echo "Processing $filename."
 
-hash=$(ffprobe -show_format -loglevel error "$filename" | b2sum | cut --delimiter " " --fields 1)
+hash=$(
+    {
+        ffprobe -show_format -loglevel error "$filename"
+        head -c 262144 -- "$filename"
+        tail -c 262144 -- "$filename"
+    } | b2sum | cut -c1-32
+)
 hashed_audio_name=$hash.mkv
 hashed_log_name=$hash.log
 hashed_sub_name=$hash.srt
