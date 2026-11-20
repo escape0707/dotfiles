@@ -80,7 +80,7 @@ echo "Processing $filename."
 
 hash=$(
     {
-        ffprobe -show_format -loglevel error "$filename"
+        ffprobe -show_format -loglevel error "$filename" | grep -v '^filename='
         head -c 262144 -- "$filename"
         tail -c 262144 -- "$filename"
     } | b2sum | cut -c1-32
